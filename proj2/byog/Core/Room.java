@@ -11,7 +11,8 @@ public class Room {
     int[] TR;
     int[] center;
 
-    public Room() {
+    public Room(int[] center) {
+        this.center = center;
         Random r = new Random();
         height = RandomUtils.uniform(r, 6);
         width = RandomUtils.uniform(r, 7);
@@ -34,4 +35,6 @@ public class Room {
             }
         }
     }
+
+
 }
