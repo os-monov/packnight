@@ -9,7 +9,7 @@ public class MapGenerator {
     private static final int HEIGHT = 80;
     private static final int WIDTH = 30;
     private static Integer[][][] room_coordinates;
-    TETile[][] TETile_world = new TETile[WIDTH][HEIGHT];
+    static TETile[][] TETile_world = new TETile[WIDTH][HEIGHT];
 
     private static Integer[] RandomWorldParameters(){
         Random r = new Random();
