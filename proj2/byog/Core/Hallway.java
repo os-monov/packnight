@@ -7,6 +7,9 @@ public class Hallway {
     int length;
     int x_start;
     int y_start;
+    Integer[][] blocks_to_delete = new Integer[1000][2];
+    int helper_index_array = 0;
+
 
     public Hallway(){
         Random r = new Random();
@@ -15,11 +18,15 @@ public class Hallway {
         int y_start = RandomUtils.uniform(r, 30);
     }
 
+
+    //firstHallway = Hallway();
+
     public void drawHorizontalHallway(){
         for (int i = x_start; i < (x_start + length); i += 1){
             MapGenerator.TETile_world[i][y_start + 1] = Tileset.WALL;
             MapGenerator.TETile_world[i][y_start - 1] = Tileset.WALL;
-            MapGenerator.TETile_world[i][y_start] = Tileset.FLOWER;
+            MapGenerator.TETile_world[i][y_start] = Tileset.WALL;
+            blocks_to_delete[helper_index_array] = new Integer[]{i, y_start};
         }
     }
 
