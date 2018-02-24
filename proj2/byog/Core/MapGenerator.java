@@ -79,4 +79,5 @@ public class MapGenerator {
     public void main (String[] args){
 
     }
+
 }
