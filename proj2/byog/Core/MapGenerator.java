@@ -71,11 +71,9 @@ public class MapGenerator {
     }
 
 
-<<<<<<< HEAD
-    public  TETile[][] MapGenerator(){
-=======
+
+
     public TETile[][] MapGenerator(){
->>>>>>> fa3ad6abd217d5f51163de158a478663b63e475e
         world_parameters = RandomWorldParameters();
         TETile[][] world = create_tile_world(world_parameters);
         return world;
