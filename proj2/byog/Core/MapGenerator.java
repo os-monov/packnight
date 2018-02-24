@@ -8,14 +8,14 @@ public class MapGenerator {
     private static Integer[] world_parameters;
     private static final int HEIGHT = 80;
     private static final int WIDTH = 30;
-    private static Integer[][] room_coordinates;
+    private static Integer[][][] room_coordinates;
 
     private static Integer[] RandomWorldParameters(){
         Random r = new Random();
         int num_rooms = RandomUtils.uniform(r, 10);
         int num_hallways = RandomUtils.uniform(r, 15);
         Integer[] params = new Integer[]{num_rooms, num_hallways};
-        room_coordinates = new Integer[num_rooms][4];
+        room_coordinates = new Integer[num_rooms][4][2];
         return params;
     }
 
