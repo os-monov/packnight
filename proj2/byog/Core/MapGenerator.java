@@ -5,11 +5,12 @@ import byog.TileEngine.Tileset;
 import byog.TileEngine.TETile;
 
 public class MapGenerator {
-    private static Integer[] world_parameters;
+    private static Integer[] world_parameters
     private static final int HEIGHT = 30;
     private static final int WIDTH = 80;
     private static Integer[][][] room_coordinates;
     static TETile[][] TETile_world = new TETile[WIDTH][HEIGHT];
+
 
     private static Integer[] RandomWorldParameters(){
         Random r = new Random();
@@ -69,4 +70,5 @@ public class MapGenerator {
     public void main (String[] args){
 
     }
+
 }
