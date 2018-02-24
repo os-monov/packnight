@@ -1,5 +1,6 @@
 package byog.Core;
 import java.util.Random;
+import byog.TileEngine.Tileset;
 
 public class Room {
     int height;
@@ -8,6 +9,7 @@ public class Room {
     int[] BR;
     int[] TL;
     int[] TR;
+    int[] center;
 
     public Room() {
         Random r = new Random();
@@ -21,11 +23,15 @@ public class Room {
         TL[1] = BL[1] + height;
         TR[0] = TL[0] + width;
         TR[1] = TL[1];
+        center[0] = (BL[0] + TL[0]) / 2;
+        center[1] = (BL[1] + TL[1]) / 2;
     }
 
     public void drawRoom(int[] BL, int height, int width) {
         for (int x = BL[0]; x < BL[0] + width; x++) {
-
+            for (int y = BL[1]; y < BL[1] + height; y++){
+                MapGenerator.TETile_world[x][y] = Tileset.WALL;
+            }
         }
     }
 }
