@@ -9,6 +9,7 @@ public class MapGenerator {
     private static final int HEIGHT = 80;
     private static final int WIDTH = 30;
     private static Integer[][][] room_coordinates;
+    TETile[][] TETile_world = new TETile[WIDTH][HEIGHT];
 
     private static Integer[] RandomWorldParameters(){
         Random r = new Random();
@@ -35,8 +36,7 @@ public class MapGenerator {
     }
 
 
-    public static TETile[][] create_tile_world(Integer[] params){
-        TETile[][] TETile_world = new TETile[WIDTH][HEIGHT];
+    public TETile[][] create_tile_world(Integer[] params){
         fillTileBackground(TETile_world);
         //int add_rooms;
         //int add_hallways;
@@ -70,7 +70,7 @@ public class MapGenerator {
     }
 
 
-    public static TETile[][] MapGenerator(){
+    public TETile[][] MapGenerator(){
         world_parameters = RandomWorldParameters();
         TETile[][] world = create_tile_world(world_parameters);
         return world;
