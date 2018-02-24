@@ -6,16 +6,17 @@ import byog.TileEngine.TETile;
 
 public class MapGenerator {
     private static Integer[] world_parameters;
-    private static final int HEIGHT = 80;
-    private static final int WIDTH = 30;
-    private static Integer[][] room_coordinates;
+    private static final int HEIGHT = 30;
+    private static final int WIDTH = 80;
+    private static Integer[][][] room_coordinates;
+    static TETile[][] TETile_world = new TETile[WIDTH][HEIGHT];
 
     private static Integer[] RandomWorldParameters(){
         Random r = new Random();
         int num_rooms = RandomUtils.uniform(r, 10);
         int num_hallways = RandomUtils.uniform(r, 15);
         Integer[] params = new Integer[]{num_rooms, num_hallways};
-        room_coordinates = new Integer[num_rooms][4];
+        room_coordinates = new Integer[num_rooms][4][2];
         return params;
     }
 
@@ -36,7 +37,6 @@ public class MapGenerator {
 
 
     public static TETile[][] create_tile_world(Integer[] params){
-        TETile[][] TETile_world = new TETile[WIDTH][HEIGHT];
         fillTileBackground(TETile_world);
         //int add_rooms;
         //int add_hallways;
@@ -53,20 +53,10 @@ public class MapGenerator {
         }
     }
 
-//    public void drawLTiles(int x_start, int y_start, int len, int direction, TETile t){
-//        if direction
-//
-//        for (int i = x_start; i < x_final; i++){
-//            for(int j = y_start; i < y_final)
-//        }
-
-
 
 
     public void addRooms(TETile[][] tile_array, int n_rooms) {
-        for (int i = 0; i < world_parameters[0]; i += 1){
 
-        }
     }
 
 
