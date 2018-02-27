@@ -8,46 +8,26 @@ public class MapGenerator {
     private static Integer[] world_parameters;
     private static final int HEIGHT = 80;
     private static final int WIDTH = 30;
-    private static Integer[][][] room_coordinates;
+//    private static Integer[][][] room_coordinates;
     static TETile[][] TETile_world = new TETile[WIDTH][HEIGHT];
+    private static long SEED;
+    public static Random r = new Random(SEED);
 
     private static Integer[] RandomWorldParameters(){
         Random r = new Random();
         int num_rooms = RandomUtils.uniform(r, 10);
         int num_hallways = RandomUtils.uniform(r, 15);
         Integer[] params = new Integer[]{num_rooms, num_hallways};
-        room_coordinates = new Integer[num_rooms][4][2];
+//        room_coordinates = new Integer[num_rooms][4][2];
         return params;
     }
 
-
-    public class Position {
-        private int x_pos;
-        private int y_pos;
-
-        public Position(int x, int y){
-            x_pos = x;
-            y_pos = y;
-        }
-
-        public Integer[] returnPosition(){
-            return new Integer[]{x_pos, y_pos};
-        }
+    private MapGenerator(String input){
+        SEED = numerical_seed(input);
     }
 
 
-
-    public TETile[][] create_tile_world(Integer[] params){
-
-        fillTileBackground(TETile_world);
-        //int add_rooms;
-        //int add_hallways;
-
-
-        return TETile_world;
-    }
-
-    public static void fillTileBackground(TETile[][] tile_array) {
+    private static void fillTileBackground(TETile[][] tile_array) {
         for (int i = 0; i < tile_array.length; i += 1){
             for (int j = 0; j < tile_array[0].length; j += 1){
                 tile_array[i][j] = Tileset.NOTHING;
@@ -55,18 +35,44 @@ public class MapGenerator {
         }
     }
 
+    private static void addHallways() {
+        int length = RandomUtils.uniform(r, 10);
+        int x_start = RandomUtils.uniform(r, 0, 79);
+        int y_start = RandomUtils.uniform(r, 0, 29);
+        Hallway.drawHorizontalHallwayRight(x_start, y_start, length);
 
 
+    }
+
+    private TETile[][] create_tile_world(Integer[] params) {
+
+        fillTileBackground(TETile_world);
+        addHallways();
 
 
-    public TETile[][] MapGenerator(){
+        return TETile_world;
+
+    }
+
+    public TETile[][] Generate(){
         world_parameters = RandomWorldParameters();
         TETile[][] world = create_tile_world(world_parameters);
         return world;
-    }
-
-    public void main (String[] args){
 
     }
+
+    public void main(String[] args){
+
+    }
+
+    private long numerical_seed(String input){
+        input = input.replace("N", "");
+        input = input.replace("n", "");
+        input = input.replace("S", "");
+        input = input.replace("n", "");
+        Long fs = Long.parseLong(input);
+        return fs;
+    }
+
 
 }

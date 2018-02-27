@@ -28,11 +28,14 @@ public class Game {
      * @return the 2D TETile[][] representing the state of the world
      */
     public TETile[][] playWithInputString(String input) {
-        // TODO: Fill out this method to run the game using the input passed in,
         // and return a 2D tile representation of the world that would have been
         // drawn if the same inputs had been given to playWithKeyboard().
 
         TETile[][] finalWorldFrame = null;
-        return finalWorldFrame;
+        MapGenerator new_map = new MapGenerator(input);
+        TETile[][] finalWorld = new_map.Generate();
+        ter.initialize(WIDTH, HEIGHT);
+        ter.renderFrame(finalWorld);
+        return finalWorld;
     }
 }
