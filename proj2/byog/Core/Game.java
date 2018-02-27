@@ -3,6 +3,8 @@ package byog.Core;
 import byog.TileEngine.TERenderer;
 import byog.TileEngine.TETile;
 
+import java.util.Map;
+
 public class Game {
     TERenderer ter = new TERenderer();
     /* Feel free to change the width and height. */
@@ -31,11 +33,10 @@ public class Game {
         // and return a 2D tile representation of the world that would have been
         // drawn if the same inputs had been given to playWithKeyboard().
 
-        TETile[][] finalWorldFrame = null;
         MapGenerator new_map = new MapGenerator(input);
-        TETile[][] finalWorld = new_map.Generate();
+        TETile[][] finalWorldFrame = new_map.Generate();
         ter.initialize(WIDTH, HEIGHT);
-        ter.renderFrame(finalWorld);
-        return finalWorld;
+        ter.renderFrame(finalWorldFrame);
+        return finalWorldFrame;
     }
 }
