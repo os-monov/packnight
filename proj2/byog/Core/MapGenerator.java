@@ -38,42 +38,49 @@ public class MapGenerator {
         int length = RandomUtils.uniform(r, 10);
         int x_start = RandomUtils.uniform(r,0, 79);
         int y_start = RandomUtils.uniform(r,0, 29);
-        Hallway.drawHorizontalHallwayRight(x_start, y_start, length);
+        Hallway.drawVerticalHallwayUp(x_start, y_start, length);
+
+
+        Integer[] next_xy1 = Hallway.lastXYpos();
+        Hallway.drawVerticalHallwayUp(next_xy1[0], next_xy1[1], 15);
+//
+//        Integer[] next_xy2 = Hallway.lastXYpos();
+//        System.out.println(next_xy2[0]);
+//        System.out.println(next_xy2[1]);
+//        Hallway.drawHorizontalHallwayRight(next_xy2[0], next_xy2[1], 15);
+
+
 
 //        for (int i = 1; i < world_parameters[1]; i+= 1){
-        int len = RandomUtils.uniform(r, 10);
-        Integer[] next_xy = Hallway.lastXYpos();
-        Hallway.drawVerticalHallwayDown(next_xy[0], next_xy[1], len);
-
-//            int hallway_type = RandomUtils.uniform(r, 1, 4);
-//            int len = RandomUtils.uniform(r, 10);
 //            Integer[] next_xy = Hallway.lastXYpos();
+//            int len = RandomUtils.uniform(r, 25);
+//            int hallway_type = RandomUtils.uniform(r, 1, 4);
 //
-//            if (hallway_type == 1){
-//                Hallway.drawHorizontalHallwayRight(next_xy[0], next_xy[1], len);
+//                if (hallway_type == 1){
+//                    Hallway.drawHorizontalHallwayRight(next_xy[0], next_xy[1], len);
 //            }
 //
-//            if (hallway_type == 2){
-//                Hallway.drawVerticalHallwayUp(next_xy[0], next_xy[1], len);
+//                if (hallway_type == 2){
+//                    Hallway.drawVerticalHallwayUp(next_xy[0], next_xy[1], len);
 //            }
-//            if (hallway_type == 3){
-//                Hallway.drawHorizontalHallwayLeft(next_xy[0], next_xy[1], len);
-//            }
-//
-//            if (hallway_type == 4){
-//                Hallway.drawVerticalHallwayDown(next_xy[0], next_xy[1], len);
+//                if (hallway_type == 3){
+//                    Hallway.drawHorizontalHallwayLeft(next_xy[0], next_xy[1], len);
 //            }
 //
+//                if (hallway_type == 4){
+//                    Hallway.drawVerticalHallwayDown(next_xy[0], next_xy[1], len);
+//            }
 //
-//        }
-
+//
+//
     }
+
 
     private TETile[][] create_tile_world(Integer[] params){
 
         fillTileBackground(TETile_world);
         addHallways();
-        Hallway.clearTheHalls();
+//        Hallway.clearTheHalls();
         //int add_rooms;
 
 
