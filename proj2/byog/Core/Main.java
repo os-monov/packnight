@@ -20,7 +20,7 @@ public class Main {
         } else {
             Game game = new Game();
 //            game.playWithKeyboard();
-            game.playWithInputString("N9999999S");
+            game.playWithInputString("888");
         }
     }
 }
