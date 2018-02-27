@@ -10,9 +10,9 @@ public class Room {
     int[] TL;
     int[] TR;
     int[] center;
+    int seed;
 
-    public Room(int[] center) {
-        this.center = center;
+    public Room() {
         Random r = new Random();
         height = RandomUtils.uniform(r, 6);
         width = RandomUtils.uniform(r, 7);
@@ -28,10 +28,36 @@ public class Room {
         center[1] = (BL[1] + TL[1]) / 2;
     }
 
-    public void drawRoom(int[] BL, int height, int width) {
+    public void drawRoom() {
         for (int x = BL[0]; x < BL[0] + width; x++) {
-            for (int y = BL[1]; y < BL[1] + height; y++){
+            if (x == 80) {
+                break;
+            }
+            for (int y = BL[1]; y < BL[1] + height; y++) {
+                if (y == 30) {
+                    break;
+                }
                 MapGenerator.TETile_world[x][y] = Tileset.WALL;
+            }
+        }
+    }
+
+    public void clearRoom() {
+        for (int x = BL[0] + 1; x < BL[0] + width - 1; x++) {
+            if (x == 0) {
+                x++;
+            }
+            if (x == 79) {
+                break;
+            }
+            for (int y = BL[1] + 1; y < BL[1] + height - 1; y++) {
+                if (y == 0) {
+                    y++;
+                }
+                if (y == 29) {
+                    break;
+                }
+                MapGenerator.TETile_world[x][y] = Tileset.FLOOR;
             }
         }
     }
