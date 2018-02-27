@@ -9,19 +9,23 @@ public class MapGenerator {
     private static final int HEIGHT = 30;
     private static final int WIDTH = 80;
     static TETile[][] TETile_world = new TETile[WIDTH][HEIGHT];
-    private static long SEED;
-    private static Random r = new Random(SEED);
-    private Integer[][] floor_tiles = new Integer[100][2];
+    private long SEED;
+    private Random r;
+    private Integer[][] floor_tiles = new Integer[4000][2];
     private int ft_array_index = 0;
-    private static final int x_start = RandomUtils.uniform(r, 30, 50);
-    private static final int y_start = RandomUtils.uniform(r, 12, 18);
+    private static final int x_start = 38; //RandomUtils.uniform(r, 30, 50);
+    private static final int y_start = 15; // RandomUtils.uniform(r, 12, 18);
     private static int x_current = x_start;
     private static int y_current = y_start;
 
 
     public MapGenerator(String input) {
         SEED = numerical_seed(input);
+        r = new Random(SEED);
+        System.out.println(SEED);
+
     }
+
 
     private static void fillTileBackground(TETile[][] tile_array) {
         for (int i = 0; i < tile_array.length; i += 1) {
@@ -57,83 +61,111 @@ public class MapGenerator {
 
     private boolean isValid(int direction) {
         if (direction == 1) {
-            return (x_current != 78);
+            return (x_current != 76 && x_current != 77);
         }
 
-        if (direction == 2) {
-            return (y_current != 28);
+        else if (direction == 2) {
+            return (y_current != 26 && y_current != 27);
         }
 
-        if (direction == 3) {
-            return (x_current != 1);
+        else if (direction == 3) {
+            return (x_current != 3 && x_current != 2);
         }
 
         else{
-
-            return (y_current != 1);
+            return (y_current != 3 && y_current != 2);
         }
 
 
     }
 
     public void moveRight () {
-        x_current += 1;
-        TETile_world[x_current][y_current] = Tileset.FLOWER;
-        floor_tiles[ft_array_index] = new Integer[]{x_current, y_current};
-        ft_array_index += 1;
+        for (int i = 0; i < 2; i++) {
+            x_current += 1;
+            TETile_world[x_current][y_current] = Tileset.FLOWER;
+            floor_tiles[ft_array_index] = new Integer[]{x_current, y_current};
+            ft_array_index += 1;
+        }
     }
 
     public void moveLeft() {
-        x_current -= 1;
-        TETile_world[x_current][y_current] = Tileset.FLOWER;
-        floor_tiles[ft_array_index] = new Integer[]{x_current, y_current};
-        ft_array_index += 1;
+        for (int i = 0; i < 2; i++) {
+            x_current -= 1;
+            TETile_world[x_current][y_current] = Tileset.FLOWER;
+            floor_tiles[ft_array_index] = new Integer[]{x_current, y_current};
+            ft_array_index += 1;
+        }
     }
 
     public void moveUp() {
-        y_current += 1;
-        TETile_world[x_current][y_current] = Tileset.FLOWER;
-        floor_tiles[ft_array_index] = new Integer[]{x_current, y_current};
-        ft_array_index += 1;
+        for (int i = 0; i < 2; i++) {
+            y_current += 1;
+            TETile_world[x_current][y_current] = Tileset.FLOWER;
+            floor_tiles[ft_array_index] = new Integer[]{x_current, y_current};
+            ft_array_index += 1;
+        }
     }
 
     public void moveDown() {
-        y_current -= 1;
-        TETile_world[x_current][y_current] = Tileset.FLOWER;
-        floor_tiles[ft_array_index] = new Integer[]{x_current, y_current};
-        ft_array_index += 1;
+        for (int i = 0; i < 2; i++) {
+            y_current -= 1;
+            TETile_world[x_current][y_current] = Tileset.FLOWER;
+            floor_tiles[ft_array_index] = new Integer[]{x_current, y_current};
+            ft_array_index += 1;
+        }
     }
 
+
+
+
+
+
     private void addFloors () {
-        TETile_world[x_current][y_current] = Tileset.FLOWER;
+        TETile_world[x_start][y_start] = Tileset.FLOWER;
+        floor_tiles[ft_array_index] = new Integer[]{x_start, y_start};
+        ft_array_index += 1;
 
-        for (int repeats = 0; repeats < 1; repeats++) {
-            x_current = x_start;
-            y_current = y_start;
 
-            for (int i = 0; i < 63; i++) {
-                int direction = RandomUtils.uniform(r, 1, 4);
+
+
+        for (int repeats = 0; repeats < 3; repeats++) {
+            x_current = x_start; //RandomUtils.uniform(r, 10, 75);
+            y_current = y_start; //RandomUtils.uniform(r, 5, 19);
+
+            for (int i = 0; i < 250; i++) {
+                int direction = RandomUtils.uniform(r, 1, 5);
                 while (isValid(direction) != true) {
-                    direction = RandomUtils.uniform(r, 1, 4);
-                }
+                        direction = RandomUtils.uniform(r, 1, 5);
+                    }
+
+
+                System.out.println(direction);
 
                 if (direction == 1) {
                     moveRight();
+                    System.out.println(x_current+ " " + y_current);
                 }
 
-                if (direction == 2) {
+                else if (direction == 2) {
                     moveUp();
+                    System.out.println(x_current+ " " + y_current);
                 }
 
-                if (direction == 3) {
+                else if (direction == 3) {
                     moveLeft();
+                    System.out.println(x_current+ " " + y_current);
 
                 } else {
                     moveDown();
-                    ;
+                    System.out.println(x_current+ " " + y_current);
+
                 }
             }
         }
+
+
+
+
     }
 }
 
