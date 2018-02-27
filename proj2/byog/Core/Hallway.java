@@ -4,18 +4,24 @@ import byog.TileEngine.Tileset;
 import byog.TileEngine.TETile;
 
 public class Hallway {
+
     static Integer[][] blocks_to_delete = new Integer[1000][2]; // 2D array of the x,y coordinates of blocks we want to replace with floor
     static int array_size = 0; // size of 2D array
     static int last_index = 0;
 
+
     public Hallway(){
+        Random r = new Random();
+        int length = RandomUtils.uniform(r, 10);
+        int x_start = RandomUtils.uniform(r, 79);
+        int y_start = RandomUtils.uniform(r, 30);
     }
 
-    ///////////////////////////////////////////////////////////////////////////
+
+    //firstHallway = Hallway();
 
     public static void drawHorizontalHallwayRight(int x, int y, int len){
-        for (int i = x; i < (x + len); i += 1){
-
+        for (int i = x; i > (x + len); i += 1){
             if (i == 79) {
                 break;
             }
@@ -115,6 +121,6 @@ public class Hallway {
 
         System.out.println(Hallway.array_size);
         System.out.println(Hallway.last_index);
-    }
 
+    }
 }
