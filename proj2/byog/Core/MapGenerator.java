@@ -103,7 +103,7 @@ public class MapGenerator {
         fillTileBackground(TETile_world);
         addHallways();
         addRooms();
-        Hallway.clearTheHalls();
+//        Hallway.clearTheHalls();
         clearRooms();
 
 
