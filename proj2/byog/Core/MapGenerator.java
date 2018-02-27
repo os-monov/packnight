@@ -138,6 +138,7 @@ public class MapGenerator {
 
                 } else {
                     moveDown();
+                    System.out.println("test");
 
                 }
             }
