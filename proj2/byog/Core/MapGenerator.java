@@ -1,4 +1,3 @@
-
 package byog.Core;
 
 import java.util.Random;
@@ -146,6 +145,7 @@ public class MapGenerator {
 
     }
 
+
     private Integer[][] getSurroundings(int[] floorCoords) {
         Integer[][] surroundings = new Integer[8][2];
         surroundings[0] = new Integer[]{floorCoords[0] - 1, floorCoords[1] + 1};
@@ -208,8 +208,59 @@ public class MapGenerator {
                 floor_tiles[ft_array_index] = new Integer[]{x, y};
                 ft_array_index += 1;
 
+
+                public void addRooms () {
+                    int numRooms = RandomUtils.uniform(r, 13, 26);
+                    System.out.println(numRooms);
+                    for (int i = 0; i < numRooms; i++) {
+                        addRoom();
+
+                    }
+                }
+
+
+                public boolean isRoomValid (Integer[]coords,int xDim, int yDim){
+                    if ((coords[0] - xDim) <= 0 || (coords[0] + xDim) >= 79) {
+                        return false;
+                    }
+                    if ((coords[1] - yDim) <= 0 || (coords[1] + yDim) >= 29) {
+                        return false;
+                    } else {
+                        return true;
+                    }
+                }
+
+
+                private void addRoom () {
+                    Integer xDim = RandomUtils.uniform(r, 2, 8);
+                    Integer yDim = RandomUtils.uniform(r, 2, 8);
+                    Integer room_index = RandomUtils.uniform(r, 0, ft_array_index);
+                    Integer[] room_coordinates = floor_tiles[room_index];
+
+                    while (isRoomValid(room_coordinates, xDim, yDim) != true) {
+                        room_index = RandomUtils.uniform(r, 0, ft_array_index);
+                        room_coordinates = floor_tiles[room_index];
+                    }
+
+                    int x_start = room_coordinates[0];
+                    int y_start = room_coordinates[1];
+
+                    System.out.println(x_start);
+                    System.out.println(y_start);
+                    System.out.println(xDim);
+                    System.out.println(yDim);
+
+                    for (int x = x_start; x < x_start + xDim; x++) {
+                        for (int y = y_start; y < y_start + yDim; y++) {
+                            TETile_world[x][y] = Tileset.FLOWER;
+                            floor_tiles[ft_array_index] = new Integer[]{x, y};
+                            ft_array_index += 1;
+
+                        }
+                    }
+
+                }
             }
         }
-
     }
 }
