@@ -40,32 +40,29 @@ public class MapGenerator {
         int y_start = RandomUtils.uniform(r,0, 29);
         Hallway.drawHorizontalHallwayRight(x_start, y_start, length);
 
-//        for (int i = 1; i < world_parameters[1]; i+= 1){
-        int len = RandomUtils.uniform(r, 10);
-        Integer[] next_xy = Hallway.lastXYpos();
-        Hallway.drawVerticalHallwayDown(next_xy[0], next_xy[1], len);
 
-//            int hallway_type = RandomUtils.uniform(r, 1, 4);
-//            int len = RandomUtils.uniform(r, 10);
+
+//        for (int i = 1; i < 4; i+= 1) {
+//            int len = RandomUtils.uniform(r, 25);
 //            Integer[] next_xy = Hallway.lastXYpos();
+//            int hallway_type = RandomUtils.uniform(r, 1, 4);
 //
-//            if (hallway_type == 1){
-//                Hallway.drawHorizontalHallwayRight(next_xy[0], next_xy[1], len);
+//                if (hallway_type == 1){
+//                    Hallway.drawHorizontalHallwayRight(next_xy[0], next_xy[1], len);
+//                }
+//
+//                if (hallway_type == 2){
+//                    Hallway.drawVerticalHallwayUp(next_xy[0], next_xy[1], len);
+//                }
+//                if (hallway_type == 3){
+//                    Hallway.drawHorizontalHallwayLeft(next_xy[0], next_xy[1], len);
+//                }
+//
+//                if (hallway_type == 4){
+//                    Hallway.drawVerticalHallwayDown(next_xy[0], next_xy[1], len);
 //            }
-//
-//            if (hallway_type == 2){
-//                Hallway.drawVerticalHallwayUp(next_xy[0], next_xy[1], len);
-//            }
-//            if (hallway_type == 3){
-//                Hallway.drawHorizontalHallwayLeft(next_xy[0], next_xy[1], len);
-//            }
-//
-//            if (hallway_type == 4){
-//                Hallway.drawVerticalHallwayDown(next_xy[0], next_xy[1], len);
-//            }
-//
-//
 //        }
+
 
     }
 

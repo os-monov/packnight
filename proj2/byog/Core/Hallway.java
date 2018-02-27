@@ -5,8 +5,8 @@ import byog.TileEngine.TETile;
 
 public class Hallway {
     static Integer[][] blocks_to_delete = new Integer[1000][2]; // 2D array of the x,y coordinates of blocks we want to replace with floor
-    static int remove_size = 0; // size of 2D array
-
+    static int array_size = 0; // size of 2D array
+    static int last_index = 0;
 
     public Hallway(){
     }
@@ -24,8 +24,9 @@ public class Hallway {
                 MapGenerator.TETile_world[i][y + 1] = Tileset.WALL;
                 MapGenerator.TETile_world[i][y - 1] = Tileset.WALL;
                 MapGenerator.TETile_world[i][y] = Tileset.WALL;
-                blocks_to_delete[remove_size] = new Integer[]{i, y};
-                remove_size += 1;
+                blocks_to_delete[last_index] = new Integer[]{i, y};
+                array_size += 1;
+                last_index += 1;
                 }
 
             }
@@ -44,8 +45,9 @@ public class Hallway {
                 MapGenerator.TETile_world[i][y + 1] = Tileset.WALL;
                 MapGenerator.TETile_world[i][y - 1] = Tileset.WALL;
                 MapGenerator.TETile_world[i][y] = Tileset.WALL;
-                blocks_to_delete[remove_size] = new Integer[]{i, y};
-                remove_size += 1;
+                blocks_to_delete[last_index] = new Integer[]{i, y};
+                array_size += 1;
+                last_index += 1;
 
             }
 
@@ -61,11 +63,12 @@ public class Hallway {
             }
 
             else {
-                MapGenerator.TETile_world[i][x + 1] = Tileset.WALL;
-                MapGenerator.TETile_world[i][x - 1] = Tileset.WALL;
-                MapGenerator.TETile_world[i][x] = Tileset.WALL;
-                blocks_to_delete[remove_size] = new Integer[]{i, x};
-                remove_size += 1;
+                MapGenerator.TETile_world[x + 1][i] = Tileset.WALL;
+                MapGenerator.TETile_world[x - 1][i] = Tileset.WALL;
+                MapGenerator.TETile_world[x][i] = Tileset.WALL;
+                blocks_to_delete[last_index] = new Integer[]{x, i};
+                array_size += 1;
+                last_index += 1;
             }
         }
     }
@@ -80,35 +83,38 @@ public class Hallway {
             }
             else {
 
-                MapGenerator.TETile_world[i][x + 1] = Tileset.WALL;
-                MapGenerator.TETile_world[i][x - 1] = Tileset.WALL;
-                MapGenerator.TETile_world[i][x] = Tileset.WALL;
-                blocks_to_delete[remove_size] = new Integer[]{i, x};
-                remove_size += 1;
+                MapGenerator.TETile_world[x + 1][i] = Tileset.WALL;
+                MapGenerator.TETile_world[x - 1][i] = Tileset.WALL;
+                MapGenerator.TETile_world[x][i] = Tileset.WALL;
+                blocks_to_delete[last_index] = new Integer[]{x, i};
+                array_size += 1;
+                last_index += 1;
             }
 
         }
     }
 
     public static Integer[] lastXYpos(){
-        return blocks_to_delete[remove_size];
+        return blocks_to_delete[array_size-1];
     }
 
     ///////////////////////////////////////////////////////////////////////////
 
     public static void clearTheHalls(){
         blocks_to_delete[0] = null;
-        blocks_to_delete[remove_size-1] = null;
-        remove_size -= 2;
+        blocks_to_delete[array_size] = null;
+        array_size -= 2;
+        last_index -=1;
 
-        for (int i = 1; i < (remove_size +1); i += 1){
+        for (int i = 1; i < (last_index); i += 1){
             int x_cor_to_rep = blocks_to_delete[i][0];
             int y_cor_to_rep = blocks_to_delete[i][1];
 
             MapGenerator.TETile_world[x_cor_to_rep][y_cor_to_rep] = Tileset.NOTHING;
         }
 
-        System.out.print(Hallway.remove_size);
+        System.out.println(Hallway.array_size);
+        System.out.println(Hallway.last_index);
     }
 
 }
