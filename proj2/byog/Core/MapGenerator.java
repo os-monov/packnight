@@ -12,7 +12,7 @@ public class MapGenerator {
     static TETile[][] TETile_world = new TETile[WIDTH][HEIGHT];
     private static long SEED;
     public static Random r = new Random(SEED);
-    Room[] roomArray = (Room[]) new Object[world_parameters[0]];
+    Room[] roomArray = new Room[100];
 
     private static Integer[] RandomWorldParameters(){
         int num_rooms = RandomUtils.uniform(r, 10);
@@ -46,7 +46,7 @@ public class MapGenerator {
 
 
         for (int i = 1; i < (world_parameters[1]); i+= 1) {
-            if (big_counter < 25) {
+            if (big_counter < 20) {
 
                 Integer[] next_xy = Hallway.lastXYpos();
                 int len = RandomUtils.uniform(r, 25);
@@ -77,6 +77,8 @@ public class MapGenerator {
 
                 if (counter == 1) {
                     Hallway.drawHorizontalHallwayRight(next_xy[0], next_xy[1], 3 * len);
+//                    Hallway.blocks_to_delete[Hallway.array_size -3*len] = null;
+//                    Hallway.blocks_to_delete[Hallway.array_size -1 ] = null;
                 }
 
                 if (counter == 2) {
@@ -100,8 +102,9 @@ public class MapGenerator {
 
         fillTileBackground(TETile_world);
         addHallways();
+        addRooms();
         Hallway.clearTheHalls();
-        //int add_rooms;
+        clearRooms();
 
 
         return TETile_world;
@@ -127,11 +130,11 @@ public class MapGenerator {
         return final_seed;
     }
 
-    public void addRooms(TETile[][] tile_array) {
+    public void addRooms() {
         for (int i = 0; i < world_parameters[0]; i += 1){
-            int room_start = RandomUtils.uniform(r, Hallway.array_size);
-            int[] r_coordin = new int[]{Hallway.blocks_to_delete[room_start][0], Hallway.blocks_to_delete[room_start][1]};
-            Room newRoom = new Room(r_coordin);
+//            int room_start = RandomUtils.uniform(r, Hallway.array_size);
+//            int[] r_coordin = new int[]{Hallway.blocks_to_delete[room_start][0], Hallway.blocks_to_delete[room_start][1]};
+            Room newRoom = new Room(new int[]{10, 15});
             newRoom.drawRoom();
             roomArray[i] = newRoom;
         }
