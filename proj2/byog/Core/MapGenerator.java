@@ -1,3 +1,4 @@
+
 package byog.Core;
 
 import java.util.Random;
@@ -125,6 +126,10 @@ public class MapGenerator {
                     direction = RandomUtils.uniform(r, 1, 5);
                 }
 
+
+                System.out.println(direction);
+
+
                 if (direction == 1) {
                     moveRight();
                 } else if (direction == 2) {
@@ -208,17 +213,3 @@ public class MapGenerator {
 
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
