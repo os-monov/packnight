@@ -139,12 +139,14 @@ public class MapGenerator {
 
                 } else {
                     moveDown();
+                    System.out.println("test");
 
                 }
             }
         }
 
     }
+
 
     private Integer[][] getSurroundings(int[] floorCoords) {
         Integer[][] surroundings = new Integer[8][2];
