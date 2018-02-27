@@ -116,7 +116,7 @@ public class MapGenerator {
         ft_array_index += 1;
 
 
-        for (int repeats = 0; repeats < 5; repeats++) {
+        for (int repeats = 0; repeats < 4; repeats++) {
             x_current = x_start; //RandomUtils.uniform(r, 10, 75);
             y_current = y_start; //RandomUtils.uniform(r, 5, 19);
 
@@ -162,7 +162,7 @@ public class MapGenerator {
     }
 
     public void addRooms() {
-        int numRooms = RandomUtils.uniform(r, 13, 26);
+        int numRooms = RandomUtils.uniform(r, 30, 40);
         System.out.println(numRooms);
         for (int i = 0; i < numRooms; i++) {
             addRoom();
