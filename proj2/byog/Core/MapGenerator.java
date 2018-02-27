@@ -15,7 +15,7 @@ public class MapGenerator {
 
     private static Integer[] RandomWorldParameters(){
         int num_rooms = RandomUtils.uniform(r, 10);
-        int num_hallways = RandomUtils.uniform(r, 15);
+        int num_hallways = RandomUtils.uniform(r, 100);
         Integer[] params = new Integer[]{num_rooms, num_hallways};
 //        room_coordinates = new Integer[num_rooms][4][2];
         return params;
@@ -35,33 +35,59 @@ public class MapGenerator {
     }
 
     private static void addHallways(){
-        int length = RandomUtils.uniform(r, 25);
-        int x_start = RandomUtils.uniform(r,0, 79);
-        int y_start = RandomUtils.uniform(r,0, 29);
-        Hallway.drawVerticalHallwayUp(x_start, y_start, length);
-        int counter = 1;
+        int length = RandomUtils.uniform(r, 15,28);
+        int x_start = RandomUtils.uniform(r,3, 6);
+        int y_start = RandomUtils.uniform(r,5, 10);
+        Hallway.drawHorizontalHallwayRight(x_start, y_start, 3*length);
+
+        System.out.println(world_parameters[1]);
+        System.out.println(length);
 
 
-        for (int i = 1; i < 75; i+= 1) {
+        for (int i = 1; i < (world_parameters[1]/4)*2; i+= 1) {
             Integer[] next_xy = Hallway.lastXYpos();
             int len = RandomUtils.uniform(r, 25);
+            int counter = RandomUtils.uniform(r, 1, 3);
 
             if (counter == 1) {
-                Hallway.drawHorizontalHallwayRight(next_xy[0], next_xy[1], len);
+                Hallway.drawHorizontalHallwayRight(next_xy[0], next_xy[1], 3*len);
             }
 
             if (counter == 2) {
-                Hallway.drawVerticalHallwayUp(next_xy[0], next_xy[1], len);
+                Hallway.drawVerticalHallwayUp(next_xy[0], next_xy[1], 2*len);
             }
             if (counter == 3) {
-                Hallway.drawHorizontalHallwayLeft(next_xy[0], next_xy[1], len);
+                Hallway.drawHorizontalHallwayLeft(next_xy[0], next_xy[1], 3* len);
             }
 
             if (counter == 4) {
-                Hallway.drawVerticalHallwayDown(next_xy[0], next_xy[1], len);
+                Hallway.drawVerticalHallwayDown(next_xy[0], next_xy[1], 2*len);
             }
 
-            counter +=1;
+        }
+
+        for (int i = 1; i < (world_parameters[1]/3); i+= 1) {
+            int new_start = RandomUtils.uniform(r, Hallway.array_size);
+            Integer[] next_xy = Hallway.blocks_to_delete[new_start];
+            int len = RandomUtils.uniform(r, 25);
+            int counter = RandomUtils.uniform(r, 1, 3);
+
+            if (counter == 1) {
+                Hallway.drawHorizontalHallwayRight(next_xy[0], next_xy[1], 3*len);
+            }
+
+            if (counter == 2) {
+                Hallway.drawVerticalHallwayUp(next_xy[0], next_xy[1], 2*len);
+            }
+            if (counter == 3) {
+                Hallway.drawHorizontalHallwayLeft(next_xy[0], next_xy[1], 3* len);
+            }
+
+            if (counter == 4) {
+                Hallway.drawVerticalHallwayDown(next_xy[0], next_xy[1], 2*len);
+            }
+
+
         }
 
     }
