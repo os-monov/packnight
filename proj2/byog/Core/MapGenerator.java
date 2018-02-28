@@ -14,10 +14,10 @@ public class MapGenerator {
     private Random r;
     private Integer[][] ft = new Integer[8000][2];
     private int ftai = 0;
-    private static final int x_start = 38; //RandomUtils.uniform(r, 30, 50);
-    private static final int y_start = 15; // RandomUtils.uniform(r, 12, 18);
-    private static int X_CURRENT = x_start;
-    private static int Y_CURRENT = y_start;
+    private static final int XSTART = 38; //RandomUtils.uniform(r, 30, 50);
+    private static final int YSTART = 15; // RandomUtils.uniform(r, 12, 18);
+    private static int X_CURRENT = XSTART;
+    private static int Y_CURRENT = YSTART;
 
 
     public MapGenerator(String input) {
@@ -110,18 +110,18 @@ public class MapGenerator {
 
 
     private void addFloors() {
-        TETILE_WORLD[x_start][y_start] = Tileset.FLOOR;
-        ft[ftai] = new Integer[]{x_start, y_start};
+        TETILE_WORLD[XSTART][YSTART] = Tileset.FLOOR;
+        ft[ftai] = new Integer[]{XSTART, YSTART};
         ftai += 1;
 
 
         for (int repeats = 0; repeats < 5; repeats++) {
-            X_CURRENT = x_start; //RandomUtils.uniform(r, 10, 75);
-            Y_CURRENT = y_start; //RandomUtils.uniform(r, 5, 19);
+            X_CURRENT = XSTART; //RandomUtils.uniform(r, 10, 75);
+            Y_CURRENT = YSTART; //RandomUtils.uniform(r, 5, 19);
 
             for (int i = 0; i < 250; i++) {
                 int direction = RandomUtils.uniform(r, 1, 5);
-                while (! isValid(direction)) {
+                while (!isValid(direction)) {
                     direction = RandomUtils.uniform(r, 1, 5);
                 }
 
@@ -180,14 +180,9 @@ public class MapGenerator {
 
 
     public boolean isRoomValid(Integer[] coords, int xDim, int yDim) {
-        if ((coords[0] - xDim) <= 0 || (coords[0] + xDim) >= 79) {
-            return false;
-        }
-        if ((coords[1] - yDim) <= 0 || (coords[1] + yDim) >= 29) {
-            return false;
-        } else {
-            return true;
-        }
+        boolean x = ((coords[0] - xDim) <= 0 || (coords[0] + xDim) >= 79);
+        boolean y = ((coords[1] - yDim) <= 0 || (coords[1] + yDim) >= 29);
+        return !(x || y);
     }
 
 
@@ -197,7 +192,7 @@ public class MapGenerator {
         Integer roomindex = RandomUtils.uniform(r, 0, ftai);
         Integer[] roomcoordinates = ft[roomindex];
 
-        while ( ! isRoomValid(roomcoordinates, xDim, yDim)) {
+        while (!isRoomValid(roomcoordinates, xDim, yDim)) {
             roomindex = RandomUtils.uniform(r, 0, ftai);
             roomcoordinates = ft[roomindex];
         }
