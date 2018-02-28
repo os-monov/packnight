@@ -21,6 +21,7 @@ public class Main {
         } else {
             Game game = new Game();
             game.playWithKeyboard();
+//            game.playWithInputString("51431230218301s");
 
         }
     }

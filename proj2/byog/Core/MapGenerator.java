@@ -7,67 +7,66 @@ import byog.TileEngine.Tileset;
 import byog.TileEngine.TETile;
 
 public class MapGenerator {
-    private static Integer[] world_parameters;
     private static final int HEIGHT = 30;
     private static final int WIDTH = 80;
-    static TETile[][] TETile_world = new TETile[WIDTH][HEIGHT];
-    private long SEED;
+    static TETile[][] TETILE_WORLD = new TETile[WIDTH][HEIGHT];
+    private static long SEED;
     private Random r;
-    private Integer[][] floor_tiles = new Integer[8000][2];
-    private int ft_array_index = 0;
+    private Integer[][] ft = new Integer[8000][2];
+    private int ftai = 0;
     private static final int x_start = 38; //RandomUtils.uniform(r, 30, 50);
     private static final int y_start = 15; // RandomUtils.uniform(r, 12, 18);
-    private static int x_current = x_start;
-    private static int y_current = y_start;
+    private static int X_CURRENT = x_start;
+    private static int Y_CURRENT = y_start;
 
 
     public MapGenerator(String input) {
-        SEED = numerical_seed(input);
+        SEED = numericalseed(input);
         r = new Random(SEED);
 
     }
 
 
-    private static void fillTileBackground(TETile[][] tile_array) {
-        for (int i = 0; i < tile_array.length; i += 1) {
-            for (int j = 0; j < tile_array[0].length; j += 1) {
-                tile_array[i][j] = Tileset.NOTHING;
+    private static void fillTileBackground(TETile[][] ta) {
+        for (int i = 0; i < ta.length; i += 1) {
+            for (int j = 0; j < ta[0].length; j += 1) {
+                ta[i][j] = Tileset.NOTHING;
             }
         }
     }
 
-    private TETile[][] create_tile_world() {
+    private TETile[][] ctw() {
 
-        fillTileBackground(TETile_world);
+        fillTileBackground(TETILE_WORLD);
         addFloors();
         addRooms();
         addWalls();
-        return TETile_world;
+        return TETILE_WORLD;
     }
 
-    public TETile[][] Generate() {
-        TETile[][] world = create_tile_world();
+    public TETile[][] generate() {
+        TETile[][] world = ctw();
         return world;
     }
 
-    private long numerical_seed(String input) {
+    private long numericalseed(String input) {
         input = input.replace("N", "");
         input = input.replace("n", "");
         input = input.replace("S", "");
-        input = input.replace("n", "");
-        Long final_seed = Long.parseLong(input);
-        return final_seed;
+        input = input.replace("s", "");
+        Long finalseed = Long.parseLong(input);
+        return finalseed;
     }
 
     private boolean isValid(int direction) {
         if (direction == 1) {
-            return (x_current != 76 && x_current != 77 && x_current != 78);
+            return (X_CURRENT != 76 && X_CURRENT != 77 && X_CURRENT != 78);
         } else if (direction == 2) {
-            return (y_current != 26 && y_current != 27 && y_current != 28);
+            return (Y_CURRENT != 26 && Y_CURRENT != 27 && Y_CURRENT != 28);
         } else if (direction == 3) {
-            return (x_current != 3 && x_current != 2 && x_current != 1);
+            return (X_CURRENT != 3 && X_CURRENT != 2 && X_CURRENT != 1);
         } else {
-            return (y_current != 3 && y_current != 2 && y_current != 1);
+            return (Y_CURRENT != 3 && Y_CURRENT != 2 && Y_CURRENT != 1);
         }
 
 
@@ -75,54 +74,54 @@ public class MapGenerator {
 
     public void moveRight() {
         for (int i = 0; i < 3; i++) {
-            x_current += 1;
-            TETile_world[x_current][y_current] = Tileset.FLOOR;
-            floor_tiles[ft_array_index] = new Integer[]{x_current, y_current};
-            ft_array_index += 1;
+            X_CURRENT += 1;
+            TETILE_WORLD[X_CURRENT][Y_CURRENT] = Tileset.FLOOR;
+            ft[ftai] = new Integer[]{X_CURRENT, Y_CURRENT};
+            ftai += 1;
         }
     }
 
     public void moveLeft() {
         for (int i = 0; i < 3; i++) {
-            x_current -= 1;
-            TETile_world[x_current][y_current] = Tileset.FLOOR;
-            floor_tiles[ft_array_index] = new Integer[]{x_current, y_current};
-            ft_array_index += 1;
+            X_CURRENT -= 1;
+            TETILE_WORLD[X_CURRENT][Y_CURRENT] = Tileset.FLOOR;
+            ft[ftai] = new Integer[]{X_CURRENT, Y_CURRENT};
+            ftai += 1;
         }
     }
 
     public void moveUp() {
         for (int i = 0; i < 3; i++) {
-            y_current += 1;
-            TETile_world[x_current][y_current] = Tileset.FLOOR;
-            floor_tiles[ft_array_index] = new Integer[]{x_current, y_current};
-            ft_array_index += 1;
+            Y_CURRENT += 1;
+            TETILE_WORLD[X_CURRENT][Y_CURRENT] = Tileset.FLOOR;
+            ft[ftai] = new Integer[]{X_CURRENT, Y_CURRENT};
+            ftai += 1;
         }
     }
 
     public void moveDown() {
         for (int i = 0; i < 3; i++) {
-            y_current -= 1;
-            TETile_world[x_current][y_current] = Tileset.FLOOR;
-            floor_tiles[ft_array_index] = new Integer[]{x_current, y_current};
-            ft_array_index += 1;
+            Y_CURRENT -= 1;
+            TETILE_WORLD[X_CURRENT][Y_CURRENT] = Tileset.FLOOR;
+            ft[ftai] = new Integer[]{X_CURRENT, Y_CURRENT};
+            ftai += 1;
         }
     }
 
 
     private void addFloors() {
-        TETile_world[x_start][y_start] = Tileset.FLOOR;
-        floor_tiles[ft_array_index] = new Integer[]{x_start, y_start};
-        ft_array_index += 1;
+        TETILE_WORLD[x_start][y_start] = Tileset.FLOOR;
+        ft[ftai] = new Integer[]{x_start, y_start};
+        ftai += 1;
 
 
         for (int repeats = 0; repeats < 5; repeats++) {
-            x_current = x_start; //RandomUtils.uniform(r, 10, 75);
-            y_current = y_start; //RandomUtils.uniform(r, 5, 19);
+            X_CURRENT = x_start; //RandomUtils.uniform(r, 10, 75);
+            Y_CURRENT = y_start; //RandomUtils.uniform(r, 5, 19);
 
             for (int i = 0; i < 250; i++) {
                 int direction = RandomUtils.uniform(r, 1, 5);
-                while (isValid(direction) != true) {
+                while (! isValid(direction)) {
                     direction = RandomUtils.uniform(r, 1, 5);
                 }
 
@@ -159,11 +158,13 @@ public class MapGenerator {
     }
 
     public void addWalls() {
-        for (int i = 0; i < ft_array_index; i++) {
-            int[][] theseSurroundings = getSurroundings(floor_tiles[i]);
+        for (int i = 0; i < ftai; i++) {
+            int[][] theseSurroundings = getSurroundings(ft[i]);
             for (int j = 0; j < 8; j++) {
-                if (TETile_world[theseSurroundings[j][0]][theseSurroundings[j][1]] == Tileset.NOTHING) {
-                    TETile_world[theseSurroundings[j][0]][theseSurroundings[j][1]] = Tileset.WALL;
+                int xcurr = theseSurroundings[j][0];
+                int ycurr = theseSurroundings[j][1];
+                if (TETILE_WORLD[xcurr][ycurr] == Tileset.NOTHING) {
+                    TETILE_WORLD[xcurr][ycurr] = Tileset.WALL;
                 }
             }
         }
@@ -171,7 +172,6 @@ public class MapGenerator {
 
     public void addRooms() {
         int numRooms = RandomUtils.uniform(r, 13, 26);
-        System.out.println(numRooms);
         for (int i = 0; i < numRooms; i++) {
             addRoom();
 
@@ -194,23 +194,23 @@ public class MapGenerator {
     private void addRoom() {
         Integer xDim = RandomUtils.uniform(r, 2, 8);
         Integer yDim = RandomUtils.uniform(r, 2, 8);
-        Integer room_index = RandomUtils.uniform(r, 0, ft_array_index);
-        Integer[] room_coordinates = floor_tiles[room_index];
+        Integer roomindex = RandomUtils.uniform(r, 0, ftai);
+        Integer[] roomcoordinates = ft[roomindex];
 
-        while (isRoomValid(room_coordinates, xDim, yDim) != true) {
-            room_index = RandomUtils.uniform(r, 0, ft_array_index);
-            room_coordinates = floor_tiles[room_index];
+        while ( ! isRoomValid(roomcoordinates, xDim, yDim)) {
+            roomindex = RandomUtils.uniform(r, 0, ftai);
+            roomcoordinates = ft[roomindex];
         }
 
-        int x_start = room_coordinates[0];
-        int y_start = room_coordinates[1];
+        int xroom = roomcoordinates[0];
+        int yroom = roomcoordinates[1];
 
 
-        for (int x = x_start; x < x_start + xDim; x++) {
-            for (int y = y_start; y < y_start + yDim; y++) {
-                TETile_world[x][y] = Tileset.FLOOR;
-                floor_tiles[ft_array_index] = new Integer[]{x, y};
-                ft_array_index += 1;
+        for (int x = xroom; x < xroom + xDim; x++) {
+            for (int y = yroom; y < yroom + yDim; y++) {
+                TETILE_WORLD[x][y] = Tileset.FLOOR;
+                ft[ftai] = new Integer[]{x, y};
+                ftai += 1;
 
             }
         }
