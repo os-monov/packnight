@@ -41,7 +41,7 @@ public class MapGenerator {
         fillTileBackground(TETile_world);
         addFloors();
         addRooms();
-        // make walls by checking 8 tiles around and that they're not equal to floor
+        addWalls();
         return TETile_world;
     }
 
@@ -146,19 +146,30 @@ public class MapGenerator {
 
     }
 
-    private Integer[][] getSurroundings(int[] floorCoords) {
-        Integer[][] surroundings = new Integer[8][2];
-        surroundings[0] = new Integer[]{floorCoords[0] - 1, floorCoords[1] + 1};
-        surroundings[1] = new Integer[]{floorCoords[0], floorCoords[1] + 1};
-        surroundings[2] = new Integer[]{floorCoords[0] + 1, floorCoords[1] + 1};
-        surroundings[3] = new Integer[]{floorCoords[0] + 1, floorCoords[1]};
-        surroundings[4] = new Integer[]{floorCoords[0] + 1, floorCoords[1] - 1};
-        surroundings[5] = new Integer[]{floorCoords[0], floorCoords[1] - 1};
-        surroundings[6] = new Integer[]{floorCoords[0] - 1, floorCoords[1] - 1};
-        surroundings[7] = new Integer[]{floorCoords[0] - 1, floorCoords[1]};
+    private int[][] getSurroundings(Integer[] floorCoords) {
+        int[][] surroundings = new int[8][2];
+        surroundings[0] = new int[]{floorCoords[0] - 1, floorCoords[1] + 1};
+        surroundings[1] = new int[]{floorCoords[0], floorCoords[1] + 1};
+        surroundings[2] = new int[]{floorCoords[0] + 1, floorCoords[1] + 1};
+        surroundings[3] = new int[]{floorCoords[0] + 1, floorCoords[1]};
+        surroundings[4] = new int[]{floorCoords[0] + 1, floorCoords[1] - 1};
+        surroundings[5] = new int[]{floorCoords[0], floorCoords[1] - 1};
+        surroundings[6] = new int[]{floorCoords[0] - 1, floorCoords[1] - 1};
+        surroundings[7] = new int[]{floorCoords[0] - 1, floorCoords[1]};
 
         return surroundings;
 
+    }
+
+    public void addWalls() {
+        for (int i = 0; i < ft_array_index; i++) {
+            int[][] theseSurroundings = getSurroundings(floor_tiles[i]);
+            for (int j = 0; j < 8; j++) {
+                if (TETile_world[theseSurroundings[j][0]][theseSurroundings[j][1]] == Tileset.NOTHING) {
+                    TETile_world[theseSurroundings[j][0]][theseSurroundings[j][1]] = Tileset.WALL;
+                }
+            }
+        }
     }
 
     public void addRooms() {
