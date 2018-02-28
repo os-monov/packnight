@@ -2,6 +2,7 @@
 package byog.Core;
 
 import java.util.Random;
+
 import byog.TileEngine.Tileset;
 import byog.TileEngine.TETile;
 
@@ -23,7 +24,6 @@ public class MapGenerator {
     public MapGenerator(String input) {
         SEED = numerical_seed(input);
         r = new Random(SEED);
-        System.out.println(SEED);
 
     }
 
@@ -76,7 +76,7 @@ public class MapGenerator {
     public void moveRight() {
         for (int i = 0; i < 3; i++) {
             x_current += 1;
-            TETile_world[x_current][y_current] = Tileset.FLOWER;
+            TETile_world[x_current][y_current] = Tileset.FLOOR;
             floor_tiles[ft_array_index] = new Integer[]{x_current, y_current};
             ft_array_index += 1;
         }
@@ -85,7 +85,7 @@ public class MapGenerator {
     public void moveLeft() {
         for (int i = 0; i < 3; i++) {
             x_current -= 1;
-            TETile_world[x_current][y_current] = Tileset.FLOWER;
+            TETile_world[x_current][y_current] = Tileset.FLOOR;
             floor_tiles[ft_array_index] = new Integer[]{x_current, y_current};
             ft_array_index += 1;
         }
@@ -94,7 +94,7 @@ public class MapGenerator {
     public void moveUp() {
         for (int i = 0; i < 3; i++) {
             y_current += 1;
-            TETile_world[x_current][y_current] = Tileset.FLOWER;
+            TETile_world[x_current][y_current] = Tileset.FLOOR;
             floor_tiles[ft_array_index] = new Integer[]{x_current, y_current};
             ft_array_index += 1;
         }
@@ -103,7 +103,7 @@ public class MapGenerator {
     public void moveDown() {
         for (int i = 0; i < 3; i++) {
             y_current -= 1;
-            TETile_world[x_current][y_current] = Tileset.FLOWER;
+            TETile_world[x_current][y_current] = Tileset.FLOOR;
             floor_tiles[ft_array_index] = new Integer[]{x_current, y_current};
             ft_array_index += 1;
         }
@@ -111,7 +111,7 @@ public class MapGenerator {
 
 
     private void addFloors() {
-        TETile_world[x_start][y_start] = Tileset.FLOWER;
+        TETile_world[x_start][y_start] = Tileset.FLOOR;
         floor_tiles[ft_array_index] = new Integer[]{x_start, y_start};
         ft_array_index += 1;
 
@@ -125,9 +125,6 @@ public class MapGenerator {
                 while (isValid(direction) != true) {
                     direction = RandomUtils.uniform(r, 1, 5);
                 }
-
-
-                System.out.println(direction);
 
 
                 if (direction == 1) {
@@ -208,14 +205,10 @@ public class MapGenerator {
         int x_start = room_coordinates[0];
         int y_start = room_coordinates[1];
 
-        System.out.println(x_start);
-        System.out.println(y_start);
-        System.out.println(xDim);
-        System.out.println(yDim);
 
         for (int x = x_start; x < x_start + xDim; x++) {
             for (int y = y_start; y < y_start + yDim; y++) {
-                TETile_world[x][y] = Tileset.FLOWER;
+                TETile_world[x][y] = Tileset.FLOOR;
                 floor_tiles[ft_array_index] = new Integer[]{x, y};
                 ft_array_index += 1;
 
