@@ -74,7 +74,7 @@ public class MapGenerator {
     }
 
     public void moveRight() {
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < 3; i++) {
             x_current += 1;
             TETile_world[x_current][y_current] = Tileset.FLOWER;
             floor_tiles[ft_array_index] = new Integer[]{x_current, y_current};
@@ -83,7 +83,7 @@ public class MapGenerator {
     }
 
     public void moveLeft() {
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < 3; i++) {
             x_current -= 1;
             TETile_world[x_current][y_current] = Tileset.FLOWER;
             floor_tiles[ft_array_index] = new Integer[]{x_current, y_current};
@@ -92,7 +92,7 @@ public class MapGenerator {
     }
 
     public void moveUp() {
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < 3; i++) {
             y_current += 1;
             TETile_world[x_current][y_current] = Tileset.FLOWER;
             floor_tiles[ft_array_index] = new Integer[]{x_current, y_current};
@@ -101,7 +101,7 @@ public class MapGenerator {
     }
 
     public void moveDown() {
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < 3; i++) {
             y_current -= 1;
             TETile_world[x_current][y_current] = Tileset.FLOWER;
             floor_tiles[ft_array_index] = new Integer[]{x_current, y_current};
