@@ -19,6 +19,9 @@ public class MapGenerator {
     private static final int YSTART = 15; // RandomUtils.uniform(r, 12, 18);
     private static int X_CURRENT = XSTART;
     private static int Y_CURRENT = YSTART;
+    private static int PLAYER_X;
+    private static int PLAYER_Y;
+    private static int SCORE;
 
 
 
@@ -29,14 +32,6 @@ public class MapGenerator {
     }
 
 
-    private static void fillTileBackground(TETile[][] ta) {
-        for (int i = 0; i < ta.length; i += 1) {
-            for (int j = 0; j < ta[0].length; j += 1) {
-                ta[i][j] = Tileset.NOTHING;
-            }
-        }
-    }
-
     private boolean inArray(Integer[][] array, Integer[] item){
         for (int j = 0; j < array.length; j++){
             if (array[j][0] == item[0] && array[j][1] == item[1]){
@@ -44,6 +39,137 @@ public class MapGenerator {
             }
         }
         return false;
+    }
+
+    private TETile[][] ctw() {
+
+        fillTileBackground(TETILE_WORLD);
+        addFloors();
+        addRooms();
+        addWalls();
+        ft = cleanTheTiles(ft);
+        Move("aaaaaaaaaadadawdadswawsds");
+
+        return TETILE_WORLD;
+    }
+
+    public TETile[][] generate() {
+        TETile[][] world = ctw();
+        return world;
+    }
+
+    private long numericalseed(String input) {
+        input = input.replace("N", "");
+        input = input.replace("n", "");
+        input = input.replace("S", "");
+        input = input.replace("s", "");
+        Long finalseed = Long.parseLong(input);
+        return finalseed;
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////
+    ///// INTERACTIVITY ///////
+    ////////////////////////////////////////////////////////////////////////////////////////////
+
+
+    private void Move(String input) {
+        int start = RandomUtils.uniform(r, 0, ftai);
+        PLAYER_X = ft[start][0];
+        PLAYER_Y = ft[start][1];
+        TETILE_WORLD[PLAYER_X][PLAYER_Y] = Tileset.PLAYER;
+
+
+        playerMove('s');
+        playerMove('w');
+        playerMove('a');
+//
+//        char[] input_array = input.toCharArray();
+//
+//        for (int i = 0; i < input_array.length; i++) {
+//            playerMove(input_array[i]);
+//
+//        }
+
+
+    }
+
+    private void playerMove(char direction) {
+
+            if (direction == 'D' || direction == 'd') {
+                if (isMoveValid(direction)) {
+                    PLAYER_X++;
+                    TETILE_WORLD[PLAYER_X - 1][PLAYER_Y] = Tileset.NOTHING;
+                    TETILE_WORLD[PLAYER_X][PLAYER_Y] = Tileset.PLAYER;
+
+            }
+
+            else if (direction == 'W' || direction == 'w') {
+                if (isMoveValid(direction)) {
+                    PLAYER_Y++;
+                    TETILE_WORLD[PLAYER_X][PLAYER_Y - 1] = Tileset.NOTHING;
+                    TETILE_WORLD[PLAYER_X][PLAYER_Y] = Tileset.PLAYER;
+
+                }
+            }
+
+            else if (direction == 'A' || direction == 'a') {
+                if (isMoveValid(direction)) {
+                    PLAYER_X--;
+                    TETILE_WORLD[PLAYER_X + 1][PLAYER_Y] = Tileset.NOTHING;
+                    TETILE_WORLD[PLAYER_X][PLAYER_Y] = Tileset.PLAYER;
+
+                }
+            }
+
+            else {
+                if (isMoveValid(direction)) {
+                    PLAYER_Y--;
+                    TETILE_WORLD[PLAYER_X][PLAYER_Y + 1] = Tileset.NOTHING;
+                    TETILE_WORLD[PLAYER_X][PLAYER_Y] = Tileset.PLAYER;
+
+                }
+            }
+        }
+    }
+
+
+
+
+    private boolean isMoveValid(char direction) {
+        Integer[] test_coord = new Integer[]{PLAYER_X, PLAYER_Y};
+
+        if (direction == 'D' || direction == 'd'){
+            test_coord[0] += 1;
+        }
+
+        else if (direction == 'W' || direction == 'w'){
+            test_coord[1] += 1;
+        }
+
+        else if (direction == 'A' || direction == 'a'){
+            test_coord[0] -= 1;
+        }
+
+        else {
+            test_coord[1] -= 1;
+        }
+
+        return inArray(ft, test_coord);
+    }
+
+
+
+
+    ////////////////////////////////////////////////////////////////////////////////////////////
+    ///// MAP GENERATION ///////
+    ////////////////////////////////////////////////////////////////////////////////////////////
+
+    private static void fillTileBackground(TETile[][] ta) {
+        for (int i = 0; i < ta.length; i += 1) {
+            for (int j = 0; j < ta[0].length; j += 1) {
+                ta[i][j] = Tileset.NOTHING;
+            }
+        }
     }
 
     private Integer[][] cleanTheTiles(Integer[][] tilecoord) {
@@ -73,39 +199,6 @@ public class MapGenerator {
         return finalcopy;
 
     }
-
-    private void testPrint(){
-        for (int i = 0; i < ftai; i++){
-            System.out.println(ft[i][0] + " " + ft[i][1]);
-        }
-    }
-
-    private TETile[][] ctw() {
-
-        fillTileBackground(TETILE_WORLD);
-        addFloors();
-        addRooms();
-        addWalls();
-        ft = cleanTheTiles(ft);
-        testPrint();
-
-        return TETILE_WORLD;
-    }
-
-    public TETile[][] generate() {
-        TETile[][] world = ctw();
-        return world;
-    }
-
-    private long numericalseed(String input) {
-        input = input.replace("N", "");
-        input = input.replace("n", "");
-        input = input.replace("S", "");
-        input = input.replace("s", "");
-        Long finalseed = Long.parseLong(input);
-        return finalseed;
-    }
-
 
     private boolean isValid(int direction) {
         if (direction == 1) {
@@ -206,7 +299,7 @@ public class MapGenerator {
 
     }
 
-    public void addWalls() {
+    private void addWalls() {
         for (int i = 0; i < ftai; i++) {
             int[][] theseSurroundings = getSurroundings(ft[i]);
             for (int j = 0; j < 8; j++) {
@@ -219,7 +312,7 @@ public class MapGenerator {
         }
     }
 
-    public void addRooms() {
+    private void addRooms() {
         int numRooms = RandomUtils.uniform(r, 24, 30);
         for (int i = 0; i < numRooms; i++) {
             addRoom();
@@ -228,7 +321,8 @@ public class MapGenerator {
     }
 
 
-    public boolean isRoomValid(Integer[] coords, int xDim, int yDim) {
+
+    private boolean isRoomValid(Integer[] coords, int xDim, int yDim) {
         boolean x = ((coords[0] - xDim) <= 0 || (coords[0] + xDim) >= 79);
         boolean y = ((coords[1] - yDim) <= 0 || (coords[1] + yDim) >= 29);
         return !(x || y);
@@ -260,4 +354,7 @@ public class MapGenerator {
         }
 
     }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////
 }
