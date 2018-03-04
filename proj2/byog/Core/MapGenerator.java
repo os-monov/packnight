@@ -164,15 +164,10 @@ public class MapGenerator {
         ftai += 1;
 
 
-<<<<<<< HEAD
-        for (int repeats = 0; repeats < 4; repeats++) {
-            X_CURRENT = x_start; //RandomUtils.uniform(r, 10, 75);
-            Y_CURRENT = y_start; //RandomUtils.uniform(r, 5, 19);
-=======
+
         for (int repeats = 0; repeats < 5; repeats++) {
             X_CURRENT = XSTART; //RandomUtils.uniform(r, 10, 75);
             Y_CURRENT = YSTART; //RandomUtils.uniform(r, 5, 19);
->>>>>>> 4a401b4fe87c78433fc034772f9bf72595762e3e
 
             for (int i = 0; i < 100; i++) {
                 int direction = RandomUtils.uniform(r, 1, 5);
