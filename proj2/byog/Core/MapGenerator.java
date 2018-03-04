@@ -13,11 +13,13 @@ public class MapGenerator {
     private static long SEED;
     private Random r;
     private Integer[][] ft = new Integer[8000][2];
+    private Integer[][] ct = new Integer[2400][2];
     private int ftai = 0;
     private static final int x_start = 38; //RandomUtils.uniform(r, 30, 50);
     private static final int y_start = 15; // RandomUtils.uniform(r, 12, 18);
     private static int X_CURRENT = x_start;
     private static int Y_CURRENT = y_start;
+
 
 
     public MapGenerator(String input) {
@@ -35,12 +37,58 @@ public class MapGenerator {
         }
     }
 
+    private boolean inArray(Integer[][] array, Integer[] item){
+        for (int j = 0; j < array.length; j++){
+            if (array[j][0] == item[0] && array[j][1] == item[1]){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private Integer[][] cleanTheTiles(Integer[][] tilecoord) {
+        Integer[][] cleancopy = new Integer[ftai][2];
+        int copyindex = 0;
+
+        for (int i = 0; i < tilecoord.length; i++) {
+            if (tilecoord[i] != null) {
+                if (!inArray(cleancopy, tilecoord[i])) {
+                    cleancopy[copyindex] = tilecoord[i];
+                    copyindex += 1;
+
+                }
+            }
+        }
+
+        Integer[][] finalcopy = new Integer[copyindex][2];
+        int findex = 0;
+
+        for (int j = 0; j < finalcopy.length; j++) {
+            if (cleancopy[j][0] != null & cleancopy[j][1] != null) {
+                finalcopy[findex] = cleancopy[j];
+                findex++;
+            }
+        }
+        ftai = findex;
+        return finalcopy;
+
+    }
+
+    private void testPrint(){
+        for (int i = 0; i < ftai; i++){
+            System.out.println(ft[i][0] + " " + ft[i][1]);
+        }
+    }
+
     private TETile[][] ctw() {
 
         fillTileBackground(TETILE_WORLD);
         addFloors();
         addRooms();
         addWalls();
+        ft = cleanTheTiles(ft);
+        testPrint();
+
         return TETILE_WORLD;
     }
 
@@ -57,6 +105,7 @@ public class MapGenerator {
         Long finalseed = Long.parseLong(input);
         return finalseed;
     }
+
 
     private boolean isValid(int direction) {
         if (direction == 1) {
@@ -115,16 +164,15 @@ public class MapGenerator {
         ftai += 1;
 
 
-        for (int repeats = 0; repeats < 5; repeats++) {
+        for (int repeats = 0; repeats < 4; repeats++) {
             X_CURRENT = x_start; //RandomUtils.uniform(r, 10, 75);
             Y_CURRENT = y_start; //RandomUtils.uniform(r, 5, 19);
 
-            for (int i = 0; i < 250; i++) {
+            for (int i = 0; i < 100; i++) {
                 int direction = RandomUtils.uniform(r, 1, 5);
                 while (! isValid(direction)) {
                     direction = RandomUtils.uniform(r, 1, 5);
                 }
-
 
                 if (direction == 1) {
                     moveRight();
@@ -171,7 +219,7 @@ public class MapGenerator {
     }
 
     public void addRooms() {
-        int numRooms = RandomUtils.uniform(r, 13, 26);
+        int numRooms = RandomUtils.uniform(r, 24, 30);
         for (int i = 0; i < numRooms; i++) {
             addRoom();
 

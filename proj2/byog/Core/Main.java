@@ -20,9 +20,9 @@ public class Main {
             System.out.println(TETile.toString(worldState));
         } else {
             Game game = new Game();
-            game.playWithKeyboard();
-//            game.playWithInputString("51431230218301s");
-
+//            game.playWithKeyboard();
+            game.playWithInputString("423451");
+//  423451
         }
     }
 }

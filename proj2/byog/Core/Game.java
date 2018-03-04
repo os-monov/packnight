@@ -34,8 +34,8 @@ public class Game {
 
         MapGenerator nm = new MapGenerator(input);
         TETile[][] finalWorldFrame = nm.generate();
-//        ter.initialize(WIDTH, HEIGHT);
-//        ter.renderFrame(finalWorldFrame);
+        ter.initialize(WIDTH, HEIGHT);
+        ter.renderFrame(finalWorldFrame);
         return finalWorldFrame;
     }
 }
