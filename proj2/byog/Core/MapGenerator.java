@@ -48,8 +48,6 @@ public class MapGenerator {
         addRooms();
         addWalls();
         ft = cleanTheTiles(ft);
-        Move("aaaaaaaaaadadawdadswawsds");
-
         return TETILE_WORLD;
     }
 
@@ -63,8 +61,7 @@ public class MapGenerator {
         input = input.replace("n", "");
         input = input.replace("S", "");
         input = input.replace("s", "");
-        Long finalseed = Long.parseLong(input);
-        return finalseed;
+        return Long.parseLong(input);
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////
@@ -121,7 +118,7 @@ public class MapGenerator {
                 }
             }
 
-            else {
+            else if (direction == 'S' || direction == 's'){
                 if (isMoveValid(direction)) {
                     PLAYER_Y--;
                     TETILE_WORLD[PLAYER_X][PLAYER_Y + 1] = Tileset.NOTHING;
