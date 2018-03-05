@@ -2,6 +2,7 @@ package byog.Core;
 
 import byog.TileEngine.TERenderer;
 import byog.TileEngine.TETile;
+import edu.princeton.cs.introcs.StdDraw;
 
 public class Game {
     TERenderer ter = new TERenderer();
@@ -9,12 +10,26 @@ public class Game {
     public static final int WIDTH = 80;
     public static final int HEIGHT = 30;
 
+
     /**
      * Method used for playing a fresh game. The game should start from the main menu.
      */
+    /*
     public void playWithKeyboard() {
+        MapGenerator nm = new MapGenerator();
+        boolean gameOver = false;
+        char input = StdDraw.nextKeyTyped();
+        String SEED = "";
+        if (input == 'S' || input == 's') {
+
+        } else if (input == ":Q" || input == ":q") {
+
+        } else if (input == "L" || input == "l") {
+
+        }
 
     }
+    */
 
 
     /**
@@ -36,8 +51,9 @@ public class Game {
 
         MapGenerator nm = new MapGenerator(input);
         TETile[][] finalWorldFrame = nm.generate();
-        ter.initialize(WIDTH, HEIGHT);
+        ter.initialize(WIDTH, HEIGHT + 3);
         ter.renderFrame(finalWorldFrame);
+        nm.mouseOverTileType();
         return finalWorldFrame;
     }
 }

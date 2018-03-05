@@ -1,10 +1,13 @@
 
 package byog.Core;
 
+import java.awt.*;
+import java.awt.event.MouseMotionListener;
 import java.util.Random;
 
 import byog.TileEngine.Tileset;
 import byog.TileEngine.TETile;
+import edu.princeton.cs.introcs.StdDraw;
 
 public class MapGenerator {
     private static final int HEIGHT = 30;
@@ -48,6 +51,7 @@ public class MapGenerator {
         addRooms();
         addWalls();
         ft = cleanTheTiles(ft);
+        mouseOverTileType();
         Move("aaaaaaaaaadadawdadswawsds");
 
         return TETILE_WORLD;
@@ -354,6 +358,21 @@ public class MapGenerator {
         }
 
     }
+
+    public void mouseOverTileType() {
+        double x = StdDraw.mouseX();
+        double y = StdDraw.mouseY();
+        int xTile = (int) (x / 16);
+        int yTile = (int) (y / 16);
+        Font font = new Font("Monaco", Font.BOLD, 16);
+        StdDraw.setFont(font);
+        StdDraw.setPenColor(StdDraw.WHITE);
+        StdDraw.text(2.5, (HEIGHT + 2.0), TETILE_WORLD[xTile][yTile].description());
+        StdDraw.show();
+    }
+
+
+
 
     ////////////////////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////////////////////
