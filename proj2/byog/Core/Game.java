@@ -46,6 +46,7 @@ public class Game {
         String SEED = "";
 
         while (!gameOver) {
+            ter.
             if (!StdDraw.hasNextKeyTyped()) {
                 continue;
             }
