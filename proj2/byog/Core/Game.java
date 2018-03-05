@@ -3,33 +3,91 @@ package byog.Core;
 import byog.TileEngine.TERenderer;
 import byog.TileEngine.TETile;
 import edu.princeton.cs.introcs.StdDraw;
+import java.awt.*;
+import java.util.Map;
+
 
 public class Game {
     TERenderer ter = new TERenderer();
     /* Feel free to change the width and height. */
     public static final int WIDTH = 80;
     public static final int HEIGHT = 30;
+    private boolean gameOver;
+    private boolean gameStarted;
 
 
     /**
      * Method used for playing a fresh game. The game should start from the main menu.
      */
-    /*
+
     public void playWithKeyboard() {
-        MapGenerator nm = new MapGenerator();
-        boolean gameOver = false;
-        char input = StdDraw.nextKeyTyped();
+        gameOver = false;
+        gameStarted = false;
+
+        StdDraw.setCanvasSize(WIDTH / 2 * 16, HEIGHT * 16);
+        Font large_font = new Font("Monaco", Font.BOLD, 40);
+        Font small_font = new Font("Monaco", Font.BOLD, 20);
+        StdDraw.setFont(large_font);
+        StdDraw.setXscale(0, WIDTH);
+        StdDraw.setYscale(0, HEIGHT);
+        StdDraw.clear(Color.BLACK);
+        StdDraw.enableDoubleBuffering();
+
+
+        StdDraw.setPenColor(Color.white);
+        StdDraw.text(WIDTH / 2, HEIGHT / 1.5, "CS61B: THE GAME");
+        StdDraw.setFont(small_font);
+        StdDraw.text(WIDTH / 2, (HEIGHT / 2), "New Game (N)");
+        StdDraw.text(WIDTH / 2, (HEIGHT / 2) - 2, "Load Game (L)");
+        StdDraw.text(WIDTH / 2, (HEIGHT / 2) - 4, "Quit Game (Q)");
+        StdDraw.show();
+
+
         String SEED = "";
-        if (input == 'S' || input == 's') {
 
-        } else if (input == ":Q" || input == ":q") {
+        while (!gameOver) {
+            if (!StdDraw.hasNextKeyTyped()) {
+                continue;
+            }
+            char key = StdDraw.nextKeyTyped();
+            SEED += String.valueOf(key);
 
-        } else if (input == "L" || input == "l") {
+            if (key == 'N' || key == 'n') {
+                StdDraw.clear(Color.BLACK);
+                StdDraw.text(WIDTH / 2, HEIGHT / 2, "SEED:");
+                StdDraw.show();
 
+            }
+
+
+            if (Character.isDigit(key)) {
+                StdDraw.clear(Color.BLACK);
+                StdDraw.text(WIDTH / 2, HEIGHT / 2, "SEED:");
+                StdDraw.text(WIDTH / 2, (HEIGHT / 2) - 2, SEED.substring(1, SEED.length()));
+                StdDraw.show();
+            }
+
+            if (Character.isLetter(key)) {
+                if (key == 'S' || key == 's') {
+                    gameStarted = true;
+                    MapGenerator nm = new MapGenerator(SEED.substring(1, SEED.length() - 1));
+                    TETile[][] finalWorldFrame = nm.generate();
+                    ter.initialize(WIDTH, HEIGHT + 3);
+                    ter.renderFrame(finalWorldFrame);
+
+                }
+
+                if (key == 'D' || key == 'd'){
+//                    MapGenerator.playerMove
+                }
+
+            }
         }
-
     }
-    */
+
+
+
+
 
 
     /**
