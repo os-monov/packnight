@@ -3,9 +3,9 @@ package byog.Core;
 import byog.TileEngine.TERenderer;
 import byog.TileEngine.TETile;
 import edu.princeton.cs.introcs.StdDraw;
-
 import java.awt.*;
 import java.util.Map;
+
 
 public class Game {
     TERenderer ter = new TERenderer();
@@ -17,9 +17,11 @@ public class Game {
     private MapGenerator nm;
     private TETile[][] finalWorldFrame;
 
+
     /**
      * Method used for playing a fresh game. The game should start from the main menu.
      */
+
     public void playWithKeyboard() {
         gameOver = false;
         gameStarted = false;
@@ -58,6 +60,7 @@ public class Game {
                 StdDraw.show();
 
             }
+
 
             if (Character.isDigit(key)) {
                 StdDraw.clear(Color.BLACK);
@@ -128,8 +131,9 @@ public class Game {
 
         MapGenerator nm = new MapGenerator(input);
         TETile[][] finalWorldFrame = nm.generate();
-        ter.initialize(WIDTH, HEIGHT);
+        ter.initialize(WIDTH, HEIGHT + 3);
         ter.renderFrame(finalWorldFrame);
+        nm.mouseOverTileType();
         return finalWorldFrame;
     }
 }
