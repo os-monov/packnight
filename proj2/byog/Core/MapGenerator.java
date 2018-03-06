@@ -10,7 +10,7 @@ import byog.TileEngine.Tileset;
 import byog.TileEngine.TETile;
 import edu.princeton.cs.introcs.StdDraw;
 
-public class MapGenerator implements Serializable{
+public class MapGenerator implements Serializable {
     private static final int HEIGHT = 30;
     private static final int WIDTH = 80;
     static TETile[][] TETILE_WORLD = new TETile[WIDTH][HEIGHT];

@@ -23,10 +23,10 @@ public class Game implements Serializable {
     /* Feel free to change the width and height. */
     public static final int WIDTH = 80;
     public static final int HEIGHT = 30;
-    private boolean gameOver;
-    private boolean gameStarted;
     private MapGenerator nm;
     private TETile[][] finalWorldFrame;
+    private boolean gameOver;
+    private boolean gameStarted;
 
 
     /**
@@ -102,15 +102,14 @@ public class Game implements Serializable {
                         nm.playerMove(key);
                         ter.renderFrame(finalWorldFrame);
 
-                    } else if (key == 'Q') {
+                    } else if (key == ':') {
                         readytoSave = true;
-                        System.exit(0);
-
 
                     }
                     else if (readytoSave) {
                         if (key == 'q' || key == 'Q') {
                             gameOver = false;
+                            saveWorld(this);
                             System.exit(0);
                         }
                     }
@@ -126,9 +125,10 @@ public class Game implements Serializable {
                         ter.renderFrame(finalWorldFrame);
 
                     } else if (key == 'L' || key == 'l') {
-                            loadWorld();
-
-
+                            Game restartedgame = loadWorld();
+                            restartedgame.gameOver = false;
+                            ter.initialize(WIDTH, HEIGHT + 3);
+                            ter.renderFrame(restartedgame.finalWorldFrame);
                         }
                     }
                 }
@@ -156,6 +156,8 @@ public class Game implements Serializable {
             FileOutputStream fs = new FileOutputStream(f);
             ObjectOutputStream os = new ObjectOutputStream(fs);
             os.writeObject(g);
+            os.close();
+            fs.close();
 
         } catch (FileNotFoundException e) {
             System.out.println("file not found");
