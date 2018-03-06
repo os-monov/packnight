@@ -18,8 +18,10 @@ public class Game implements Serializable {
     public static final int HEIGHT = 30;
     private boolean gameOver;
     private boolean gameStarted;
+    private boolean readytoSave;
     private MapGenerator nm;
     private TETile[][] finalWorldFrame;
+
 
 
     /**
@@ -29,6 +31,7 @@ public class Game implements Serializable {
     public void playWithKeyboard() {
         gameOver = false;
         gameStarted = false;
+        readytoSave = false;
 
         StdDraw.setCanvasSize(WIDTH / 2 * 16, HEIGHT * 16);
         Font large_font = new Font("Monaco", Font.BOLD, 40);
@@ -73,7 +76,7 @@ public class Game implements Serializable {
                 StdDraw.show();
             }
 
-            if (Character.isLetter(key)) {
+            if (!Character.isDigit(key)) {
 
                 if (!gameStarted) {
                     if (key == 'S' || key == 's') {
@@ -82,10 +85,9 @@ public class Game implements Serializable {
                         finalWorldFrame = nm.generate();
                         ter.initialize(WIDTH, HEIGHT + 3);
                         ter.renderFrame(finalWorldFrame);
-                    }
-
-//                    else if (key == 'L' || key == 'l'){
-//                        loadWorld();
+                    } else if (key == 'L' || key == 'l') {
+                        Game savedGame = loadWorld();
+                        savedGame.playWithKeyboard();
                     }
                 }
 
@@ -106,57 +108,66 @@ public class Game implements Serializable {
                     } else if (key == 's' || key == 'S') {
                         nm.playerMove(key);
                         ter.renderFrame(finalWorldFrame);
+
+                    } else if (key == ':') {
+                        readytoSave = true;
+
+                    }
+                    if (readytoSave) {
+                        if (key == 'Q' || key == 'q') {
+
+                            saveWorld(this);
+                            gameOver = true;
+                        }
                     }
                 }
 //
             }
-
         }
+        System.exit(0);
+    }
+    private static void saveWorld (Game g){
+        File f = new File("./SavedGame.ser");
+        try {
+            if (!f.exists()) {
+                f.createNewFile();
+            }
+            FileOutputStream fs = new FileOutputStream(f);
+            ObjectOutputStream os = new ObjectOutputStream(fs);
+            os.writeObject(g);
+
+        } catch (FileNotFoundException e) {
+            System.out.println("file not found");
+            System.exit(0);
+
+        } catch (IOException e) {
+            System.out.println(e);
+            System.exit(0);
+        }
+    }
 
 
-//
-//    private static void saveWorld(Game g) {
-//        File f = new File("./SavedGame.ser");
-//        try {
-//            if (!f.exists()) {
-//                f.createNewFile();
-//            }
-//            FileOutputStream fs = new FileOutputStream(f);
-//            ObjectOutputStream os = new ObjectOutputStream(fs);
-//            os.writeObject(g);
-//
-//        }  catch (FileNotFoundException e) {
-//            System.out.println("file not found");
-//            System.exit(0);
-//
-//        } catch (IOException e) {
-//            System.out.println(e);
-//            System.exit(0);
-//        }
-//    }
+    private static Game loadWorld() {
+        File f = new File("./SavedGame.ser");
+        if (f.exists()) {
+            try {
+                FileInputStream fs = new FileInputStream(f);
+                ObjectInputStream os = new ObjectInputStream(fs);
+                return (Game) os.readObject();
+            } catch (FileNotFoundException e) {
+                System.out.println("file not found");
+                System.exit(0);
+            } catch (IOException e) {
+                System.out.println(e);
+                System.exit(0);
 
-
-//    private static Game loadWorld() {
-//        File f = new File("./SavedGame.ser");
-//        if (f.exists()) {
-//            try {
-//                FileInputStream fs = new FileInputStream(f);
-//                ObjectInputStream os = new ObjectInputStream(fs);
-//                return (Game) os.readObject();
-//
-//            } catch (IOException e) {
-//                System.out.println(e);
-//                System.exit(0);
-//
-//            } catch (ClassNotFoundException e) {
-//                System.out.println("class not found");
-//                System.exit(0);
-//
-//            }
-//        }
-//
-//
-//    }
+            } catch (ClassNotFoundException e) {
+                System.out.println("class not found");
+                System.exit(0);
+            }
+        }
+        return new Game();
+    }
 
 
 
