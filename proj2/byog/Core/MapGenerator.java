@@ -17,7 +17,6 @@ public class MapGenerator implements Serializable {
     private static long SEED;
     private Random r;
     private Integer[][] ft = new Integer[8000][2];
-    private Integer[][] ct = new Integer[2400][2];
     private int ftai = 0;
     private static final int XSTART = 38; //RandomUtils.uniform(r, 30, 50);
     private static final int YSTART = 15; // RandomUtils.uniform(r, 12, 18);
