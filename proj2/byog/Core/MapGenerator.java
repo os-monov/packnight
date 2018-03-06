@@ -25,7 +25,6 @@ public class MapGenerator {
     private static int PLAYER_X;
     private static int PLAYER_Y;
     private static int SCORE;
-    private boolean gameOn;
 
 
 
@@ -46,7 +45,6 @@ public class MapGenerator {
     }
 
     private TETile[][] ctw() {
-        gameOn = true;
         fillTileBackground(TETILE_WORLD);
         addFloors();
         addRooms();
@@ -356,10 +354,7 @@ public class MapGenerator {
         Font font = new Font("Monaco", Font.BOLD, 16);
         StdDraw.setFont(font);
         StdDraw.setPenColor(StdDraw.WHITE);
-        while(gameOn) {
-            StdDraw.text(2.5, (HEIGHT - 2.0), TETILE_WORLD[xTile][yTile].description());
-        }
-        StdDraw.show();
+        StdDraw.text(2.5, (HEIGHT - 2.0), TETILE_WORLD[xTile][yTile].description());
     }
 
 
