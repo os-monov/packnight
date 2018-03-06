@@ -25,6 +25,7 @@ public class Game implements Serializable {
     /* Feel free to change the width and height. */
     public static final int WIDTH = 80;
     public static final int HEIGHT = 30;
+
     private MapGenerator nm;
     private TETile[][] finalWorldFrame;
     private boolean gameOver = false;
@@ -37,25 +38,8 @@ public class Game implements Serializable {
      * Method used for playing a fresh game. The game should start from the main menu.
      */
 
+
     public void showStartScreen() {
-
-        StdDraw.setCanvasSize(WIDTH / 2 * 16, HEIGHT * 16);
-        Font large_font = new Font("Monaco", Font.BOLD, 40);
-        Font small_font = new Font("Monaco", Font.BOLD, 20);
-        StdDraw.setFont(large_font);
-        StdDraw.setXscale(0, WIDTH);
-        StdDraw.setYscale(0, HEIGHT);
-        StdDraw.clear(Color.BLACK);
-        StdDraw.enableDoubleBuffering();
-
-
-        StdDraw.setPenColor(Color.white);
-        StdDraw.text(WIDTH / 2, HEIGHT / 1.5, "CS61B: THE GAME");
-        StdDraw.setFont(small_font);
-        StdDraw.text(WIDTH / 2, (HEIGHT / 2), "New Game (N)");
-        StdDraw.text(WIDTH / 2, (HEIGHT / 2) - 2, "Load Game (L)");
-        StdDraw.text(WIDTH / 2, (HEIGHT / 2) - 4, "Quit Game (Q)");
-        StdDraw.show();
 
 
         SEED = "";
@@ -116,6 +100,7 @@ public class Game implements Serializable {
         }
     }
 
+
     public void playWithKeyboard() {
 
         while (!gameStarted) {
@@ -146,9 +131,11 @@ public class Game implements Serializable {
                 nm.playerMove(key);
                 ter.renderFrame(finalWorldFrame);
 
+
             } else if (key == 'A' || key == 'a') {
                 nm.playerMove(key);
                 ter.renderFrame(finalWorldFrame);
+
 
 
             } else if (key == 's' || key == 'S') {
@@ -206,6 +193,7 @@ public class Game implements Serializable {
 
     }
 
+
     private boolean mouseInBounds(int x, int y){
         return (x > 0) && (x < WIDTH) && (y > 0) && (y < HEIGHT);
 
@@ -241,6 +229,7 @@ public class Game implements Serializable {
             try {
                 FileInputStream fs = new FileInputStream(f);
                 ObjectInputStream os = new ObjectInputStream(fs);
+
                 Game oldgame = (Game) os.readObject();
                 os.close();
                 fs.close();
