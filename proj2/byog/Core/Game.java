@@ -25,18 +25,16 @@ public class Game implements Serializable {
     public static final int HEIGHT = 30;
     private MapGenerator nm;
     private TETile[][] finalWorldFrame;
-    private boolean gameOver;
-    private boolean gameStarted;
-
+    private boolean gameOver = false;
+    private boolean gameStarted = false;
+    boolean readytoSave = false;
+    private String SEED;
 
     /**
      * Method used for playing a fresh game. The game should start from the main menu.
      */
 
-    public void playWithKeyboard() {
-        gameOver = false;
-        gameStarted = false;
-        boolean readytoSave = false;
+    public void showStartScreen() {
 
         StdDraw.setCanvasSize(WIDTH / 2 * 16, HEIGHT * 16);
         Font large_font = new Font("Monaco", Font.BOLD, 40);
@@ -57,9 +55,9 @@ public class Game implements Serializable {
         StdDraw.show();
 
 
-        String SEED = "";
+        SEED = "";
 
-        while (!gameOver) {
+        while (!gameStarted) {
             if (!StdDraw.hasNextKeyTyped()) {
                 continue;
             }
@@ -79,61 +77,70 @@ public class Game implements Serializable {
                 StdDraw.text(WIDTH / 2, HEIGHT / 2, "SEED:");
                 StdDraw.text(WIDTH / 2, (HEIGHT / 2) - 2, SEED.substring(1, SEED.length()));
                 StdDraw.show();
+
+            } else if (key == 'S' || key == 's') {
+                gameStarted = true;
+                nm = new MapGenerator(SEED.substring(1, SEED.length() - 1));
+                finalWorldFrame = nm.generate();
+                ter.initialize(WIDTH, HEIGHT + 3);
+                ter.renderFrame(finalWorldFrame);
+
+            } else if (key == 'L' || key == 'l') {
+                Game reloaded = loadWorld();
+                this.nm = reloaded.nm;
+                this.finalWorldFrame = reloaded.finalWorldFrame;
+                this.SEED = reloaded.SEED;
+                this.gameOver = false;
+                this.gameStarted = true;
+                ter.initialize(WIDTH, HEIGHT + 3);
+                ter.renderFrame(reloaded.finalWorldFrame);
+            }
+        }
+    }
+
+    public void playWithKeyboard () {
+
+        while (!gameStarted){
+            showStartScreen();
+        }
+
+        while (!gameOver) {
+            if (!StdDraw.hasNextKeyTyped()) {
+                continue;
             }
 
-            if (!Character.isDigit(key)) {
+            char key = StdDraw.nextKeyTyped();
+            SEED += String.valueOf(key);
 
 
-                if (gameStarted) {
+            if (key == 'D' || key == 'd') {
+                nm.playerMove(key);
+                ter.renderFrame(finalWorldFrame);
 
-                    if (key == 'D' || key == 'd') {
-                        nm.playerMove(key);
-                        ter.renderFrame(finalWorldFrame);
+            } else if (key == 'W' || key == 'w') {
+                nm.playerMove(key);
+                ter.renderFrame(finalWorldFrame);
 
-                    } else if (key == 'W' || key == 'w') {
-                        nm.playerMove(key);
-                        ter.renderFrame(finalWorldFrame);
+            } else if (key == 'A' || key == 'a') {
+                nm.playerMove(key);
+                ter.renderFrame(finalWorldFrame);
 
-                    } else if (key == 'A' || key == 'a') {
-                        nm.playerMove(key);
-                        ter.renderFrame(finalWorldFrame);
+            } else if (key == 's' || key == 'S') {
+                nm.playerMove(key);
+                ter.renderFrame(finalWorldFrame);
 
-                    } else if (key == 's' || key == 'S') {
-                        nm.playerMove(key);
-                        ter.renderFrame(finalWorldFrame);
+            } else if (key == ':') {
+                readytoSave = true;
 
-                    } else if (key == ':') {
-                        readytoSave = true;
-
-                    }
-                    else if (readytoSave) {
-                        if (key == 'q' || key == 'Q') {
-                            gameOver = false;
-                            saveWorld(this);
-                            System.exit(0);
-                        }
-                    }
-
-                }
-
-                if (!gameStarted) {
-                    if (key == 'S' || key == 's') {
-                        gameStarted = true;
-                        nm = new MapGenerator(SEED.substring(1, SEED.length() - 1));
-                        finalWorldFrame = nm.generate();
-                        ter.initialize(WIDTH, HEIGHT + 3);
-                        ter.renderFrame(finalWorldFrame);
-
-                    } else if (key == 'L' || key == 'l') {
-                            Game restartedgame = loadWorld();
-                            restartedgame.gameOver = false;
-                            ter.initialize(WIDTH, HEIGHT + 3);
-                            ter.renderFrame(restartedgame.finalWorldFrame);
-                        }
-                    }
+            } else if (readytoSave) {
+                if (key == 'q' || key == 'Q') {
+                    gameOver = false;
+                    saveWorld(this);
+                    System.exit(0);
                 }
             }
         }
+    }
 
 
 
@@ -148,7 +155,7 @@ public class Game implements Serializable {
     }
 
     private static void saveWorld(Game g) {
-        File f = new File("./SavedGame.ser");
+        File f = new File("./SavedGame.txt");
         try {
             if (!f.exists()) {
                 f.createNewFile();
@@ -171,12 +178,15 @@ public class Game implements Serializable {
 
 
     private static Game loadWorld() {
-        File f = new File("./SavedGame.ser");
+        File f = new File("./SavedGame.txt");
         if (f.exists()) {
             try {
                 FileInputStream fs = new FileInputStream(f);
                 ObjectInputStream os = new ObjectInputStream(fs);
-                return (Game) os.readObject();
+                Game oldgame = (Game) os.readObject();
+                os.close();
+                fs.close();
+                return oldgame;
 
             } catch (IOException e) {
                 System.out.println("Unable to Load");
