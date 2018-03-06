@@ -6,7 +6,7 @@ import byog.TileEngine.TERenderer;
 import byog.TileEngine.TETile;
 import edu.princeton.cs.introcs.StdDraw;
 import java.awt.*;
-import java.io.*;
+import java.io.Serializable;
 import java.util.Map;
 
 
@@ -87,7 +87,10 @@ public class Game implements Serializable {
                         ter.renderFrame(finalWorldFrame);
                     } else if (key == 'L' || key == 'l') {
                         Game savedGame = loadWorld();
-                        savedGame.playWithKeyboard();
+                        savedGame.gameOver = false;
+
+                    } else if (key == 'Q' || key == 'q') {
+                        System.exit(0);
                     }
                 }
 
@@ -115,18 +118,44 @@ public class Game implements Serializable {
                     }
                     if (readytoSave) {
                         if (key == 'Q' || key == 'q') {
-
                             saveWorld(this);
                             gameOver = true;
+                            System.exit(0);
                         }
                     }
+
                 }
-//
+
+                if (!gameStarted) {
+                    if (key == 'S' || key == 's') {
+                        gameStarted = true;
+                        nm = new MapGenerator(SEED.substring(1, SEED.length() - 1));
+                        finalWorldFrame = nm.generate();
+                        ter.initialize(WIDTH, HEIGHT + 3);
+                        ter.renderFrame(finalWorldFrame);
+
+                    } else if (key == 'L' || key == 'l') {
+                        loadWorld();
+                    }
+                }
             }
         }
         System.exit(0);
     }
-    private static void saveWorld (Game g){
+
+
+
+
+    public Integer[] mouseCoordinates() {
+        double x = StdDraw.mouseX();
+        double y = StdDraw.mouseY();
+        int xTile = (int) (x / 16);
+        int yTile = (int) (y / 16);
+        return new Integer[]{xTile, yTile};
+
+    }
+
+    private static void saveWorld(Game g) {
         File f = new File("./SavedGame.ser");
         try {
             if (!f.exists()) {
@@ -145,6 +174,7 @@ public class Game implements Serializable {
             System.exit(0);
         }
     }
+
 
 
     private static Game loadWorld() {
@@ -171,6 +201,8 @@ public class Game implements Serializable {
 
 
 
+
+
     /**
      * Method used for autograding and testing the game code. The input string will be a series
      * of characters (for example, "n123sswwdasdassadwas", "n123sss:q", "lwww". The game should
@@ -192,7 +224,6 @@ public class Game implements Serializable {
         TETile[][] finalWorldFrame = nm.generate();
         ter.initialize(WIDTH, HEIGHT + 3);
         ter.renderFrame(finalWorldFrame);
-//        nm.mouseOverTileType();
         return finalWorldFrame;
     }
 }

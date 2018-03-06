@@ -151,6 +151,7 @@ public class MapGenerator implements Serializable{
 
 
 
+
     ////////////////////////////////////////////////////////////////////////////////////////////
     ///// MAP GENERATION ///////
     ////////////////////////////////////////////////////////////////////////////////////////////
@@ -345,19 +346,6 @@ public class MapGenerator implements Serializable{
         }
 
     }
-
-    public void mouseOverTileType() {
-        double x = StdDraw.mouseX();
-        double y = StdDraw.mouseY();
-        int xTile = (int) (x / 16);
-        int yTile = (int) (y / 16);
-        Font font = new Font("Monaco", Font.BOLD, 16);
-        StdDraw.setFont(font);
-        StdDraw.setPenColor(StdDraw.WHITE);
-        StdDraw.text(2.5, (HEIGHT + 2.0), TETILE_WORLD[xTile][yTile].description());
-        StdDraw.show();
-    }
-
 
 
 
