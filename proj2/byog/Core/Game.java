@@ -38,9 +38,6 @@ public class Game implements Serializable {
 
     public void showStartScreen() {
 
-
-
-
         SEED = "";
 
         while (!gameStarted) {
