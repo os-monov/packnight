@@ -74,6 +74,14 @@ public class Game implements Serializable {
 
             if (Character.isLetter(key)) {
 
+                if (key == 'S' || key == 's') {
+                    gameStarted = true;
+                    MapGenerator nm = new MapGenerator(SEED.substring(1, SEED.length() - 1));
+                    TETile[][] finalWorldFrame = nm.generate();
+                    ter.initialize(WIDTH, HEIGHT + 3);
+                    ter.renderFrame(finalWorldFrame);
+                }
+
                 if (!gameStarted) {
                     if (key == 'S' || key == 's') {
                         gameStarted = true;
@@ -107,12 +115,8 @@ public class Game implements Serializable {
                         ter.renderFrame(finalWorldFrame);
                     }
 
-                    else if (key == 'Q' || key == 'q'){
-//                        saveWorld(this);
-
-                    }
                 }
-//
+
             }
 
         }
