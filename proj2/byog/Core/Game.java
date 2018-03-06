@@ -1,3 +1,4 @@
+
 package byog.Core;
 
 import byog.TileEngine.TERenderer;
@@ -71,14 +72,6 @@ public class Game {
 
             if (Character.isLetter(key)) {
 
-                if (key == 'S' || key == 's') {
-                    gameStarted = true;
-                    MapGenerator nm = new MapGenerator(SEED.substring(1, SEED.length() - 1));
-                    TETile[][] finalWorldFrame = nm.generate();
-                    ter.initialize(WIDTH, HEIGHT + 3);
-                    ter.renderFrame(finalWorldFrame);
-                }
-
                 if (!gameStarted) {
                     if (key == 'S' || key == 's') {
                         gameStarted = true;
@@ -107,9 +100,8 @@ public class Game {
                         nm.playerMove(key);
                         ter.renderFrame(finalWorldFrame);
                     }
-
                 }
-
+//
             }
 
         }

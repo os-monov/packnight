@@ -45,6 +45,7 @@ public class MapGenerator {
     }
 
     private TETile[][] ctw() {
+
         fillTileBackground(TETILE_WORLD);
         addFloors();
         addRooms();
@@ -85,42 +86,42 @@ public class MapGenerator {
 
     public void playerMove(char direction) {
 
-            if (direction == 'd') {
-                if (isMoveValid(direction)) {
-                    PLAYER_X++;
-                    TETILE_WORLD[PLAYER_X - 1][PLAYER_Y] = Tileset.NOTHING;
-                    TETILE_WORLD[PLAYER_X][PLAYER_Y] = Tileset.PLAYER;
-                }
-
+        if (direction == 'D' || direction == 'd') {
+            if (isMoveValid(direction)) {
+                PLAYER_X++;
+                TETILE_WORLD[PLAYER_X - 1][PLAYER_Y] = Tileset.NOTHING;
+                TETILE_WORLD[PLAYER_X][PLAYER_Y] = Tileset.PLAYER;
             }
 
-            else if (direction == 'w') {
-                if (isMoveValid(direction)) {
-                    PLAYER_Y++;
-                    TETILE_WORLD[PLAYER_X][PLAYER_Y - 1] = Tileset.NOTHING;
-                    TETILE_WORLD[PLAYER_X][PLAYER_Y] = Tileset.PLAYER;
+        }
 
-                }
-            }
+        else if (direction == 'W' || direction == 'w') {
+            if (isMoveValid(direction)) {
+                PLAYER_Y++;
+                TETILE_WORLD[PLAYER_X][PLAYER_Y - 1] = Tileset.NOTHING;
+                TETILE_WORLD[PLAYER_X][PLAYER_Y] = Tileset.PLAYER;
 
-            else if (direction == 'a') {
-                if (isMoveValid(direction)) {
-                    PLAYER_X--;
-                    TETILE_WORLD[PLAYER_X + 1][PLAYER_Y] = Tileset.NOTHING;
-                    TETILE_WORLD[PLAYER_X][PLAYER_Y] = Tileset.PLAYER;
-
-                }
-            }
-
-            else if (direction == 's'){
-                if (isMoveValid(direction)) {
-                    PLAYER_Y--;
-                    TETILE_WORLD[PLAYER_X][PLAYER_Y + 1] = Tileset.NOTHING;
-                    TETILE_WORLD[PLAYER_X][PLAYER_Y] = Tileset.PLAYER;
-
-                }
             }
         }
+
+        else if (direction == 'A' || direction == 'a') {
+            if (isMoveValid(direction)) {
+                PLAYER_X--;
+                TETILE_WORLD[PLAYER_X + 1][PLAYER_Y] = Tileset.NOTHING;
+                TETILE_WORLD[PLAYER_X][PLAYER_Y] = Tileset.PLAYER;
+
+            }
+        }
+
+        else if (direction == 'S' || direction == 's'){
+            if (isMoveValid(direction)) {
+                PLAYER_Y--;
+                TETILE_WORLD[PLAYER_X][PLAYER_Y + 1] = Tileset.NOTHING;
+                TETILE_WORLD[PLAYER_X][PLAYER_Y] = Tileset.PLAYER;
+
+            }
+        }
+    }
 
 
 
@@ -354,7 +355,8 @@ public class MapGenerator {
         Font font = new Font("Monaco", Font.BOLD, 16);
         StdDraw.setFont(font);
         StdDraw.setPenColor(StdDraw.WHITE);
-        StdDraw.text(2.5, (HEIGHT - 2.0), TETILE_WORLD[xTile][yTile].description());
+        StdDraw.text(2.5, (HEIGHT + 2.0), TETILE_WORLD[xTile][yTile].description());
+        StdDraw.show();
     }
 
 
