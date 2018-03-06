@@ -54,7 +54,6 @@ public class MapGenerator implements Serializable{
         addWalls();
         ft = cleanTheTiles(ft);
         Move();
-        mouseOverTileType();
         return TETILE_WORLD;
     }
 
@@ -81,7 +80,6 @@ public class MapGenerator implements Serializable{
         PLAYER_X = ft[start][0];
         PLAYER_Y = ft[start][1];
         TETILE_WORLD[PLAYER_X][PLAYER_Y] = Tileset.PLAYER;
-
 
 
     }

@@ -54,6 +54,7 @@ public class Game implements Serializable {
             if (!StdDraw.hasNextKeyTyped()) {
                 continue;
             }
+
             char key = StdDraw.nextKeyTyped();
             SEED += String.valueOf(key);
 
@@ -64,7 +65,6 @@ public class Game implements Serializable {
 
             }
 
-
             if (Character.isDigit(key)) {
                 StdDraw.clear(Color.BLACK);
                 StdDraw.text(WIDTH / 2, HEIGHT / 2, "SEED:");
@@ -73,14 +73,6 @@ public class Game implements Serializable {
             }
 
             if (Character.isLetter(key)) {
-
-                if (key == 'S' || key == 's') {
-                    gameStarted = true;
-                    MapGenerator nm = new MapGenerator(SEED.substring(1, SEED.length() - 1));
-                    TETile[][] finalWorldFrame = nm.generate();
-                    ter.initialize(WIDTH, HEIGHT + 3);
-                    ter.renderFrame(finalWorldFrame);
-                }
 
                 if (!gameStarted) {
                     if (key == 'S' || key == 's') {
@@ -91,7 +83,7 @@ public class Game implements Serializable {
                         ter.renderFrame(finalWorldFrame);
                     }
 
-                    else if (key == 'L' || key == 'l'){
+//                    else if (key == 'L' || key == 'l'){
 //                        loadWorld();
                     }
                 }
@@ -121,7 +113,7 @@ public class Game implements Serializable {
 
         }
 
-    }
+
 //
 //    private static void saveWorld(Game g) {
 //        File f = new File("./SavedGame.ser");
@@ -189,7 +181,7 @@ public class Game implements Serializable {
         TETile[][] finalWorldFrame = nm.generate();
         ter.initialize(WIDTH, HEIGHT + 3);
         ter.renderFrame(finalWorldFrame);
-        nm.mouseOverTileType();
+//        nm.mouseOverTileType();
         return finalWorldFrame;
     }
 }
