@@ -1,3 +1,4 @@
+
 package byog.Core;
 
 import byog.SaveDemo.World;
@@ -106,9 +107,8 @@ public class Game implements Serializable {
                         nm.playerMove(key);
                         ter.renderFrame(finalWorldFrame);
                     }
-
                 }
-
+//
             }
 
         }
