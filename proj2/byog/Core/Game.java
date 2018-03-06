@@ -8,6 +8,13 @@ import edu.princeton.cs.introcs.StdDraw;
 import java.awt.*;
 import java.io.Serializable;
 import java.util.Map;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 
 
 
@@ -20,7 +27,6 @@ public class Game implements Serializable {
     private boolean gameStarted;
     private MapGenerator nm;
     private TETile[][] finalWorldFrame;
-    private boolean readytoSave;
 
 
     /**
@@ -30,7 +36,7 @@ public class Game implements Serializable {
     public void playWithKeyboard() {
         gameOver = false;
         gameStarted = false;
-        readytoSave = false;
+        boolean readytoSave = false;
 
         StdDraw.setCanvasSize(WIDTH / 2 * 16, HEIGHT * 16);
         Font large_font = new Font("Monaco", Font.BOLD, 40);
@@ -75,7 +81,7 @@ public class Game implements Serializable {
                 StdDraw.show();
             }
 
-            if (Character.isLetter(key)) {
+            if (!Character.isDigit(key)) {
 
 
                 if (gameStarted) {
@@ -95,9 +101,11 @@ public class Game implements Serializable {
                     } else if (key == 's' || key == 'S') {
                         nm.playerMove(key);
                         ter.renderFrame(finalWorldFrame);
-                    } else if (key == ':') {
+
+                    } else if (key == 'Q') {
                         readytoSave = true;
-                        System.out.println(SEED);
+                        System.exit(0);
+
 
                     }
                     else if (readytoSave) {
@@ -118,12 +126,15 @@ public class Game implements Serializable {
                         ter.renderFrame(finalWorldFrame);
 
                     } else if (key == 'L' || key == 'l') {
-                        loadWorld();
+                            loadWorld();
+
+
+                        }
                     }
                 }
             }
         }
-    }
+
 
 
 
@@ -151,7 +162,7 @@ public class Game implements Serializable {
             System.exit(0);
 
         } catch (IOException e) {
-            System.out.println(e);
+            System.out.println("Unable to Save");
             System.exit(0);
         }
     }
@@ -166,7 +177,7 @@ public class Game implements Serializable {
                 return (Game) os.readObject();
 
             } catch (IOException e) {
-                System.out.println(e);
+                System.out.println("Unable to Load");
                 System.exit(0);
 
             } catch (ClassNotFoundException e) {
