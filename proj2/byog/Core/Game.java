@@ -1,13 +1,16 @@
 package byog.Core;
 
+import byog.SaveDemo.World;
 import byog.TileEngine.TERenderer;
 import byog.TileEngine.TETile;
 import edu.princeton.cs.introcs.StdDraw;
 import java.awt.*;
+import java.io.*;
 import java.util.Map;
 
 
-public class Game {
+
+public class Game implements Serializable {
     TERenderer ter = new TERenderer();
     /* Feel free to change the width and height. */
     public static final int WIDTH = 80;
@@ -79,6 +82,10 @@ public class Game {
                         ter.initialize(WIDTH, HEIGHT + 3);
                         ter.renderFrame(finalWorldFrame);
                     }
+
+                    else if (key == 'L' || key == 'l'){
+//                        loadWorld();
+                    }
                 }
 
                 if (gameStarted) {
@@ -99,6 +106,11 @@ public class Game {
                         nm.playerMove(key);
                         ter.renderFrame(finalWorldFrame);
                     }
+
+                    else if (key == 'Q' || key == 'q'){
+//                        saveWorld(this);
+
+                    }
                 }
 //
             }
@@ -106,9 +118,49 @@ public class Game {
         }
 
     }
+//
+//    private static void saveWorld(Game g) {
+//        File f = new File("./SavedGame.ser");
+//        try {
+//            if (!f.exists()) {
+//                f.createNewFile();
+//            }
+//            FileOutputStream fs = new FileOutputStream(f);
+//            ObjectOutputStream os = new ObjectOutputStream(fs);
+//            os.writeObject(g);
+//
+//        }  catch (FileNotFoundException e) {
+//            System.out.println("file not found");
+//            System.exit(0);
+//
+//        } catch (IOException e) {
+//            System.out.println(e);
+//            System.exit(0);
+//        }
+//    }
 
 
-
+//    private static Game loadWorld() {
+//        File f = new File("./SavedGame.ser");
+//        if (f.exists()) {
+//            try {
+//                FileInputStream fs = new FileInputStream(f);
+//                ObjectInputStream os = new ObjectInputStream(fs);
+//                return (Game) os.readObject();
+//
+//            } catch (IOException e) {
+//                System.out.println(e);
+//                System.exit(0);
+//
+//            } catch (ClassNotFoundException e) {
+//                System.out.println("class not found");
+//                System.exit(0);
+//
+//            }
+//        }
+//
+//
+//    }
 
 
 
