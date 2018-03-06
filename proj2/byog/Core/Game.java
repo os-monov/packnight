@@ -46,7 +46,6 @@ public class Game {
         String SEED = "";
 
         while (!gameOver) {
-            ter.
             if (!StdDraw.hasNextKeyTyped()) {
                 continue;
             }
@@ -75,11 +74,10 @@ public class Game {
                     TETile[][] finalWorldFrame = nm.generate();
                     ter.initialize(WIDTH, HEIGHT + 3);
                     ter.renderFrame(finalWorldFrame);
-
                 }
 
                 if (key == 'D' || key == 'd'){
-//                    MapGenerator.playerMove
+//                    MapGenerator.playerMove('d');
                 }
 
             }

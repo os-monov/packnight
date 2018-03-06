@@ -25,6 +25,7 @@ public class MapGenerator {
     private static int PLAYER_X;
     private static int PLAYER_Y;
     private static int SCORE;
+    private boolean gameOn;
 
 
 
@@ -45,7 +46,7 @@ public class MapGenerator {
     }
 
     private TETile[][] ctw() {
-
+        gameOn = true;
         fillTileBackground(TETILE_WORLD);
         addFloors();
         addRooms();
@@ -94,9 +95,9 @@ public class MapGenerator {
 
     }
 
-    private void playerMove(char direction) {
+    public void playerMove(char direction) {
 
-            if (direction == 'D' || direction == 'd') {
+            if (direction == 'd') {
                 if (isMoveValid(direction)) {
                     PLAYER_X++;
                     TETILE_WORLD[PLAYER_X - 1][PLAYER_Y] = Tileset.NOTHING;
@@ -104,7 +105,7 @@ public class MapGenerator {
 
             }
 
-            else if (direction == 'W' || direction == 'w') {
+            else if (direction == 'w') {
                 if (isMoveValid(direction)) {
                     PLAYER_Y++;
                     TETILE_WORLD[PLAYER_X][PLAYER_Y - 1] = Tileset.NOTHING;
@@ -113,7 +114,7 @@ public class MapGenerator {
                 }
             }
 
-            else if (direction == 'A' || direction == 'a') {
+            else if (direction == 'a') {
                 if (isMoveValid(direction)) {
                     PLAYER_X--;
                     TETILE_WORLD[PLAYER_X + 1][PLAYER_Y] = Tileset.NOTHING;
@@ -122,7 +123,7 @@ public class MapGenerator {
                 }
             }
 
-            else if (direction == 'S' || direction == 's'){
+            else if (direction == 's'){
                 if (isMoveValid(direction)) {
                     PLAYER_Y--;
                     TETILE_WORLD[PLAYER_X][PLAYER_Y + 1] = Tileset.NOTHING;
@@ -364,7 +365,9 @@ public class MapGenerator {
         Font font = new Font("Monaco", Font.BOLD, 16);
         StdDraw.setFont(font);
         StdDraw.setPenColor(StdDraw.WHITE);
-        StdDraw.text(2.5, (HEIGHT + 2.0), TETILE_WORLD[xTile][yTile].description());
+        while(gameOn) {
+            StdDraw.text(2.5, (HEIGHT - 2.0), TETILE_WORLD[xTile][yTile].description());
+        }
         StdDraw.show();
     }
 
