@@ -85,7 +85,7 @@ public class MapGenerator {
 
     public void playerMove(char direction) {
 
-            if (direction == 'D' || direction == 'd') {
+            if (direction == 'd') {
                 if (isMoveValid(direction)) {
                     PLAYER_X++;
                     TETILE_WORLD[PLAYER_X - 1][PLAYER_Y] = Tileset.NOTHING;
@@ -94,7 +94,7 @@ public class MapGenerator {
 
             }
 
-            else if (direction == 'W' || direction == 'w') {
+            else if (direction == 'w') {
                 if (isMoveValid(direction)) {
                     PLAYER_Y++;
                     TETILE_WORLD[PLAYER_X][PLAYER_Y - 1] = Tileset.NOTHING;
@@ -103,7 +103,7 @@ public class MapGenerator {
                 }
             }
 
-            else if (direction == 'A' || direction == 'a') {
+            else if (direction == 'a') {
                 if (isMoveValid(direction)) {
                     PLAYER_X--;
                     TETILE_WORLD[PLAYER_X + 1][PLAYER_Y] = Tileset.NOTHING;
@@ -112,7 +112,7 @@ public class MapGenerator {
                 }
             }
 
-            else if (direction == 'S' || direction == 's'){
+            else if (direction == 's'){
                 if (isMoveValid(direction)) {
                     PLAYER_Y--;
                     TETILE_WORLD[PLAYER_X][PLAYER_Y + 1] = Tileset.NOTHING;
