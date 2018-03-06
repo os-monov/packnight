@@ -108,10 +108,11 @@ public class Game implements Serializable {
                         readytoSave = true;
 
                     }
-                    if (readytoSave) {
-                        if (key == 'Q' || key == 'q') {
+
+                    else if (readytoSave) {
+                        if (key == 'q' || key == 'Q') {
+                            gameOver = false;
                             saveWorld(this);
-                            gameOver = true;
                             System.exit(0);
                         }
                     }
@@ -126,11 +127,15 @@ public class Game implements Serializable {
                         ter.initialize(WIDTH, HEIGHT + 3);
                         ter.renderFrame(finalWorldFrame);
                     } else if (key == 'L' || key == 'l') {
-                        Game savedGame = loadWorld();
-                        savedGame.gameOver = false;
+
+                        Game restartedgame = loadWorld();
+                        restartedgame.gameOver = false;
+                        ter.initialize(WIDTH, HEIGHT + 3);
+                        ter.renderFrame(restartedgame.finalWorldFrame);
 
                     } else if (key == 'Q' || key == 'q') {
                         System.exit(0);
+
                     }
                 }
             }
@@ -155,8 +160,7 @@ public class Game implements Serializable {
             }
             FileOutputStream fs = new FileOutputStream(f);
             ObjectOutputStream os = new ObjectOutputStream(fs);
-            os.writeInt(69696969);
-            //os.writeObject(g);
+            os.writeObject(g);
             os.close();
             fs.close();
 
