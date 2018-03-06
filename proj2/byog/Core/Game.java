@@ -14,6 +14,8 @@ public class Game {
     public static final int HEIGHT = 30;
     private boolean gameOver;
     private boolean gameStarted;
+    private MapGenerator nm;
+    private TETile[][] finalWorldFrame;
 
 
     /**
@@ -68,6 +70,7 @@ public class Game {
             }
 
             if (Character.isLetter(key)) {
+
                 if (key == 'S' || key == 's') {
                     gameStarted = true;
                     MapGenerator nm = new MapGenerator(SEED.substring(1, SEED.length() - 1));
@@ -76,12 +79,41 @@ public class Game {
                     ter.renderFrame(finalWorldFrame);
                 }
 
-                if (key == 'D' || key == 'd'){
-//                    MapGenerator.playerMove('d');
+                if (!gameStarted) {
+                    if (key == 'S' || key == 's') {
+                        gameStarted = true;
+                        nm = new MapGenerator(SEED.substring(1, SEED.length() - 1));
+                        finalWorldFrame = nm.generate();
+                        ter.initialize(WIDTH, HEIGHT + 3);
+                        ter.renderFrame(finalWorldFrame);
+                    }
+                }
+
+                if (gameStarted) {
+
+                    if (key == 'D' || key == 'd') {
+                        nm.playerMove(key);
+                        ter.renderFrame(finalWorldFrame);
+
+                    } else if (key == 'W' || key == 'w') {
+                        nm.playerMove(key);
+                        ter.renderFrame(finalWorldFrame);
+
+                    } else if (key == 'A' || key == 'a') {
+                        nm.playerMove(key);
+                        ter.renderFrame(finalWorldFrame);
+
+                    } else if (key == 's' || key == 'S') {
+                        nm.playerMove(key);
+                        ter.renderFrame(finalWorldFrame);
+                    }
+
                 }
 
             }
+
         }
+
     }
 
 

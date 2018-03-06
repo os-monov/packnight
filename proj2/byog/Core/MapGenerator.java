@@ -52,6 +52,7 @@ public class MapGenerator {
         addRooms();
         addWalls();
         ft = cleanTheTiles(ft);
+        Move();
         mouseOverTileType();
         return TETILE_WORLD;
     }
@@ -74,23 +75,12 @@ public class MapGenerator {
     ////////////////////////////////////////////////////////////////////////////////////////////
 
 
-    private void Move(String input) {
+    private void Move() {
         int start = RandomUtils.uniform(r, 0, ftai);
         PLAYER_X = ft[start][0];
         PLAYER_Y = ft[start][1];
         TETILE_WORLD[PLAYER_X][PLAYER_Y] = Tileset.PLAYER;
 
-
-        playerMove('s');
-        playerMove('w');
-        playerMove('a');
-//
-//        char[] input_array = input.toCharArray();
-//
-//        for (int i = 0; i < input_array.length; i++) {
-//            playerMove(input_array[i]);
-//
-//        }
 
 
     }
@@ -102,6 +92,7 @@ public class MapGenerator {
                     PLAYER_X++;
                     TETILE_WORLD[PLAYER_X - 1][PLAYER_Y] = Tileset.NOTHING;
                     TETILE_WORLD[PLAYER_X][PLAYER_Y] = Tileset.PLAYER;
+                }
 
             }
 
@@ -132,31 +123,31 @@ public class MapGenerator {
                 }
             }
         }
-    }
+
 
 
 
 
     private boolean isMoveValid(char direction) {
-        Integer[] test_coord = new Integer[]{PLAYER_X, PLAYER_Y};
+        Integer[] test_coordinates = new Integer[]{PLAYER_X, PLAYER_Y};
 
         if (direction == 'D' || direction == 'd'){
-            test_coord[0] += 1;
+            test_coordinates[0] += 1;
         }
 
         else if (direction == 'W' || direction == 'w'){
-            test_coord[1] += 1;
+            test_coordinates[1] += 1;
         }
 
         else if (direction == 'A' || direction == 'a'){
-            test_coord[0] -= 1;
+            test_coordinates[0] -= 1;
         }
 
         else {
-            test_coord[1] -= 1;
+            test_coordinates[1] -= 1;
         }
 
-        return inArray(ft, test_coord);
+        return inArray(ft, test_coordinates);
     }
 
 
