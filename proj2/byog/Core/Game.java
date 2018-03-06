@@ -6,7 +6,7 @@ import byog.TileEngine.TERenderer;
 import byog.TileEngine.TETile;
 import edu.princeton.cs.introcs.StdDraw;
 import java.awt.*;
-import java.io.*;
+import java.io.Serializable;
 import java.util.Map;
 
 
@@ -20,6 +20,7 @@ public class Game implements Serializable {
     private boolean gameStarted;
     private MapGenerator nm;
     private TETile[][] finalWorldFrame;
+    private boolean readytoSave;
 
 
     /**
@@ -29,6 +30,7 @@ public class Game implements Serializable {
     public void playWithKeyboard() {
         gameOver = false;
         gameStarted = false;
+        readytoSave = false;
 
         StdDraw.setCanvasSize(WIDTH / 2 * 16, HEIGHT * 16);
         Font large_font = new Font("Monaco", Font.BOLD, 40);
@@ -75,19 +77,6 @@ public class Game implements Serializable {
 
             if (Character.isLetter(key)) {
 
-                if (!gameStarted) {
-                    if (key == 'S' || key == 's') {
-                        gameStarted = true;
-                        nm = new MapGenerator(SEED.substring(1, SEED.length() - 1));
-                        finalWorldFrame = nm.generate();
-                        ter.initialize(WIDTH, HEIGHT + 3);
-                        ter.renderFrame(finalWorldFrame);
-                    }
-
-//                    else if (key == 'L' || key == 'l'){
-//                        loadWorld();
-                    }
-                }
 
                 if (gameStarted) {
 
@@ -106,57 +95,96 @@ public class Game implements Serializable {
                     } else if (key == 's' || key == 'S') {
                         nm.playerMove(key);
                         ter.renderFrame(finalWorldFrame);
+                    } else if (key == ':') {
+                        readytoSave = true;
+                        System.out.println(SEED);
+
+                    }
+                    else if (readytoSave) {
+                        if (key == 'q' || key == 'Q') {
+                            gameOver = false;
+                            System.exit(0);
+                        }
+                    }
+
+                }
+
+                if (!gameStarted) {
+                    if (key == 'S' || key == 's') {
+                        gameStarted = true;
+                        nm = new MapGenerator(SEED.substring(1, SEED.length() - 1));
+                        finalWorldFrame = nm.generate();
+                        ter.initialize(WIDTH, HEIGHT + 3);
+                        ter.renderFrame(finalWorldFrame);
+
+                    } else if (key == 'L' || key == 'l') {
+                        loadWorld();
                     }
                 }
-//
             }
-
         }
+    }
 
 
-//
-//    private static void saveWorld(Game g) {
-//        File f = new File("./SavedGame.ser");
-//        try {
-//            if (!f.exists()) {
-//                f.createNewFile();
-//            }
-//            FileOutputStream fs = new FileOutputStream(f);
-//            ObjectOutputStream os = new ObjectOutputStream(fs);
-//            os.writeObject(g);
-//
-//        }  catch (FileNotFoundException e) {
-//            System.out.println("file not found");
-//            System.exit(0);
-//
-//        } catch (IOException e) {
-//            System.out.println(e);
-//            System.exit(0);
-//        }
-//    }
+
+    public Integer[] mouseCoordinates() {
+        double x = StdDraw.mouseX();
+        double y = StdDraw.mouseY();
+        int xTile = (int) (x / 16);
+        int yTile = (int) (y / 16);
+        return new Integer[]{xTile, yTile};
+
+    }
+
+    private static void saveWorld(Game g) {
+        File f = new File("./SavedGame.ser");
+        try {
+            if (!f.exists()) {
+                f.createNewFile();
+            }
+            FileOutputStream fs = new FileOutputStream(f);
+            ObjectOutputStream os = new ObjectOutputStream(fs);
+            os.writeObject(g);
+
+        } catch (FileNotFoundException e) {
+            System.out.println("file not found");
+            System.exit(0);
+
+        } catch (IOException e) {
+            System.out.println(e);
+            System.exit(0);
+        }
+    }
 
 
-//    private static Game loadWorld() {
-//        File f = new File("./SavedGame.ser");
-//        if (f.exists()) {
-//            try {
-//                FileInputStream fs = new FileInputStream(f);
-//                ObjectInputStream os = new ObjectInputStream(fs);
-//                return (Game) os.readObject();
-//
-//            } catch (IOException e) {
-//                System.out.println(e);
-//                System.exit(0);
-//
-//            } catch (ClassNotFoundException e) {
-//                System.out.println("class not found");
-//                System.exit(0);
-//
-//            }
-//        }
-//
-//
-//    }
+    private static Game loadWorld() {
+        File f = new File("./SavedGame.ser");
+        if (f.exists()) {
+            try {
+                FileInputStream fs = new FileInputStream(f);
+                ObjectInputStream os = new ObjectInputStream(fs);
+                return (Game) os.readObject();
+
+            } catch (IOException e) {
+                System.out.println(e);
+                System.exit(0);
+
+            } catch (ClassNotFoundException e) {
+                System.out.println("class not found");
+                System.exit(0);
+
+            }
+        }
+        return null;
+
+    }
+
+
+
+
+
+
+
 
 
 
@@ -181,7 +209,6 @@ public class Game implements Serializable {
         TETile[][] finalWorldFrame = nm.generate();
         ter.initialize(WIDTH, HEIGHT + 3);
         ter.renderFrame(finalWorldFrame);
-//        nm.mouseOverTileType();
         return finalWorldFrame;
     }
 }
