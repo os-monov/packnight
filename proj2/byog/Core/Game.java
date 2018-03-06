@@ -93,14 +93,14 @@ public class Game implements Serializable {
                 this.gameOver = false;
                 this.gameStarted = true;
                 ter.initialize(WIDTH, HEIGHT + 3);
-                ter.renderFrame(reloaded.finalWorldFrame);
+                ter.renderFrame(finalWorldFrame);
             }
         }
     }
 
-    public void playWithKeyboard () {
+    public void playWithKeyboard() {
 
-        while (!gameStarted){
+        while (!gameStarted) {
             showStartScreen();
         }
 
@@ -125,9 +125,11 @@ public class Game implements Serializable {
                 nm.playerMove(key);
                 ter.renderFrame(finalWorldFrame);
 
+
             } else if (key == 's' || key == 'S') {
                 nm.playerMove(key);
                 ter.renderFrame(finalWorldFrame);
+
 
             } else if (key == ':') {
                 readytoSave = true;
@@ -142,9 +144,6 @@ public class Game implements Serializable {
         }
     }
 
-
-
-
     public Integer[] mouseCoordinates() {
         double x = StdDraw.mouseX();
         double y = StdDraw.mouseY();
@@ -156,6 +155,7 @@ public class Game implements Serializable {
 
     private static void saveWorld(Game g) {
         File f = new File("./SavedGame.txt");
+
         try {
             if (!f.exists()) {
                 f.createNewFile();
@@ -177,6 +177,7 @@ public class Game implements Serializable {
     }
 
 
+
     private static Game loadWorld() {
         File f = new File("./SavedGame.txt");
         if (f.exists()) {
@@ -186,7 +187,10 @@ public class Game implements Serializable {
                 Game oldgame = (Game) os.readObject();
                 os.close();
                 fs.close();
-                return oldgame;
+
+            } catch (FileNotFoundException e) {
+                System.out.println("file not found");
+                System.exit(0);
 
             } catch (IOException e) {
                 System.out.println("Unable to Load");
@@ -195,17 +199,10 @@ public class Game implements Serializable {
             } catch (ClassNotFoundException e) {
                 System.out.println("class not found");
                 System.exit(0);
-
             }
         }
-        return null;
-
+        return new Game();
     }
-
-
-
-
-
 
 
 
