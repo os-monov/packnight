@@ -30,8 +30,10 @@ public class Game implements Serializable {
     private TETile[][] finalWorldFrame;
     private boolean gameOver = false;
     private boolean gameStarted = false;
-    boolean readytoSave = false;
+    boolean readytoSave;
     private String SEED;
+    private int SCORE;
+    private int HEALTH;
 
 
     /**
@@ -40,6 +42,27 @@ public class Game implements Serializable {
 
 
     public void showStartScreen() {
+        gameOver = false;
+        gameStarted = false;
+        readytoSave = false;
+
+        StdDraw.setCanvasSize(WIDTH / 2 * 16, HEIGHT * 16);
+        Font large_font = new Font("Monaco", Font.BOLD, 40);
+        Font small_font = new Font("Monaco", Font.BOLD, 20);
+        StdDraw.setFont(large_font);
+        StdDraw.setXscale(0, WIDTH);
+        StdDraw.setYscale(0, HEIGHT);
+        StdDraw.clear(Color.BLACK);
+        StdDraw.enableDoubleBuffering();
+
+
+        StdDraw.setPenColor(Color.white);
+        StdDraw.text(WIDTH / 2, HEIGHT / 1.5, "CS61B: THE GAME");
+        StdDraw.setFont(small_font);
+        StdDraw.text(WIDTH / 2, (HEIGHT / 2), "New Game (N)");
+        StdDraw.text(WIDTH / 2, (HEIGHT / 2) - 2, "Load Game (L)");
+        StdDraw.text(WIDTH / 2, (HEIGHT / 2) - 4, "Quit Game (Q)");
+        StdDraw.show();
 
 
         SEED = "";
@@ -109,8 +132,11 @@ public class Game implements Serializable {
 
         while (!gameOver) {
 
+            SCORE = nm.SCORE;
+            HEALTH = nm.HEALTH;
+
             ter.renderFrame(finalWorldFrame);
-            drawMessage();
+            HeadsUpDisplay();
             StdDraw.clear(Color.black);
 
 
@@ -123,7 +149,6 @@ public class Game implements Serializable {
 
 
             if (key == 'D' || key == 'd') {
-                System.out.println("test");
                 nm.playerMove(key);
                 ter.renderFrame(finalWorldFrame);
 
@@ -157,13 +182,14 @@ public class Game implements Serializable {
     }
 
 
-    public void drawMessage() {
+    public void HeadsUpDisplay() {
         String message = tileMessage();
         Font small_font = new Font("Monaco", Font.BOLD, 15);
         StdDraw.setFont(small_font);
         StdDraw.setPenColor(Color.white);
-//        StdDraw.clear(Color.black);
         StdDraw.text(5, HEIGHT + 2, message);
+        StdDraw.text(5, HEIGHT + 1, String.valueOf(HEALTH));
+        StdDraw.text(5, HEIGHT , String.valueOf(SCORE));
         StdDraw.show();
 
 
@@ -198,6 +224,7 @@ public class Game implements Serializable {
         return (x > 0) && (x < WIDTH) && (y > 0) && (y < HEIGHT);
 
     }
+
     private static void saveWorld(Game g) {
         File f = new File("./SavedGame.txt");
 

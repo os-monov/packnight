@@ -24,7 +24,8 @@ public class MapGenerator implements Serializable {
     private static int Y_CURRENT = YSTART;
     private static int PLAYER_X;
     private static int PLAYER_Y;
-    private static int SCORE;
+    static int SCORE;
+    static int HEALTH;
 
 
 
@@ -51,7 +52,8 @@ public class MapGenerator implements Serializable {
         addRooms();
         addWalls();
         ft = cleanTheTiles(ft);
-        Move();
+        PlayerStart();
+        addFlowers(6);
         return TETILE_WORLD;
     }
 
@@ -73,7 +75,7 @@ public class MapGenerator implements Serializable {
     ////////////////////////////////////////////////////////////////////////////////////////////
 
 
-    private void Move() {
+    private void PlayerStart() {
         int start = RandomUtils.uniform(r, 0, ftai);
         PLAYER_X = ft[start][0];
         PLAYER_Y = ft[start][1];
@@ -82,11 +84,38 @@ public class MapGenerator implements Serializable {
 
     }
 
+
+    public int TileType(int x, int y) {
+        String type = TETILE_WORLD[PLAYER_X - 1][PLAYER_Y].description();
+
+        if (type.equals("floor")) {
+            return 1;
+        }
+
+        else if (type.equals("flower")){
+            return 2;
+        }
+
+        else return 0;
+    }
+
+
+    public void updateHUD (int x){
+        if (x == 1){
+            SCORE += 1;
+        }
+
+        else if (x == 2){
+            HEALTH += 1;
+        }
+
+    }
     public void playerMove(char direction) {
 
         if (direction == 'D' || direction == 'd') {
             if (isMoveValid(direction)) {
                 PLAYER_X++;
+                updateHUD(TileType(PLAYER_X - 1, PLAYER_Y));
                 TETILE_WORLD[PLAYER_X - 1][PLAYER_Y] = Tileset.NOTHING;
                 TETILE_WORLD[PLAYER_X][PLAYER_Y] = Tileset.PLAYER;
             }
@@ -96,6 +125,7 @@ public class MapGenerator implements Serializable {
         else if (direction == 'W' || direction == 'w') {
             if (isMoveValid(direction)) {
                 PLAYER_Y++;
+                updateHUD(TileType(PLAYER_X, PLAYER_Y - 1));
                 TETILE_WORLD[PLAYER_X][PLAYER_Y - 1] = Tileset.NOTHING;
                 TETILE_WORLD[PLAYER_X][PLAYER_Y] = Tileset.PLAYER;
 
@@ -105,6 +135,7 @@ public class MapGenerator implements Serializable {
         else if (direction == 'A' || direction == 'a') {
             if (isMoveValid(direction)) {
                 PLAYER_X--;
+                updateHUD(TileType(PLAYER_X + 1, PLAYER_Y));
                 TETILE_WORLD[PLAYER_X + 1][PLAYER_Y] = Tileset.NOTHING;
                 TETILE_WORLD[PLAYER_X][PLAYER_Y] = Tileset.PLAYER;
 
@@ -114,6 +145,7 @@ public class MapGenerator implements Serializable {
         else if (direction == 'S' || direction == 's'){
             if (isMoveValid(direction)) {
                 PLAYER_Y--;
+                updateHUD(TileType(PLAYER_X, PLAYER_Y - 1));
                 TETILE_WORLD[PLAYER_X][PLAYER_Y + 1] = Tileset.NOTHING;
                 TETILE_WORLD[PLAYER_X][PLAYER_Y] = Tileset.PLAYER;
 
@@ -273,6 +305,15 @@ public class MapGenerator implements Serializable {
             }
         }
 
+    }
+
+    private void addFlowers(int num) {
+        for (int i = 0; i < num; i++){
+            Integer flowerindex = RandomUtils.uniform(r, 0, ftai);
+            Integer flowerx = ft[flowerindex][0];
+            Integer flowery = ft[flowerindex][1];
+            TETILE_WORLD[flowerx][flowery] = Tileset.FLOWER;
+        }
     }
 
     private int[][] getSurroundings(Integer[] floorCoords) {
