@@ -98,8 +98,8 @@ public class MapGenerator implements Serializable {
     }
 
 
-    public int TileType(int x, int y) {
-        String type = TETILE_WORLD[PLAYER_X][PLAYER_Y].description();
+    public int TileType(int x, int y, TETile[][] world) {
+        String type = world[PLAYER_X][PLAYER_Y].description();
 
         if (type.equals("floor")) {
             return 1;
@@ -129,7 +129,7 @@ public class MapGenerator implements Serializable {
         if (direction == 'D' || direction == 'd') {
             if (isMoveValid(direction)) {
                 PLAYER_X++;
-                updateHUD(TileType(PLAYER_X - 1, PLAYER_Y));
+                updateHUD(TileType(PLAYER_X - 1, PLAYER_Y, world));
                 world[PLAYER_X - 1][PLAYER_Y] = Tileset.NOTHING;
                 world[PLAYER_X][PLAYER_Y] = Tileset.PLAYER;
             }
@@ -141,7 +141,7 @@ public class MapGenerator implements Serializable {
         else if (direction == 'W' || direction == 'w') {
             if (isMoveValid(direction)) {
                 PLAYER_Y++;
-                updateHUD(TileType(PLAYER_X, PLAYER_Y - 1));
+                updateHUD(TileType(PLAYER_X, PLAYER_Y - 1, world));
                 world[PLAYER_X][PLAYER_Y - 1] = Tileset.NOTHING;
                 world[PLAYER_X][PLAYER_Y] = Tileset.PLAYER;
 
@@ -154,7 +154,7 @@ public class MapGenerator implements Serializable {
         else if (direction == 'A' || direction == 'a') {
             if (isMoveValid(direction)) {
                 PLAYER_X--;
-                updateHUD(TileType(PLAYER_X + 1, PLAYER_Y));
+                updateHUD(TileType(PLAYER_X + 1, PLAYER_Y, world));
                 world[PLAYER_X + 1][PLAYER_Y] = Tileset.NOTHING;
                 world[PLAYER_X][PLAYER_Y] = Tileset.PLAYER;
 
@@ -167,7 +167,7 @@ public class MapGenerator implements Serializable {
         else if (direction == 'S' || direction == 's'){
             if (isMoveValid(direction)) {
                 PLAYER_Y--;
-                updateHUD(TileType(PLAYER_X, PLAYER_Y - 1));
+                updateHUD(TileType(PLAYER_X, PLAYER_Y - 1, world));
                 world[PLAYER_X][PLAYER_Y + 1] = Tileset.NOTHING;
                 world[PLAYER_X][PLAYER_Y] = Tileset.PLAYER;
 

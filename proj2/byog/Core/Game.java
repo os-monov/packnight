@@ -24,7 +24,6 @@ public class Game implements Serializable {
     /* Feel free to change the width and height. */
     public static final int WIDTH = 80;
     public static final int HEIGHT = 30;
-
     private MapGenerator nm;
     private TETile[][] finalWorldFrame;
     private boolean gameOver = false;
@@ -100,32 +99,14 @@ public class Game implements Serializable {
 
             } else if (key == 'L' || key == 'l') {
                 Game reloaded = loadWorld();
-//                ter.initialize(WIDTH, HEIGHT + 3);
-//                ter.renderFrame(reloaded.finalWorldFrame);
-//                reloaded.gameOver = false;
-//                reloaded.readytoSave = false;
-//                this.nm.PLAYER_X = reloaded.player_X;
-//                this.nm.PLAYER_Y = reloaded.player_Y;
-//                reloaded.playWithKeyboard();
-
-
-                this.nm = reloaded.nm;
-                this.ter = reloaded.ter;
-                this.finalWorldFrame = reloaded.finalWorldFrame;
-                this.gameOver = false;
-                this.gameStarted = true;
-                this.readytoSave = false;
-                this.SEED = reloaded.SEED;
-                System.out.println(SEED);
-
-
+                this.nm.SCORE = reloaded.SCORE;
+                this.nm.HEALTH = reloaded.HEALTH;
+                ter.initialize(WIDTH, HEIGHT + 3);
+                ter.renderFrame(reloaded.finalWorldFrame);
+                reloaded.gameOver = false;
+                reloaded.readytoSave = false;
                 this.nm.PLAYER_X = reloaded.player_X;
                 this.nm.PLAYER_Y = reloaded.player_Y;
-                ter.initialize(WIDTH, HEIGHT + 3);
-                if (finalWorldFrame[10][15] == null){
-                    System.out.println("NULL");
-                }
-                ter.renderFrame(finalWorldFrame);
                 this.playWithKeyboard();
 
 
@@ -344,49 +325,31 @@ public class Game implements Serializable {
         return finalWorldFrame;
     }
 
-    private String parseInput(String input) {
-        char[] inputarray = input.toCharArray();
-        String numberseed = "";
-        boolean readyforMoves = false;
-        boolean readytoSave = false;
-
-        for (int i = 0; i < inputarray.length; i++ ) {
-            if (inputarray[i] == 'N' || inputarray[i] == 'n') {
-
-            } else if (Character.isDigit(inputarray[i])) {
-                numberseed += inputarray[i];
-
-            }
-
-            else if (inputarray[i] == 'S' || inputarray[i] == 's'){
-                    readyforMoves = true;
-            }
-
-            else if (readyforMoves) {
-                moves += inputarray[i];
-            }
-
-
-
-//            else if ((inputarray[i] == 'L' || inputarray[i] == 'l')) {
-//                readyforMoves = false;
-//                //LOAD
+//    private String parseInput(String input) {
+//        char[] inputarray = input.toCharArray();
+//        String numberseed = "";
+//        boolean readyforMoves = false;
+//        boolean readytoSave = false;
 //
-//            } else if (inputarray[i] == ':') {
-//                readytoSave = true;
-//                readyforMoves = false;
+//        for (int i = 0; i < inputarray.length; i++ ) {
+//            if (inputarray[i] == 'N' || inputarray[i] == 'n') {
 //
-//            } else if (readytoSave) {
-//                if (inputarray[i] == 'Q' || inputarray[i] == 'q') {
-//                    //SAVE & QUIT
-//                }
+//            } else if (Character.isDigit(inputarray[i])) {
+//                numberseed += inputarray[i];
+//
 //            }
-
-
-
-        }
-        System.out.println(numberseed);
-//        System.out.println(moves);
-        return numberseed;
-    }
+//
+//            else if (inputarray[i] == 'S' || inputarray[i] == 's'){
+//                    readyforMoves = true;
+//            }
+//
+//            else if (readyforMoves) {
+//                moves += inputarray[i];
+//            }
+//
+//        }
+//        System.out.println(numberseed);
+////        System.out.println(moves);
+//        return numberseed;
+//    }
 }
