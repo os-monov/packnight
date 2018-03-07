@@ -33,8 +33,8 @@ public class Game implements Serializable {
     private String SEED;
     private int player_X;
     private int player_Y;
-//    private int SCORE;
-//////    private int HEALTH;
+    private int SCORE;
+    private int HEALTH;
 
 
     /**
@@ -142,8 +142,8 @@ public class Game implements Serializable {
 
         while (!gameOver) {
 
-//            SCORE = nm.SCORE;
-//            HEALTH = nm.HEALTH;
+            SCORE = nm.SCORE;
+            HEALTH = nm.HEALTH;
 
             ter.renderFrame(finalWorldFrame);
             HeadsUpDisplay();
@@ -209,13 +209,16 @@ public class Game implements Serializable {
         StdDraw.setFont(small_font);
         StdDraw.setPenColor(Color.white);
         StdDraw.text(5, HEIGHT + 2, message);
-//        StdDraw.text(5, HEIGHT + 1, String.valueOf(HEALTH));
-//        StdDraw.text(5, HEIGHT , String.valueOf(SCORE));
+        StdDraw.text(5, HEIGHT + 1, String.valueOf(HEALTH));
+        StdDraw.text(5, HEIGHT , String.valueOf(SCORE));
         StdDraw.show();
 
 
 
     }
+
+
+
 
     public String tileMessage() {
         int mousex = (int) StdDraw.mouseX(); //StdDraw.mouseX();
