@@ -15,7 +15,8 @@ public class MapGenerator implements Serializable {
     private static final int HEIGHT = 30;
     private static final int WIDTH = 80;
     static TETile[][] TETILE_WORLD = new TETile[WIDTH][HEIGHT];
-    private static long SEED;
+    private static long randomSEED;
+    private static String FULLSEED;
     private Random r;
     private int[][] ft = new int[8000][2];
     private int ftai = 0;
@@ -31,13 +32,14 @@ public class MapGenerator implements Serializable {
     protected static int PLAYER_Y;
     static int SCORE = 0;
     static int HEALTH = 1;
+    static String moves;
 
 
 
 
     public MapGenerator(String input) {
-        SEED = numericalseed(input);
-        r = new Random(SEED);
+        randomSEED = numericalseed(input);
+        r = new Random(randomSEED);
 
     }
 
@@ -76,6 +78,10 @@ public class MapGenerator implements Serializable {
         input = input.replace("s", "");
         return Long.parseLong(input);
     }
+
+//    public long numberSEED(String input){
+//        return Long.parseLong(input);
+//    }
 
     ////////////////////////////////////////////////////////////////////////////////////////////
     ///// INTERACTIVITY ///////
@@ -198,6 +204,7 @@ public class MapGenerator implements Serializable {
 
     private boolean isWallSpiked(char direction) {
         int[] test_coordinates = new int[]{PLAYER_X, PLAYER_Y};
+
         if (direction == 'D' || direction == 'd'){
             test_coordinates[0] += 1;
         }
@@ -246,15 +253,6 @@ public class MapGenerator implements Serializable {
             }
         }
 
-//        int [][] finalcopy = new int [copyindex][2];
-//        int findex = 0;
-//
-//        for (int j = 0; j < finalcopy.length; j++) {
-//            if (cleancopy[j][0] == null && cleancopy[j][1] == null) {
-//                finalcopy[findex] = cleancopy[j];
-//                findex++;
-//            }
-//        }
         ftai = copyindex;
         return cleancopy;
 
@@ -434,81 +432,6 @@ public class MapGenerator implements Serializable {
             }
         }
     }
-
-/*
-    public void addLight() {
-        Integer lightIndex = RandomUtils.uniform(r, 0, ftai);
-        Integer[] lightCoordinates = ft[lightIndex];
-        lightx = lightCoordinates[0];
-        lighty = lightCoordinates[1];
-        while (!isLightValid(lightx,lighty)) {
-            lightIndex = RandomUtils.uniform(r, 0, ftai);
-            lightCoordinates = ft[lightIndex];
-            lightx = lightCoordinates[0];
-            lighty = lightCoordinates[1];
-        }
-        TETILE_WORLD[lightx][lighty] = Tileset.LIGHT_OFF;
-        lightStatus = false;
-
-            int lightindex = RandomUtils.uniform(r, 0, ftai);
-            lightx = ft[lightindex][0];
-            lighty = ft[lightindex][1];
-            while(!isLightValid(lightx, lighty)) {
-                lightindex = RandomUtils.uniform(r, 0, ftai);
-                lightx = ft[lightindex][0];
-                lighty = ft[lightindex][1];
-            }
-            TETILE_WORLD[lightx][lighty] = Tileset.LIGHT_OFF;
-            lightStatus = false;
-
-    }
-
-    public boolean isLightValid(int xPos, int yPos) {
-        for (int i = 0; i < 6; i++) {
-            for (int j = 0; j < 6; j++) {
-                if(TETILE_WORLD[(xPos - 2 + i)][(yPos - 2 + j)] == Tileset.WALL) {
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
-
-    public void makeBright() {
-        lightStatus = true;
-        for(int i = 0; i < 6; i++) {
-            for (int j = 0; j < 6; j++) {
-                if (TETILE_WORLD[lightx - 2 + i][lighty - 2 + j] == Tileset.NOTHING) {
-                    TETILE_WORLD[lightx - 2 + i][lighty - 2 + j] = Tileset.LIT_NOTHING;
-                } else if (TETILE_WORLD[lightx - 2 + i][lighty - 2 + j] == Tileset.FLOOR) {
-                    TETILE_WORLD[lightx - 2 + i][lighty - 2 + j] = Tileset.LIT_FLOOR;
-                } else if (TETILE_WORLD[lightx - 2 + i][lighty - 2 + j] == Tileset.PLAYER) {
-                    TETILE_WORLD[lightx - 2 + i][lighty - 2 + j] = Tileset.LIT_PLAYER;
-                } else if (TETILE_WORLD[lightx - 2 + i][lighty - 2 + j] == Tileset.FLOWER) {
-                    TETILE_WORLD[lightx - 2 + i][lighty - 2 + j] = Tileset.LIT_FLOWER;
-                }
-            }
-        }
-    }
-
-    public void makeDim() {
-        lightStatus = false;
-        for(int i = 0; i < 6; i++) {
-            for (int j = 0; j < 6; j++) {
-                if (TETILE_WORLD[lightx - 2 + i][lighty - 2 + j] == Tileset.LIT_NOTHING) {
-                    TETILE_WORLD[lightx - 2 + i][lighty - 2 + j] = Tileset.NOTHING;
-                } else if (TETILE_WORLD[lightx - 2 + i][lighty - 2 + j] == Tileset.LIT_FLOOR) {
-                    TETILE_WORLD[lightx - 2 + i][lighty - 2 + j] = Tileset.FLOOR;
-                } else if (TETILE_WORLD[lightx - 2 + i][lighty - 2 + j] == Tileset.LIT_PLAYER) {
-                    TETILE_WORLD[lightx - 2 + i][lighty - 2 + j] = Tileset.PLAYER;
-                } else if(TETILE_WORLD[lightx - 2 + i][lighty - 2 + j] == Tileset.LIT_FLOWER) {
-                    TETILE_WORLD[lightx - 2 + i][lighty - 2 + j] = Tileset.FLOWER;
-                }
-            }
-        }
-    }
-
-*/
 
 
     ////////////////////////////////////////////////////////////////////////////////////////////

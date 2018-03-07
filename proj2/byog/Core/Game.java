@@ -24,7 +24,6 @@ public class Game implements Serializable {
     /* Feel free to change the width and height. */
     public static final int WIDTH = 80;
     public static final int HEIGHT = 30;
-
     private MapGenerator nm;
     private TETile[][] finalWorldFrame;
     private boolean gameOver = false;
@@ -37,8 +36,6 @@ public class Game implements Serializable {
     private int HEALTH;
     public String moves = "";
     public String numberseed = "";
-    char[] movesBeforeSave = new char[100];
-
 
 
     /**
@@ -355,10 +352,6 @@ public class Game implements Serializable {
             }
             i++;
         }
-
-
-        ter.initialize(WIDTH, HEIGHT + 3);
-        //ter.renderFrame(finalWorldFrame);
         return finalWorldFrame;
     }
 
@@ -399,4 +392,4 @@ public class Game implements Serializable {
         return numberseed;
     }
 }
-        //return numberseed;
+
