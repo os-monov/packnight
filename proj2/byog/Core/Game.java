@@ -325,31 +325,37 @@ public class Game implements Serializable {
         return finalWorldFrame;
     }
 
-//    private String parseInput(String input) {
-//        char[] inputarray = input.toCharArray();
-//        String numberseed = "";
-//        boolean readyforMoves = false;
-//        boolean readytoSave = false;
-//
-//        for (int i = 0; i < inputarray.length; i++ ) {
-//            if (inputarray[i] == 'N' || inputarray[i] == 'n') {
-//
-//            } else if (Character.isDigit(inputarray[i])) {
-//                numberseed += inputarray[i];
-//
-//            }
-//
-//            else if (inputarray[i] == 'S' || inputarray[i] == 's'){
-//                    readyforMoves = true;
-//            }
-//
-//            else if (readyforMoves) {
-//                moves += inputarray[i];
-//            }
-//
-//        }
-//        System.out.println(numberseed);
-////        System.out.println(moves);
-//        return numberseed;
-//    }
+    private String parseInput(String input) {
+        char[] inputarray = input.toCharArray();
+        String numberseed = "";
+        boolean readyforMoves = false;
+        boolean readytoSave = false;
+        int i = 0;
+
+
+        for (int i = 0; i < inputarray.length; i++ ) {
+
+
+            if (inputarray[i] == 'N' || inputarray[i] == 'n') {
+
+            } else if (Character.isDigit(inputarray[i])) {
+                numberseed += inputarray[i];
+
+            }
+
+            else
+
+            else if (inputarray[i] == 'S' || inputarray[i] == 's'){
+                    readyforMoves = true;
+            }
+
+            else if (readyforMoves) {
+                moves += inputarray[i];
+            }
+
+        }
+        System.out.println(numberseed);
+//        System.out.println(moves);
+        return numberseed;
+    }
 }
