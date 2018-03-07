@@ -19,6 +19,8 @@ public class MapGenerator implements Serializable {
     private Random r;
     private int[][] ft = new int[8000][2];
     private int ftai = 0;
+    private int[][] wt = new int[8000][2];
+    private int wtai = 0;
     private static final int XSTART = 38; //RandomUtils.uniform(r, 30, 50);
     private static final int YSTART = 15; // RandomUtils.uniform(r, 12, 18);
     protected static int X_CURRENT = XSTART;
@@ -56,6 +58,7 @@ public class MapGenerator implements Serializable {
         ft = cleanTheTiles(ft);
         PlayerStart();
 //        addFlowers(6);
+        spikedWalls(10);
         return TETILE_WORLD;
     }
 
@@ -387,8 +390,19 @@ public class MapGenerator implements Serializable {
                 int ycurr = theseSurroundings[j][1];
                 if (TETILE_WORLD[xcurr][ycurr].equals(Tileset.NOTHING)) {
                     TETILE_WORLD[xcurr][ycurr] = Tileset.WALL;
+                    wt[wtai] = new int[]{xcurr,ycurr};
+                    wtai += 1;
                 }
             }
+        }
+    }
+
+    private void spikedWalls(int num) {
+        for (int i = 0; i < num; i++){
+            int spikeindex = RandomUtils.uniform(r, 0, wtai);
+            int spikex = wt[spikeindex][0];
+            int spikey = wt[spikeindex][1];
+            TETILE_WORLD[spikex][spikey] = Tileset.SPIKED_WALL;
         }
     }
 

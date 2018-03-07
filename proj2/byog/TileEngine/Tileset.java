@@ -40,6 +40,8 @@ public class Tileset implements Serializable {
     public static final TETile LIT_NOTHING = new TETile(' ', Color.black, new Color(255, 255, 204), "nothing");
     public static final TETile LIT_PLAYER = new TETile('@', Color.white, new Color(255,255,204), "player");
     public static final TETile LIT_FLOWER = new TETile('❀', Color.magenta, new Color(255, 255, 204), "flower");
+    public static final TETile SPIKED_WALL = new TETile('#', new Color(255, 255, 51), Color.darkGray,
+            "wall");
 }
 
 
