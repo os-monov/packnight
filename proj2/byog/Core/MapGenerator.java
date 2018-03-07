@@ -1,14 +1,9 @@
-
 package byog.Core;
 
-import java.awt.*;
-import java.awt.event.MouseMotionListener;
 import java.io.Serializable;
 import java.util.Random;
-
 import byog.TileEngine.Tileset;
 import byog.TileEngine.TETile;
-import edu.princeton.cs.introcs.StdDraw;
 
 public class MapGenerator implements Serializable {
 
@@ -35,18 +30,15 @@ public class MapGenerator implements Serializable {
     static String moves;
 
 
-
-
     public MapGenerator(String input) {
         randomSEED = numericalseed(input);
         r = new Random(randomSEED);
 
     }
 
-
-    private boolean inArray(int[][] array, int[] item){
-        for (int j = 0; j < array.length; j++){
-            if (array[j][0] == (item[0]) && array[j][1] == (item[1])){
+    private boolean inArray(int[][] array, int[] item) {
+        for (int j = 0; j < array.length; j++) {
+            if (array[j][0] == (item[0]) && array[j][1] == (item[1])) {
                 return true;
             }
         }
@@ -60,7 +52,7 @@ public class MapGenerator implements Serializable {
         addRooms();
         addWalls();
         ft = cleanTheTiles(ft);
-        PlayerStart();
+        playerStart();
         spikedWalls(25);
         addFlowers(6);
         return TETILE_WORLD;
@@ -88,7 +80,7 @@ public class MapGenerator implements Serializable {
     ////////////////////////////////////////////////////////////////////////////////////////////
 
 
-    private void PlayerStart() {
+    private void playerStart() {
         int start = RandomUtils.uniform(r, 0, ftai);
         PLAYER_X = ft[start][0];
         PLAYER_Y = ft[start][1];
@@ -98,27 +90,23 @@ public class MapGenerator implements Serializable {
     }
 
 
-    public int TileType(int x, int y, TETile[][] world) {
+    public int tileType(int x, int y, TETile[][] world) {
         String type = world[PLAYER_X][PLAYER_Y].description();
 
         if (type.equals("floor")) {
             return 1;
-        }
-
-        else if (type.equals("flower")){
+        } else if (type.equals("flower")) {
             return 2;
+        } else {
+            return 0;
         }
-
-        else return 0;
     }
 
 
-    public void updateHUD (int x){
-        if (x == 1 && HEALTH > 0){
+    public void updateHUD(int x) {
+        if (x == 1 && HEALTH > 0) {
             SCORE += 1;
-        }
-
-        else if (x == 2){
+        } else if (x == 2) {
             HEALTH += 1;
         }
 
@@ -129,19 +117,17 @@ public class MapGenerator implements Serializable {
         if (direction == 'D' || direction == 'd') {
             if (isMoveValid(direction)) {
                 PLAYER_X++;
-                updateHUD(TileType(PLAYER_X - 1, PLAYER_Y, world));
+                updateHUD(tileType(PLAYER_X - 1, PLAYER_Y, world));
                 world[PLAYER_X - 1][PLAYER_Y] = Tileset.NOTHING;
                 world[PLAYER_X][PLAYER_Y] = Tileset.PLAYER;
             }
             if (isWallSpiked(direction)) {
                 HEALTH -= 1;
             }
-        }
-
-        else if (direction == 'W' || direction == 'w') {
+        } else if (direction == 'W' || direction == 'w') {
             if (isMoveValid(direction)) {
                 PLAYER_Y++;
-                updateHUD(TileType(PLAYER_X, PLAYER_Y - 1, world));
+                updateHUD(tileType(PLAYER_X, PLAYER_Y - 1, world));
                 world[PLAYER_X][PLAYER_Y - 1] = Tileset.NOTHING;
                 world[PLAYER_X][PLAYER_Y] = Tileset.PLAYER;
 
@@ -149,12 +135,10 @@ public class MapGenerator implements Serializable {
             if (isWallSpiked(direction)) {
                 HEALTH -= 1;
             }
-        }
-
-        else if (direction == 'A' || direction == 'a') {
+        } else if (direction == 'A' || direction == 'a') {
             if (isMoveValid(direction)) {
                 PLAYER_X--;
-                updateHUD(TileType(PLAYER_X + 1, PLAYER_Y, world));
+                updateHUD(tileType(PLAYER_X + 1, PLAYER_Y, world));
                 world[PLAYER_X + 1][PLAYER_Y] = Tileset.NOTHING;
                 world[PLAYER_X][PLAYER_Y] = Tileset.PLAYER;
 
@@ -162,12 +146,10 @@ public class MapGenerator implements Serializable {
             if (isWallSpiked(direction)) {
                 HEALTH -= 1;
             }
-        }
-
-        else if (direction == 'S' || direction == 's'){
+        } else if (direction == 'S' || direction == 's') {
             if (isMoveValid(direction)) {
                 PLAYER_Y--;
-                updateHUD(TileType(PLAYER_X, PLAYER_Y - 1, world));
+                updateHUD(tileType(PLAYER_X, PLAYER_Y - 1, world));
                 world[PLAYER_X][PLAYER_Y + 1] = Tileset.NOTHING;
                 world[PLAYER_X][PLAYER_Y] = Tileset.PLAYER;
 
@@ -181,46 +163,34 @@ public class MapGenerator implements Serializable {
 
 
     private boolean isMoveValid(char direction) {
-        int[] test_coordinates = new int[]{PLAYER_X, PLAYER_Y};
+        int[] testCoordinates = new int[]{PLAYER_X, PLAYER_Y};
 
-        if (direction == 'D' || direction == 'd'){
-            test_coordinates[0] += 1;
+        if (direction == 'D' || direction == 'd') {
+            testCoordinates[0] += 1;
+        } else if (direction == 'W' || direction == 'w') {
+            testCoordinates[1] += 1;
+        } else if (direction == 'A' || direction == 'a') {
+            testCoordinates[0] -= 1;
+        } else {
+            testCoordinates[1] -= 1;
         }
 
-        else if (direction == 'W' || direction == 'w'){
-            test_coordinates[1] += 1;
-        }
-
-        else if (direction == 'A' || direction == 'a'){
-            test_coordinates[0] -= 1;
-        }
-
-        else {
-            test_coordinates[1] -= 1;
-        }
-
-        return inArray(ft, test_coordinates);
+        return inArray(ft, testCoordinates);
     }
 
     private boolean isWallSpiked(char direction) {
-        int[] test_coordinates = new int[]{PLAYER_X, PLAYER_Y};
+        int[] testCoordinates = new int[]{PLAYER_X, PLAYER_Y};
 
-        if (direction == 'D' || direction == 'd'){
-            test_coordinates[0] += 1;
+        if (direction == 'D' || direction == 'd') {
+            testCoordinates[0] += 1;
+        } else if (direction == 'W' || direction == 'w') {
+            testCoordinates[1] += 1;
+        } else if (direction == 'A' || direction == 'a') {
+            testCoordinates[0] -= 1;
+        } else {
+            testCoordinates[1] -= 1;
         }
-
-        else if (direction == 'W' || direction == 'w'){
-            test_coordinates[1] += 1;
-        }
-
-        else if (direction == 'A' || direction == 'a'){
-            test_coordinates[0] -= 1;
-        }
-
-        else {
-            test_coordinates[1] -= 1;
-        }
-        return inArray(st, test_coordinates);
+        return inArray(st, testCoordinates);
     }
 
 
@@ -260,8 +230,7 @@ public class MapGenerator implements Serializable {
 
     private boolean isValid(int direction) {
         if (direction == 1) {
-//            return (X_CURRENT != 76 && X_CURRENT != 77 && X_CURRENT != 78);
-            return (X_CURRENT!= 76 && X_CURRENT != 77 && X_CURRENT != 78);
+            return (X_CURRENT != 76 && X_CURRENT != 77 && X_CURRENT != 78);
         } else if (direction == 2) {
             return (Y_CURRENT != 26 && Y_CURRENT != 27 && Y_CURRENT != 28);
         } else if (direction == 3) {
@@ -343,7 +312,7 @@ public class MapGenerator implements Serializable {
     }
 
     private void addFlowers(int num) {
-        for (int i = 0; i < num; i++){
+        for (int i = 0; i < num; i++) {
             int flowerindex = RandomUtils.uniform(r, 0, ftai);
             int flowerx = ft[flowerindex][0];
             int flowery = ft[flowerindex][1];
@@ -374,7 +343,7 @@ public class MapGenerator implements Serializable {
                 int ycurr = theseSurroundings[j][1];
                 if (TETILE_WORLD[xcurr][ycurr].equals(Tileset.NOTHING)) {
                     TETILE_WORLD[xcurr][ycurr] = Tileset.WALL;
-                    wt[wtai] = new int[]{xcurr,ycurr};
+                    wt[wtai] = new int[]{xcurr, ycurr};
                     wtai += 1;
                 }
             }
@@ -382,7 +351,7 @@ public class MapGenerator implements Serializable {
     }
 
     private void spikedWalls(int num) {
-        for (int i = 0; i < num; i++){
+        for (int i = 0; i < num; i++) {
             int spikeindex = RandomUtils.uniform(r, 0, wtai);
             int spikex = wt[spikeindex][0];
             int spikey = wt[spikeindex][1];
@@ -432,8 +401,4 @@ public class MapGenerator implements Serializable {
             }
         }
     }
-
-
-    ////////////////////////////////////////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////////////////////
 }

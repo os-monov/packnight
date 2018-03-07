@@ -1,14 +1,12 @@
-
 package byog.Core;
 
-import byog.SaveDemo.World;
 import byog.TileEngine.TERenderer;
 import byog.TileEngine.TETile;
 import byog.TileEngine.Tileset;
 import edu.princeton.cs.introcs.StdDraw;
-import java.awt.*;
+import java.awt.Font;
+import java.awt.Color;
 import java.io.Serializable;
-import java.util.Map;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -16,8 +14,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.util.Random;
-
 
 public class Game implements Serializable {
     TERenderer ter = new TERenderer();
@@ -28,14 +24,14 @@ public class Game implements Serializable {
     private TETile[][] finalWorldFrame;
     private boolean gameOver = false;
     private boolean gameStarted = false;
-    boolean readytoSave;
+    boolean readytoSave = false;
     private String SEED;
     private int player_X;
     private int player_Y;
     private int SCORE;
     private int HEALTH;
-    public String moves = "";
-    public String numberseed = "";
+    private String moves = "";
+    private String numberseed = "";
 
 
     /**
@@ -50,9 +46,9 @@ public class Game implements Serializable {
 
 
         StdDraw.setCanvasSize(WIDTH / 2 * 16, HEIGHT * 16);
-        Font large_font = new Font("Monaco", Font.BOLD, 40);
-        Font small_font = new Font("Monaco", Font.BOLD, 20);
-        StdDraw.setFont(large_font);
+        Font largeFont = new Font("Monaco", Font.BOLD, 40);
+        Font smallFont = new Font("Monaco", Font.BOLD, 20);
+        StdDraw.setFont(largeFont);
         StdDraw.setXscale(0, WIDTH);
         StdDraw.setYscale(0, HEIGHT);
         StdDraw.clear(Color.BLACK);
@@ -61,7 +57,7 @@ public class Game implements Serializable {
 
         StdDraw.setPenColor(Color.white);
         StdDraw.text(WIDTH / 2, HEIGHT / 1.5, "CS61B: THE GAME");
-        StdDraw.setFont(small_font);
+        StdDraw.setFont(smallFont);
         StdDraw.text(WIDTH / 2, (HEIGHT / 2), "New Game (N)");
         StdDraw.text(WIDTH / 2, (HEIGHT / 2) - 2, "Load Game (L)");
         StdDraw.text(WIDTH / 2, (HEIGHT / 2) - 4, "Quit Game (Q)");
@@ -127,7 +123,7 @@ public class Game implements Serializable {
             HEALTH = nm.HEALTH;
 
             ter.renderFrame(finalWorldFrame);
-            HeadsUpDisplay();
+            headsUpDisplay();
             StdDraw.clear(Color.black);
 
 
@@ -175,10 +171,10 @@ public class Game implements Serializable {
     }
 
 
-    public void HeadsUpDisplay() {
+    public void headsUpDisplay() {
         String message = tileMessage();
-        Font small_font = new Font("Monaco", Font.BOLD, 15);
-        StdDraw.setFont(small_font);
+        Font smallFont = new Font("Monaco", Font.BOLD, 15);
+        StdDraw.setFont(smallFont);
         StdDraw.setPenColor(Color.white);
         StdDraw.text(5, HEIGHT + 2, message);
         if (HEALTH <= 0) {
@@ -302,17 +298,14 @@ public class Game implements Serializable {
         // drawn if the same inputs had been given to playWithKeyboard().
         String separatedSeed = parseInput(input);
         char[] arrayedmoves = moves.toCharArray();
-        System.out.println(arrayedmoves[0]);
-
 
         int i = 0;
 
-        if (arrayedmoves[0] == 'L' || arrayedmoves[0] == 'l' ){
+        if (arrayedmoves[0] == 'L' || arrayedmoves[0] == 'l') {
             i++;
             char[] newarray = new char[arrayedmoves.length - 1];
             System.arraycopy(arrayedmoves, 1, newarray, 0, arrayedmoves.length - 1);
             String inputnew = new String(newarray);
-            System.out.println(newarray[0] + "TEST");
 
 
             Game reloaded = loadWorld();
@@ -326,36 +319,24 @@ public class Game implements Serializable {
 //            reloaded.readytoSave = false;
 //            this.nm.PLAYER_X = reloaded.nm.PLAYER_X;
 //            this.nm.PLAYER_Y = reloaded.nm.PLAYER_Y;
-            System.out.println(nm.PLAYER_X);
-            System.out.println(reloaded.nm.PLAYER_X);
             reloaded.playWithInputString(inputnew);
 
-        } else if (arrayedmoves[i] == 's' || arrayedmoves[i] == 'S'){
+        } else if (arrayedmoves[i] == 's' || arrayedmoves[i] == 'S') {
             i++;
             nm = new MapGenerator(separatedSeed);
             finalWorldFrame = nm.generate();
         }
 
-
-        boolean readytoSave = false;
-
         while (i < arrayedmoves.length) {
             if (arrayedmoves[i] == ':') {
                 readytoSave = true;
-            }
-
-            else if (readytoSave){
-                if (arrayedmoves[i] == 'Q' || arrayedmoves[i] == 'q' ){
+            } else if (readytoSave) {
+                if (arrayedmoves[i] == 'Q' || arrayedmoves[i] == 'q') {
                     this.player_X = nm.PLAYER_X;
                     this.player_Y = nm.PLAYER_Y;
                     saveWorld(this);
                 }
-            }
-
-            else {
-                if (nm == null) {
-                    System.out.print("testtttt");
-                }
+            } else {
                 nm.playerMove(arrayedmoves[i], finalWorldFrame);
             }
             i++;
@@ -368,7 +349,8 @@ public class Game implements Serializable {
     private String parseInput(String input) {
         char[] inputarray = input.toCharArray();
         boolean readyForMoves = false;
-        if (inputarray[0] != 'n' && inputarray[0] != 'N' && inputarray[0] != 'l' && inputarray[0] != 'L') {
+        char first = inputarray[0];
+        if (first != 'n' && first != 'N' && first != 'l' && first != 'L') {
             readyForMoves = true;
         }
         int i = 0;
@@ -384,15 +366,13 @@ public class Game implements Serializable {
                     numberseed += inputarray[i];
                 } else if (inputarray[i] == 'S' || inputarray[i] == 's') {
                     moves += inputarray[i];
-                    readyForMoves = true; }
-                } else {
-                    moves += inputarray[i];
+                    readyForMoves = true;
                 }
-
-                i++;
+            } else {
+                moves += inputarray[i];
             }
-
+            i++;
+        }
         return numberseed;
     }
 }
-
