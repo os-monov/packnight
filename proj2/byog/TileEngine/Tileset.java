@@ -18,15 +18,15 @@ import java.io.Serializable;
  */
 
 public class Tileset implements Serializable {
-    public static final TETile PLAYER = new TETile('@', Color.white, Color.black, "player");
-    public static final TETile WALL = new TETile('#', new Color(216, 128, 128), Color.darkGray,
+    public static final TETile PLAYER = new TETile('♞', Color.white, Color.black, "player");
+    public static final TETile WALL = new TETile('߷', new Color(216, 128, 128), Color.darkGray,
             "wall");
     public static final TETile FLOOR = new TETile('·', new Color(128, 192, 128), Color.black,
             "floor");
     public static final TETile NOTHING = new TETile(' ', Color.black, Color.black, "nothing");
     public static final TETile GRASS = new TETile('"', Color.green, Color.black, "grass");
     public static final TETile WATER = new TETile('≈', Color.blue, Color.black, "water");
-    public static final TETile FLOWER = new TETile('❀', Color.magenta, Color.black, "flower");
+    public static final TETile FLOWER = new TETile('❤', Color.pink, Color.black, "flower");
     public static final TETile LOCKED_DOOR = new TETile('█', Color.orange, Color.black,
             "locked door");
     public static final TETile UNLOCKED_DOOR = new TETile('▢', Color.orange, Color.black,
@@ -38,10 +38,10 @@ public class Tileset implements Serializable {
     public static final TETile LIGHT_OFF = new TETile('▢', Color.gray, Color.black, "light bulb (off) - press (t) to turn on");
     public static final TETile LIT_FLOOR = new TETile('·', new Color(128, 192, 128), Color.black, "floor");
     public static final TETile LIT_NOTHING = new TETile(' ', Color.black, new Color(255, 255, 204), "nothing");
-    public static final TETile LIT_PLAYER = new TETile('@', Color.white, new Color(255,255,204), "player");
+    public static final TETile LIT_PLAYER = new TETile('♞', Color.white, new Color(255,255,204), "player");
     public static final TETile LIT_FLOWER = new TETile('❀', Color.magenta, new Color(255, 255, 204), "flower");
-    public static final TETile SPIKED_WALL = new TETile('#', new Color(255, 255, 51), Color.darkGray,
-            "wall");
+    public static final TETile SPIKED_WALL = new TETile('☭', new Color(255, 255, 51), Color.darkGray,
+            "spiked wall");
 }
 
 

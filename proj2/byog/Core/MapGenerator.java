@@ -21,14 +21,16 @@ public class MapGenerator implements Serializable {
     private int ftai = 0;
     private int[][] wt = new int[8000][2];
     private int wtai = 0;
+    private int[][] st = new int[100][2];
+    private int stai = 0;
     private static final int XSTART = 38; //RandomUtils.uniform(r, 30, 50);
     private static final int YSTART = 15; // RandomUtils.uniform(r, 12, 18);
     protected static int X_CURRENT = XSTART;
     private static int Y_CURRENT = YSTART;
     protected static int PLAYER_X;
     protected static int PLAYER_Y;
-//    static int SCORE;
-//    static int HEALTH;
+    static int SCORE = 0;
+    static int HEALTH = 1;
 
 
 
@@ -57,8 +59,8 @@ public class MapGenerator implements Serializable {
         addWalls();
         ft = cleanTheTiles(ft);
         PlayerStart();
-//        addFlowers(6);
-        spikedWalls(10);
+        spikedWalls(25);
+        addFlowers(6);
         return TETILE_WORLD;
     }
 
@@ -90,31 +92,32 @@ public class MapGenerator implements Serializable {
     }
 
 
-//    public int TileType(int x, int y) {
-//        String type = TETILE_WORLD[PLAYER_X - 1][PLAYER_Y].description();
-//
-//        if (type.equals("floor")) {
-//            return 1;
-//        }
-//
-//        else if (type.equals("flower")){
-//            return 2;
-//        }
-//
-//        else return 0;
-//    }
+    public int TileType(int x, int y) {
+        String type = TETILE_WORLD[PLAYER_X][PLAYER_Y].description();
 
-//
-//    public void updateHUD (int x){
-//        if (x == 1){
-//            SCORE += 1;
-//        }
-//
-//        else if (x == 2){
-//            HEALTH += 1;
-//        }
-//
-//    }
+        if (type.equals("floor")) {
+            return 1;
+        }
+
+        else if (type.equals("flower")){
+            return 2;
+        }
+
+        else return 0;
+    }
+
+
+    public void updateHUD (int x){
+        if (x == 1 && HEALTH > 0){
+            SCORE += 1;
+        }
+
+        else if (x == 2){
+            HEALTH += 1;
+        }
+
+    }
+
     public void playerMove(char direction, TETile[][] world) {
 
         if (direction == 'D' || direction == 'd') {
@@ -122,84 +125,55 @@ public class MapGenerator implements Serializable {
             if (isMoveValid(direction)) {
                 System.out.println("move is valid");
                 PLAYER_X++;
-//                updateHUD(TileType(PLAYER_X - 1, PLAYER_Y));
+                updateHUD(TileType(PLAYER_X - 1, PLAYER_Y));
                 world[PLAYER_X - 1][PLAYER_Y] = Tileset.NOTHING;
                 world[PLAYER_X][PLAYER_Y] = Tileset.PLAYER;
+            }
+            if (isWallSpiked(direction)) {
+                HEALTH -= 1;
             }
         }
 
         else if (direction == 'W' || direction == 'w') {
             if (isMoveValid(direction)) {
                 PLAYER_Y++;
-//                updateHUD(TileType(PLAYER_X, PLAYER_Y - 1));
+                updateHUD(TileType(PLAYER_X, PLAYER_Y - 1));
                 world[PLAYER_X][PLAYER_Y - 1] = Tileset.NOTHING;
                 world[PLAYER_X][PLAYER_Y] = Tileset.PLAYER;
 
+            }
+            if (isWallSpiked(direction)) {
+                HEALTH -= 1;
             }
         }
 
         else if (direction == 'A' || direction == 'a') {
             if (isMoveValid(direction)) {
                 PLAYER_X--;
-//                updateHUD(TileType(PLAYER_X + 1, PLAYER_Y));
+                updateHUD(TileType(PLAYER_X + 1, PLAYER_Y));
                 world[PLAYER_X + 1][PLAYER_Y] = Tileset.NOTHING;
                 world[PLAYER_X][PLAYER_Y] = Tileset.PLAYER;
 
+            }
+            if (isWallSpiked(direction)) {
+                HEALTH -= 1;
             }
         }
 
         else if (direction == 'S' || direction == 's'){
             if (isMoveValid(direction)) {
                 PLAYER_Y--;
-//                updateHUD(TileType(PLAYER_X, PLAYER_Y - 1));
+                updateHUD(TileType(PLAYER_X, PLAYER_Y - 1));
                 world[PLAYER_X][PLAYER_Y + 1] = Tileset.NOTHING;
                 world[PLAYER_X][PLAYER_Y] = Tileset.PLAYER;
 
             }
-//        if (direction == 'D' || direction == 'd') {
-//            System.out.println("testing if move is valid");
-//            if (isMoveValid(direction)) {
-//                System.out.println("move is valid");
-//                PLAYER_X++;
-////                updateHUD(TileType(PLAYER_X - 1, PLAYER_Y));
-//                TETILE_WORLD[PLAYER_X - 1][PLAYER_Y] = Tileset.NOTHING;
-//                TETILE_WORLD[PLAYER_X][PLAYER_Y] = Tileset.PLAYER;
-//            }
-//        }
-//
-//        else if (direction == 'W' || direction == 'w') {
-//            if (isMoveValid(direction)) {
-//                PLAYER_Y++;
-////                updateHUD(TileType(PLAYER_X, PLAYER_Y - 1));
-//                TETILE_WORLD[PLAYER_X][PLAYER_Y - 1] = Tileset.NOTHING;
-//                TETILE_WORLD[PLAYER_X][PLAYER_Y] = Tileset.PLAYER;
-//
-//            }
-//        }
-//
-//        else if (direction == 'A' || direction == 'a') {
-//            if (isMoveValid(direction)) {
-//                PLAYER_X--;
-////                updateHUD(TileType(PLAYER_X + 1, PLAYER_Y));
-//                TETILE_WORLD[PLAYER_X + 1][PLAYER_Y] = Tileset.NOTHING;
-//                TETILE_WORLD[PLAYER_X][PLAYER_Y] = Tileset.PLAYER;
-//
-//            }
-//        }
-//
-//        else if (direction == 'S' || direction == 's'){
-//            if (isMoveValid(direction)) {
-//                PLAYER_Y--;
-////                updateHUD(TileType(PLAYER_X, PLAYER_Y - 1));
-//                TETILE_WORLD[PLAYER_X][PLAYER_Y + 1] = Tileset.NOTHING;
-//                TETILE_WORLD[PLAYER_X][PLAYER_Y] = Tileset.PLAYER;
-//
-//            }
+            if (isWallSpiked(direction)) {
+                HEALTH -= 1;
+            }
+
         }
     }
-
-
-
 
 
     private boolean isMoveValid(char direction) {
@@ -227,6 +201,32 @@ public class MapGenerator implements Serializable {
         }
 
         return inArray(ft, test_coordinates);
+    }
+
+    private boolean isWallSpiked(char direction) {
+        int[] test_coordinates = new int[]{PLAYER_X, PLAYER_Y};
+        System.out.println(PLAYER_X);
+        System.out.println(PLAYER_Y);
+
+        System.out.println("in Danger Test");
+        if (direction == 'D' || direction == 'd'){
+
+            test_coordinates[0] += 1;
+            System.out.println("test coordinates updated");
+        }
+
+        else if (direction == 'W' || direction == 'w'){
+            test_coordinates[1] += 1;
+        }
+
+        else if (direction == 'A' || direction == 'a'){
+            test_coordinates[0] -= 1;
+        }
+
+        else {
+            test_coordinates[1] -= 1;
+        }
+        return inArray(st, test_coordinates);
     }
 
 
@@ -351,7 +351,6 @@ public class MapGenerator implements Serializable {
 
                 } else {
                     moveDown();
-
                 }
             }
         }
@@ -403,6 +402,8 @@ public class MapGenerator implements Serializable {
             int spikex = wt[spikeindex][0];
             int spikey = wt[spikeindex][1];
             TETILE_WORLD[spikex][spikey] = Tileset.SPIKED_WALL;
+            st[stai] = new int[]{spikex, spikey};
+            stai += 1;
         }
     }
 
@@ -410,7 +411,6 @@ public class MapGenerator implements Serializable {
         int numRooms = RandomUtils.uniform(r, 24, 30);
         for (int i = 0; i < numRooms; i++) {
             addRoom();
-
         }
     }
 
