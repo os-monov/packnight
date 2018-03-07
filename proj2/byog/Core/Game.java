@@ -99,6 +99,8 @@ public class Game implements Serializable {
 
             } else if (key == 'L' || key == 'l') {
                 Game reloaded = loadWorld();
+                this.nm.SCORE = reloaded.SCORE;
+                this.nm.HEALTH = reloaded.HEALTH;
                 ter.initialize(WIDTH, HEIGHT + 3);
                 ter.renderFrame(reloaded.finalWorldFrame);
                 reloaded.gameOver = false;
