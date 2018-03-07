@@ -326,6 +326,7 @@ public class Game implements Serializable {
         // drawn if the same inputs had been given to playWithKeyboard().
 
         MapGenerator nm = new MapGenerator(input);
+
         TETile[][] finalWorldFrame = nm.generate();
         ter.initialize(WIDTH, HEIGHT + 3);
         ter.renderFrame(finalWorldFrame);

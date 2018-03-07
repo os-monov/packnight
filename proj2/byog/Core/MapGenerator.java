@@ -15,7 +15,8 @@ public class MapGenerator implements Serializable {
     private static final int HEIGHT = 30;
     private static final int WIDTH = 80;
     static TETile[][] TETILE_WORLD = new TETile[WIDTH][HEIGHT];
-    private static long SEED;
+    private static long randomSEED;
+    private static String FULLSEED;
     private Random r;
     private int[][] ft = new int[8000][2];
     private int ftai = 0;
@@ -27,13 +28,14 @@ public class MapGenerator implements Serializable {
     protected static int PLAYER_Y;
     static int SCORE = 0;
     static int HEALTH = 1;
+    static String moves;
 
 
 
 
     public MapGenerator(String input) {
-        SEED = numericalseed(input);
-        r = new Random(SEED);
+        randomSEED = filterSEED(input);
+        r = new Random(randomSEED);
 
     }
 
@@ -64,12 +66,36 @@ public class MapGenerator implements Serializable {
         return world;
     }
 
-    private long numericalseed(String input) {
-        input = input.replace("N", "");
-        input = input.replace("n", "");
-        input = input.replace("S", "");
-        input = input.replace("s", "");
-        return Long.parseLong(input);
+    private long filterSEED(String input) {
+        char[] inputarray = input.toCharArray();
+        String numberseed = "";
+
+        boolean readytoSave = false;
+
+        for (int i = 0; i < inputarray.length; i++ ) {
+            if (inputarray[i] == 'N' || inputarray[i] == 'n') {
+
+            } else if (Character.isDigit(inputarray[i])) {
+                numberseed += inputarray[i];
+
+            }
+
+
+
+            } else if ((inputarray[i] == 'L' || inputarray[i] == 'l')) {
+
+                //LOAD
+
+            } else if (inputarray[i] == ':') {
+                readytoSave = true;
+
+            } else if (readytoSave) {
+                if (inputarray[i] == 'Q' || inputarray[i] == 'q') {
+                    //SAVE & QUIT
+                }
+            }
+        }
+        return Long.parseLong(numberseed);
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////
@@ -116,9 +142,7 @@ public class MapGenerator implements Serializable {
     public void playerMove(char direction, TETile[][] world) {
 
         if (direction == 'D' || direction == 'd') {
-            System.out.println("testing if move is valid");
             if (isMoveValid(direction)) {
-                System.out.println("move is valid");
                 PLAYER_X++;
                 updateHUD(TileType(PLAYER_X - 1, PLAYER_Y));
                 world[PLAYER_X - 1][PLAYER_Y] = Tileset.NOTHING;
