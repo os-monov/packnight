@@ -16,8 +16,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-
-
+import java.util.Random;
 
 
 public class Game implements Serializable {
@@ -32,8 +31,10 @@ public class Game implements Serializable {
     private boolean gameStarted = false;
     boolean readytoSave;
     private String SEED;
-    private int SCORE;
-    private int HEALTH;
+    private int player_X;
+    private int player_Y;
+//    private int SCORE;
+//////    private int HEALTH;
 
 
     /**
@@ -98,26 +99,34 @@ public class Game implements Serializable {
 
             } else if (key == 'L' || key == 'l') {
                 Game reloaded = loadWorld();
-                this.nm = reloaded.nm;
-                this.finalWorldFrame = reloaded.finalWorldFrame;
-                this.gameOver = false;
-                this.gameStarted = true;
-                this.readytoSave = false;
-                this.SEED = reloaded.SEED;
                 ter.initialize(WIDTH, HEIGHT + 3);
                 ter.renderFrame(reloaded.finalWorldFrame);
+                reloaded.gameOver = false;
+                reloaded.readytoSave = false;
+                this.nm.PLAYER_X = reloaded.player_X;
+                this.nm.PLAYER_Y = reloaded.player_Y;
+                reloaded.playWithKeyboard();
 
-//                this.nm.ft = reloaded.nm.ft;
-                this.playWithKeyboard();
-
 //
-//
-//
+//                this.nm = reloaded.nm;
 //                this.ter = reloaded.ter;
-
-
+//                this.finalWorldFrame = reloaded.finalWorldFrame;
+//                this.gameOver = false;
+//                this.gameStarted = true;
+//                this.readytoSave = false;
+//                this.SEED = reloaded.SEED;
+//                System.out.println(SEED);
+//
+//
+//                this.nm.PLAYER_X = reloaded.player_X;
+//                this.nm.PLAYER_Y = reloaded.player_Y;
+//                ter.initialize(WIDTH, HEIGHT + 3);
+//                if (finalWorldFrame[10][15] == null){
+//                    System.out.println("NULL");
+//                }
+//                ter.renderFrame(finalWorldFrame);
 //                this.playWithKeyboard();
-
+//
 
 
             }
@@ -133,8 +142,8 @@ public class Game implements Serializable {
 
         while (!gameOver) {
 
-            SCORE = nm.SCORE;
-            HEALTH = nm.HEALTH;
+//            SCORE = nm.SCORE;
+//            HEALTH = nm.HEALTH;
 
             ter.renderFrame(finalWorldFrame);
             HeadsUpDisplay();
@@ -150,22 +159,22 @@ public class Game implements Serializable {
 
 
             if (key == 'D' || key == 'd') {
-                nm.playerMove(key);
+                nm.playerMove(key, finalWorldFrame);
                 ter.renderFrame(finalWorldFrame);
 
             } else if (key == 'W' || key == 'w') {
-                nm.playerMove(key);
+                nm.playerMove(key, finalWorldFrame);
                 ter.renderFrame(finalWorldFrame);
 
 
             } else if (key == 'A' || key == 'a') {
-                nm.playerMove(key);
+                nm.playerMove(key, finalWorldFrame);
                 ter.renderFrame(finalWorldFrame);
 
 
 
             } else if (key == 's' || key == 'S') {
-                nm.playerMove(key);
+                nm.playerMove(key, finalWorldFrame);
                 ter.renderFrame(finalWorldFrame);
 
 
@@ -174,17 +183,22 @@ public class Game implements Serializable {
 
             } else if (readytoSave) {
                 if (key == 'q' || key == 'Q') {
-                    gameOver = false;
+                    gameOver = true;
+                    player_X = nm.PLAYER_X;
+                    player_Y = nm.PLAYER_Y;
+                    finalWorldFrame = nm.TETILE_WORLD;
+
+                    System.out.println(SEED);
                     saveWorld(this);
                     System.exit(0);
                 }
-            } else if (key == 'T' || key == 't') {
+            } /*else if (key == 'T' || key == 't') {
                 if(nm.lightStatus) {
                     nm.makeDim();
                 } else {
                     nm.makeBright();
                 }
-            }
+            } */
         }
     }
 
@@ -195,8 +209,8 @@ public class Game implements Serializable {
         StdDraw.setFont(small_font);
         StdDraw.setPenColor(Color.white);
         StdDraw.text(5, HEIGHT + 2, message);
-        StdDraw.text(5, HEIGHT + 1, String.valueOf(HEALTH));
-        StdDraw.text(5, HEIGHT , String.valueOf(SCORE));
+//        StdDraw.text(5, HEIGHT + 1, String.valueOf(HEALTH));
+//        StdDraw.text(5, HEIGHT , String.valueOf(SCORE));
         StdDraw.show();
 
 
@@ -239,11 +253,13 @@ public class Game implements Serializable {
             if (!f.exists()) {
                 f.createNewFile();
             }
+
             FileOutputStream fs = new FileOutputStream(f);
             ObjectOutputStream os = new ObjectOutputStream(fs);
             os.writeObject(g);
             os.close();
             fs.close();
+
 
         } catch (FileNotFoundException e) {
             System.out.println("file not found");
