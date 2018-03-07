@@ -26,7 +26,7 @@ public class Tileset implements Serializable {
     public static final TETile NOTHING = new TETile(' ', Color.black, Color.black, "nothing");
     public static final TETile GRASS = new TETile('"', Color.green, Color.black, "grass");
     public static final TETile WATER = new TETile('≈', Color.blue, Color.black, "water");
-    public static final TETile FLOWER = new TETile('❀', Color.magenta, Color.pink, "flower");
+    public static final TETile FLOWER = new TETile('❀', Color.magenta, Color.black, "flower");
     public static final TETile LOCKED_DOOR = new TETile('█', Color.orange, Color.black,
             "locked door");
     public static final TETile UNLOCKED_DOOR = new TETile('▢', Color.orange, Color.black,
@@ -34,6 +34,12 @@ public class Tileset implements Serializable {
     public static final TETile SAND = new TETile('▒', Color.yellow, Color.black, "sand");
     public static final TETile MOUNTAIN = new TETile('▲', Color.gray, Color.black, "mountain");
     public static final TETile TREE = new TETile('♠', Color.green, Color.black, "tree");
+    public static final TETile LIGHT_ON = new TETile('▢', Color.white, new Color(255, 255, 204), "light bulb (on) - press (t) to turn off");
+    public static final TETile LIGHT_OFF = new TETile('▢', Color.gray, Color.black, "light bulb (off) - press (t) to turn on");
+    public static final TETile LIT_FLOOR = new TETile('·', new Color(128, 192, 128), Color.black, "floor");
+    public static final TETile LIT_NOTHING = new TETile(' ', Color.black, new Color(255, 255, 204), "nothing");
+    public static final TETile LIT_PLAYER = new TETile('@', Color.white, new Color(255,255,204), "player");
+    public static final TETile LIT_FLOWER = new TETile('❀', Color.magenta, new Color(255, 255, 204), "flower");
 }
 
 

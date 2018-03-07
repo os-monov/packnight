@@ -17,7 +17,6 @@ public class MapGenerator implements Serializable {
     private static long SEED;
     private Random r;
     private Integer[][] ft = new Integer[8000][2];
-    private Integer[][] ct = new Integer[2400][2];
     private int ftai = 0;
     private static final int XSTART = 38; //RandomUtils.uniform(r, 30, 50);
     private static final int YSTART = 15; // RandomUtils.uniform(r, 12, 18);
@@ -25,7 +24,9 @@ public class MapGenerator implements Serializable {
     private static int Y_CURRENT = YSTART;
     private static int PLAYER_X;
     private static int PLAYER_Y;
-    private static int SCORE;
+    static int SCORE;
+    static int HEALTH;
+
 
 
 
@@ -52,7 +53,8 @@ public class MapGenerator implements Serializable {
         addRooms();
         addWalls();
         ft = cleanTheTiles(ft);
-        Move();
+        PlayerStart();
+        addFlowers(6);
         return TETILE_WORLD;
     }
 
@@ -74,7 +76,7 @@ public class MapGenerator implements Serializable {
     ////////////////////////////////////////////////////////////////////////////////////////////
 
 
-    private void Move() {
+    private void PlayerStart() {
         int start = RandomUtils.uniform(r, 0, ftai);
         PLAYER_X = ft[start][0];
         PLAYER_Y = ft[start][1];
@@ -83,11 +85,38 @@ public class MapGenerator implements Serializable {
 
     }
 
+
+    public int TileType(int x, int y) {
+        String type = TETILE_WORLD[PLAYER_X - 1][PLAYER_Y].description();
+
+        if (type.equals("floor")) {
+            return 1;
+        }
+
+        else if (type.equals("flower")){
+            return 2;
+        }
+
+        else return 0;
+    }
+
+
+    public void updateHUD (int x){
+        if (x == 1){
+            SCORE += 1;
+        }
+
+        else if (x == 2){
+            HEALTH += 1;
+        }
+
+    }
     public void playerMove(char direction) {
 
         if (direction == 'D' || direction == 'd') {
             if (isMoveValid(direction)) {
                 PLAYER_X++;
+                updateHUD(TileType(PLAYER_X - 1, PLAYER_Y));
                 TETILE_WORLD[PLAYER_X - 1][PLAYER_Y] = Tileset.NOTHING;
                 TETILE_WORLD[PLAYER_X][PLAYER_Y] = Tileset.PLAYER;
             }
@@ -97,6 +126,7 @@ public class MapGenerator implements Serializable {
         else if (direction == 'W' || direction == 'w') {
             if (isMoveValid(direction)) {
                 PLAYER_Y++;
+                updateHUD(TileType(PLAYER_X, PLAYER_Y - 1));
                 TETILE_WORLD[PLAYER_X][PLAYER_Y - 1] = Tileset.NOTHING;
                 TETILE_WORLD[PLAYER_X][PLAYER_Y] = Tileset.PLAYER;
 
@@ -106,6 +136,7 @@ public class MapGenerator implements Serializable {
         else if (direction == 'A' || direction == 'a') {
             if (isMoveValid(direction)) {
                 PLAYER_X--;
+                updateHUD(TileType(PLAYER_X + 1, PLAYER_Y));
                 TETILE_WORLD[PLAYER_X + 1][PLAYER_Y] = Tileset.NOTHING;
                 TETILE_WORLD[PLAYER_X][PLAYER_Y] = Tileset.PLAYER;
 
@@ -115,6 +146,7 @@ public class MapGenerator implements Serializable {
         else if (direction == 'S' || direction == 's'){
             if (isMoveValid(direction)) {
                 PLAYER_Y--;
+                updateHUD(TileType(PLAYER_X, PLAYER_Y - 1));
                 TETILE_WORLD[PLAYER_X][PLAYER_Y + 1] = Tileset.NOTHING;
                 TETILE_WORLD[PLAYER_X][PLAYER_Y] = Tileset.PLAYER;
 
@@ -276,6 +308,15 @@ public class MapGenerator implements Serializable {
 
     }
 
+    private void addFlowers(int num) {
+        for (int i = 0; i < num; i++){
+            Integer flowerindex = RandomUtils.uniform(r, 0, ftai);
+            Integer flowerx = ft[flowerindex][0];
+            Integer flowery = ft[flowerindex][1];
+            TETILE_WORLD[flowerx][flowery] = Tileset.FLOWER;
+        }
+    }
+
     private int[][] getSurroundings(Integer[] floorCoords) {
         int[][] surroundings = new int[8][2];
         surroundings[0] = new int[]{floorCoords[0] - 1, floorCoords[1] + 1};
@@ -313,7 +354,6 @@ public class MapGenerator implements Serializable {
     }
 
 
-
     private boolean isRoomValid(Integer[] coords, int xDim, int yDim) {
         boolean x = ((coords[0] - xDim) <= 0 || (coords[0] + xDim) >= 79);
         boolean y = ((coords[1] - yDim) <= 0 || (coords[1] + yDim) >= 29);
@@ -341,12 +381,84 @@ public class MapGenerator implements Serializable {
                 TETILE_WORLD[x][y] = Tileset.FLOOR;
                 ft[ftai] = new Integer[]{x, y};
                 ftai += 1;
-
             }
         }
+    }
+
+/*
+    public void addLight() {
+        Integer lightIndex = RandomUtils.uniform(r, 0, ftai);
+        Integer[] lightCoordinates = ft[lightIndex];
+        lightx = lightCoordinates[0];
+        lighty = lightCoordinates[1];
+        while (!isLightValid(lightx,lighty)) {
+            lightIndex = RandomUtils.uniform(r, 0, ftai);
+            lightCoordinates = ft[lightIndex];
+            lightx = lightCoordinates[0];
+            lighty = lightCoordinates[1];
+        }
+        TETILE_WORLD[lightx][lighty] = Tileset.LIGHT_OFF;
+        lightStatus = false;
+
+            int lightindex = RandomUtils.uniform(r, 0, ftai);
+            lightx = ft[lightindex][0];
+            lighty = ft[lightindex][1];
+            while(!isLightValid(lightx, lighty)) {
+                lightindex = RandomUtils.uniform(r, 0, ftai);
+                lightx = ft[lightindex][0];
+                lighty = ft[lightindex][1];
+            }
+            TETILE_WORLD[lightx][lighty] = Tileset.LIGHT_OFF;
+            lightStatus = false;
 
     }
 
+    public boolean isLightValid(int xPos, int yPos) {
+        for (int i = 0; i < 6; i++) {
+            for (int j = 0; j < 6; j++) {
+                if(TETILE_WORLD[(xPos - 2 + i)][(yPos - 2 + j)] == Tileset.WALL) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    public void makeBright() {
+        lightStatus = true;
+        for(int i = 0; i < 6; i++) {
+            for (int j = 0; j < 6; j++) {
+                if (TETILE_WORLD[lightx - 2 + i][lighty - 2 + j] == Tileset.NOTHING) {
+                    TETILE_WORLD[lightx - 2 + i][lighty - 2 + j] = Tileset.LIT_NOTHING;
+                } else if (TETILE_WORLD[lightx - 2 + i][lighty - 2 + j] == Tileset.FLOOR) {
+                    TETILE_WORLD[lightx - 2 + i][lighty - 2 + j] = Tileset.LIT_FLOOR;
+                } else if (TETILE_WORLD[lightx - 2 + i][lighty - 2 + j] == Tileset.PLAYER) {
+                    TETILE_WORLD[lightx - 2 + i][lighty - 2 + j] = Tileset.LIT_PLAYER;
+                } else if (TETILE_WORLD[lightx - 2 + i][lighty - 2 + j] == Tileset.FLOWER) {
+                    TETILE_WORLD[lightx - 2 + i][lighty - 2 + j] = Tileset.LIT_FLOWER;
+                }
+            }
+        }
+    }
+
+    public void makeDim() {
+        lightStatus = false;
+        for(int i = 0; i < 6; i++) {
+            for (int j = 0; j < 6; j++) {
+                if (TETILE_WORLD[lightx - 2 + i][lighty - 2 + j] == Tileset.LIT_NOTHING) {
+                    TETILE_WORLD[lightx - 2 + i][lighty - 2 + j] = Tileset.NOTHING;
+                } else if (TETILE_WORLD[lightx - 2 + i][lighty - 2 + j] == Tileset.LIT_FLOOR) {
+                    TETILE_WORLD[lightx - 2 + i][lighty - 2 + j] = Tileset.FLOOR;
+                } else if (TETILE_WORLD[lightx - 2 + i][lighty - 2 + j] == Tileset.LIT_PLAYER) {
+                    TETILE_WORLD[lightx - 2 + i][lighty - 2 + j] = Tileset.PLAYER;
+                } else if(TETILE_WORLD[lightx - 2 + i][lighty - 2 + j] == Tileset.LIT_FLOWER) {
+                    TETILE_WORLD[lightx - 2 + i][lighty - 2 + j] = Tileset.FLOWER;
+                }
+            }
+        }
+    }
+
+*/
 
 
     ////////////////////////////////////////////////////////////////////////////////////////////

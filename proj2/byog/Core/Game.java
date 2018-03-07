@@ -4,6 +4,7 @@ package byog.Core;
 import byog.SaveDemo.World;
 import byog.TileEngine.TERenderer;
 import byog.TileEngine.TETile;
+import byog.TileEngine.Tileset;
 import edu.princeton.cs.introcs.StdDraw;
 import java.awt.*;
 import java.io.Serializable;
@@ -18,6 +19,7 @@ import java.io.ObjectOutputStream;
 
 
 
+
 public class Game implements Serializable {
     TERenderer ter = new TERenderer();
     /* Feel free to change the width and height. */
@@ -28,8 +30,11 @@ public class Game implements Serializable {
     private TETile[][] finalWorldFrame;
     private boolean gameOver = false;
     private boolean gameStarted = false;
-    boolean readytoSave = false;
+    boolean readytoSave;
     private String SEED;
+    private int SCORE;
+    private int HEALTH;
+
 
     /**
      * Method used for playing a fresh game. The game should start from the main menu.
@@ -37,6 +42,29 @@ public class Game implements Serializable {
 
 
     public void showStartScreen() {
+        gameOver = false;
+        gameStarted = false;
+        readytoSave = false;
+
+
+        StdDraw.setCanvasSize(WIDTH / 2 * 16, HEIGHT * 16);
+        Font large_font = new Font("Monaco", Font.BOLD, 40);
+        Font small_font = new Font("Monaco", Font.BOLD, 20);
+        StdDraw.setFont(large_font);
+        StdDraw.setXscale(0, WIDTH);
+        StdDraw.setYscale(0, HEIGHT);
+        StdDraw.clear(Color.BLACK);
+        StdDraw.enableDoubleBuffering();
+
+
+        StdDraw.setPenColor(Color.white);
+        StdDraw.text(WIDTH / 2, HEIGHT / 1.5, "CS61B: THE GAME");
+        StdDraw.setFont(small_font);
+        StdDraw.text(WIDTH / 2, (HEIGHT / 2), "New Game (N)");
+        StdDraw.text(WIDTH / 2, (HEIGHT / 2) - 2, "Load Game (L)");
+        StdDraw.text(WIDTH / 2, (HEIGHT / 2) - 4, "Quit Game (Q)");
+        StdDraw.show();
+
 
         SEED = "";
 
@@ -72,11 +100,26 @@ public class Game implements Serializable {
                 Game reloaded = loadWorld();
                 this.nm = reloaded.nm;
                 this.finalWorldFrame = reloaded.finalWorldFrame;
-                this.SEED = reloaded.SEED;
                 this.gameOver = false;
                 this.gameStarted = true;
+                this.readytoSave = false;
+                this.SEED = reloaded.SEED;
                 ter.initialize(WIDTH, HEIGHT + 3);
-                ter.renderFrame(finalWorldFrame);
+                ter.renderFrame(reloaded.finalWorldFrame);
+
+//                this.nm.ft = reloaded.nm.ft;
+                this.playWithKeyboard();
+
+//
+//
+//
+//                this.ter = reloaded.ter;
+
+
+//                this.playWithKeyboard();
+
+
+
             }
         }
     }
@@ -89,6 +132,15 @@ public class Game implements Serializable {
         }
 
         while (!gameOver) {
+
+            SCORE = nm.SCORE;
+            HEALTH = nm.HEALTH;
+
+            ter.renderFrame(finalWorldFrame);
+            HeadsUpDisplay();
+            StdDraw.clear(Color.black);
+
+
             if (!StdDraw.hasNextKeyTyped()) {
                 continue;
             }
@@ -126,25 +178,58 @@ public class Game implements Serializable {
                     saveWorld(this);
                     System.exit(0);
                 }
+            } else if (key == 'T' || key == 't') {
+                if(nm.lightStatus) {
+                    nm.makeDim();
+                } else {
+                    nm.makeBright();
+                }
             }
         }
     }
 
-    public Integer[] mouseCoordinates() {
-        double x = StdDraw.mouseX();
-        double y = StdDraw.mouseY();
-        int xTile = (int) (x / 16);
-        int yTile = (int) (y / 16);
-        return new Integer[]{xTile, yTile};
+
+    public void HeadsUpDisplay() {
+        String message = tileMessage();
+        Font small_font = new Font("Monaco", Font.BOLD, 15);
+        StdDraw.setFont(small_font);
+        StdDraw.setPenColor(Color.white);
+        StdDraw.text(5, HEIGHT + 2, message);
+        StdDraw.text(5, HEIGHT + 1, String.valueOf(HEALTH));
+        StdDraw.text(5, HEIGHT , String.valueOf(SCORE));
+        StdDraw.show();
+
+
 
     }
 
-    public void showTileAt(Integer[] coords) {
-        StdDraw.setPenColor(Color.white);
-        Font font = new Font("Arial", Font.BOLD, 60);
-        StdDraw.setFont(font);
-        System.out.println(finalWorldFrame[coords[0]][coords[1]].description());
-        StdDraw.text(WIDTH / 2, HEIGHT / 2, this.finalWorldFrame[coords[0]][coords[1]].description());
+    public String tileMessage() {
+        int mousex = (int) StdDraw.mouseX(); //StdDraw.mouseX();
+        int mousey = (int) StdDraw.mouseY();
+
+        if (mouseInBounds(mousex, mousey)){
+            TETile twm = finalWorldFrame[mousex][mousey];
+            if (twm.equals(Tileset.FLOOR)) {
+                return "Floor";
+            } else if (twm.equals(Tileset.PLAYER)) {
+                return "You";
+            } else if (twm.equals(Tileset.WALL)) {
+                return "Wall";
+            } else if (twm.equals(Tileset.NOTHING)) {
+                return "Nothing";
+            } else {
+                return "";
+            }
+        }
+
+        return "";
+
+    }
+
+
+    private boolean mouseInBounds(int x, int y){
+        return (x > 0) && (x < WIDTH) && (y > 0) && (y < HEIGHT);
+
     }
 
     private static void saveWorld(Game g) {
@@ -197,7 +282,7 @@ public class Game implements Serializable {
                 System.exit(0);
             }
         }
-        return new Game();
+        return null;
     }
 
 
