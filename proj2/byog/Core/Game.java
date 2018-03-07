@@ -35,6 +35,7 @@ public class Game implements Serializable {
     private int player_Y;
     private int SCORE;
     private int HEALTH;
+    public String moves;
 
 
     /**
@@ -99,34 +100,34 @@ public class Game implements Serializable {
 
             } else if (key == 'L' || key == 'l') {
                 Game reloaded = loadWorld();
-                ter.initialize(WIDTH, HEIGHT + 3);
-                ter.renderFrame(reloaded.finalWorldFrame);
-                reloaded.gameOver = false;
-                reloaded.readytoSave = false;
-                this.nm.PLAYER_X = reloaded.player_X;
-                this.nm.PLAYER_Y = reloaded.player_Y;
-                reloaded.playWithKeyboard();
-
-//
-//                this.nm = reloaded.nm;
-//                this.ter = reloaded.ter;
-//                this.finalWorldFrame = reloaded.finalWorldFrame;
-//                this.gameOver = false;
-//                this.gameStarted = true;
-//                this.readytoSave = false;
-//                this.SEED = reloaded.SEED;
-//                System.out.println(SEED);
-//
-//
+//                ter.initialize(WIDTH, HEIGHT + 3);
+//                ter.renderFrame(reloaded.finalWorldFrame);
+//                reloaded.gameOver = false;
+//                reloaded.readytoSave = false;
 //                this.nm.PLAYER_X = reloaded.player_X;
 //                this.nm.PLAYER_Y = reloaded.player_Y;
-//                ter.initialize(WIDTH, HEIGHT + 3);
-//                if (finalWorldFrame[10][15] == null){
-//                    System.out.println("NULL");
-//                }
-//                ter.renderFrame(finalWorldFrame);
-//                this.playWithKeyboard();
-//
+//                reloaded.playWithKeyboard();
+
+
+                this.nm = reloaded.nm;
+                this.ter = reloaded.ter;
+                this.finalWorldFrame = reloaded.finalWorldFrame;
+                this.gameOver = false;
+                this.gameStarted = true;
+                this.readytoSave = false;
+                this.SEED = reloaded.SEED;
+                System.out.println(SEED);
+
+
+                this.nm.PLAYER_X = reloaded.player_X;
+                this.nm.PLAYER_Y = reloaded.player_Y;
+                ter.initialize(WIDTH, HEIGHT + 3);
+                if (finalWorldFrame[10][15] == null){
+                    System.out.println("NULL");
+                }
+                ter.renderFrame(finalWorldFrame);
+                this.playWithKeyboard();
+
 
 
             }
@@ -335,11 +336,57 @@ public class Game implements Serializable {
         // and return a 2D tile representation of the world that would have been
         // drawn if the same inputs had been given to playWithKeyboard().
 
+//        String randomSEED = parseInput(input);
         MapGenerator nm = new MapGenerator(input);
-
         TETile[][] finalWorldFrame = nm.generate();
         ter.initialize(WIDTH, HEIGHT + 3);
         ter.renderFrame(finalWorldFrame);
         return finalWorldFrame;
+    }
+
+    private String parseInput(String input) {
+        char[] inputarray = input.toCharArray();
+        String numberseed = "";
+        boolean readyforMoves = false;
+        boolean readytoSave = false;
+
+        for (int i = 0; i < inputarray.length; i++ ) {
+            if (inputarray[i] == 'N' || inputarray[i] == 'n') {
+
+            } else if (Character.isDigit(inputarray[i])) {
+                numberseed += inputarray[i];
+
+            }
+
+            else if (inputarray[i] == 'S' || inputarray[i] == 's'){
+                    readyforMoves = true;
+            }
+
+            else if (readyforMoves) {
+                moves += inputarray[i];
+            }
+
+
+
+//            else if ((inputarray[i] == 'L' || inputarray[i] == 'l')) {
+//                readyforMoves = false;
+//                //LOAD
+//
+//            } else if (inputarray[i] == ':') {
+//                readytoSave = true;
+//                readyforMoves = false;
+//
+//            } else if (readytoSave) {
+//                if (inputarray[i] == 'Q' || inputarray[i] == 'q') {
+//                    //SAVE & QUIT
+//                }
+//            }
+
+
+
+        }
+        System.out.println(numberseed);
+//        System.out.println(moves);
+        return numberseed;
     }
 }

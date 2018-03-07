@@ -38,7 +38,7 @@ public class MapGenerator implements Serializable {
 
 
     public MapGenerator(String input) {
-        randomSEED = filterSEED(input);
+        randomSEED = numericalseed(input);
         r = new Random(randomSEED);
 
     }
@@ -71,37 +71,17 @@ public class MapGenerator implements Serializable {
         return world;
     }
 
-    private long filterSEED(String input) {
-        char[] inputarray = input.toCharArray();
-        String numberseed = "";
-
-        boolean readytoSave = false;
-
-        for (int i = 0; i < inputarray.length; i++ ) {
-            if (inputarray[i] == 'N' || inputarray[i] == 'n') {
-
-            } else if (Character.isDigit(inputarray[i])) {
-                numberseed += inputarray[i];
-
-            }
-
-
-
-            else if ((inputarray[i] == 'L' || inputarray[i] == 'l')) {
-
-                //LOAD
-
-            } else if (inputarray[i] == ':') {
-                readytoSave = true;
-
-            } else if (readytoSave) {
-                if (inputarray[i] == 'Q' || inputarray[i] == 'q') {
-                    //SAVE & QUIT
-                }
-            }
-        }
-        return Long.parseLong(numberseed);
+    private long numericalseed(String input) {
+        input = input.replace("N", "");
+        input = input.replace("n", "");
+        input = input.replace("S", "");
+        input = input.replace("s", "");
+        return Long.parseLong(input);
     }
+
+//    public long numberSEED(String input){
+//        return Long.parseLong(input);
+//    }
 
     ////////////////////////////////////////////////////////////////////////////////////////////
     ///// INTERACTIVITY ///////
@@ -232,11 +212,9 @@ public class MapGenerator implements Serializable {
         System.out.println(PLAYER_X);
         System.out.println(PLAYER_Y);
 
-        System.out.println("in Danger Test");
         if (direction == 'D' || direction == 'd'){
 
             test_coordinates[0] += 1;
-            System.out.println("test coordinates updated");
         }
 
         else if (direction == 'W' || direction == 'w'){
