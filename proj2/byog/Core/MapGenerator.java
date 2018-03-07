@@ -20,6 +20,10 @@ public class MapGenerator implements Serializable {
     private Random r;
     private int[][] ft = new int[8000][2];
     private int ftai = 0;
+    private int[][] wt = new int[8000][2];
+    private int wtai = 0;
+    private int[][] st = new int[100][2];
+    private int stai = 0;
     private static final int XSTART = 38; //RandomUtils.uniform(r, 30, 50);
     private static final int YSTART = 15; // RandomUtils.uniform(r, 12, 18);
     protected static int X_CURRENT = XSTART;
@@ -57,6 +61,7 @@ public class MapGenerator implements Serializable {
         addWalls();
         ft = cleanTheTiles(ft);
         PlayerStart();
+        spikedWalls(25);
         addFlowers(6);
         return TETILE_WORLD;
     }
@@ -82,7 +87,7 @@ public class MapGenerator implements Serializable {
 
 
 
-            } else if ((inputarray[i] == 'L' || inputarray[i] == 'l')) {
+            else if ((inputarray[i] == 'L' || inputarray[i] == 'l')) {
 
                 //LOAD
 
@@ -114,7 +119,7 @@ public class MapGenerator implements Serializable {
 
 
     public int TileType(int x, int y) {
-        String type = TETILE_WORLD[PLAYER_X - 1][PLAYER_Y].description();
+        String type = TETILE_WORLD[PLAYER_X][PLAYER_Y].description();
 
         if (type.equals("floor")) {
             return 1;
@@ -129,7 +134,7 @@ public class MapGenerator implements Serializable {
 
 
     public void updateHUD (int x){
-        if (x == 1){
+        if (x == 1 && HEALTH > 0){
             SCORE += 1;
         }
 
@@ -148,6 +153,9 @@ public class MapGenerator implements Serializable {
                 world[PLAYER_X - 1][PLAYER_Y] = Tileset.NOTHING;
                 world[PLAYER_X][PLAYER_Y] = Tileset.PLAYER;
             }
+            if (isWallSpiked(direction)) {
+                HEALTH -= 1;
+            }
         }
 
         else if (direction == 'W' || direction == 'w') {
@@ -157,6 +165,9 @@ public class MapGenerator implements Serializable {
                 world[PLAYER_X][PLAYER_Y - 1] = Tileset.NOTHING;
                 world[PLAYER_X][PLAYER_Y] = Tileset.PLAYER;
 
+            }
+            if (isWallSpiked(direction)) {
+                HEALTH -= 1;
             }
         }
 
@@ -168,6 +179,9 @@ public class MapGenerator implements Serializable {
                 world[PLAYER_X][PLAYER_Y] = Tileset.PLAYER;
 
             }
+            if (isWallSpiked(direction)) {
+                HEALTH -= 1;
+            }
         }
 
         else if (direction == 'S' || direction == 's'){
@@ -178,12 +192,12 @@ public class MapGenerator implements Serializable {
                 world[PLAYER_X][PLAYER_Y] = Tileset.PLAYER;
 
             }
+            if (isWallSpiked(direction)) {
+                HEALTH -= 1;
+            }
 
         }
     }
-
-
-
 
 
     private boolean isMoveValid(char direction) {
@@ -211,6 +225,32 @@ public class MapGenerator implements Serializable {
         }
 
         return inArray(ft, test_coordinates);
+    }
+
+    private boolean isWallSpiked(char direction) {
+        int[] test_coordinates = new int[]{PLAYER_X, PLAYER_Y};
+        System.out.println(PLAYER_X);
+        System.out.println(PLAYER_Y);
+
+        System.out.println("in Danger Test");
+        if (direction == 'D' || direction == 'd'){
+
+            test_coordinates[0] += 1;
+            System.out.println("test coordinates updated");
+        }
+
+        else if (direction == 'W' || direction == 'w'){
+            test_coordinates[1] += 1;
+        }
+
+        else if (direction == 'A' || direction == 'a'){
+            test_coordinates[0] -= 1;
+        }
+
+        else {
+            test_coordinates[1] -= 1;
+        }
+        return inArray(st, test_coordinates);
     }
 
 
@@ -243,15 +283,6 @@ public class MapGenerator implements Serializable {
             }
         }
 
-//        int [][] finalcopy = new int [copyindex][2];
-//        int findex = 0;
-//
-//        for (int j = 0; j < finalcopy.length; j++) {
-//            if (cleancopy[j][0] == null && cleancopy[j][1] == null) {
-//                finalcopy[findex] = cleancopy[j];
-//                findex++;
-//            }
-//        }
         ftai = copyindex;
         return cleancopy;
 
@@ -335,7 +366,6 @@ public class MapGenerator implements Serializable {
 
                 } else {
                     moveDown();
-
                 }
             }
         }
@@ -374,8 +404,21 @@ public class MapGenerator implements Serializable {
                 int ycurr = theseSurroundings[j][1];
                 if (TETILE_WORLD[xcurr][ycurr].equals(Tileset.NOTHING)) {
                     TETILE_WORLD[xcurr][ycurr] = Tileset.WALL;
+                    wt[wtai] = new int[]{xcurr,ycurr};
+                    wtai += 1;
                 }
             }
+        }
+    }
+
+    private void spikedWalls(int num) {
+        for (int i = 0; i < num; i++){
+            int spikeindex = RandomUtils.uniform(r, 0, wtai);
+            int spikex = wt[spikeindex][0];
+            int spikey = wt[spikeindex][1];
+            TETILE_WORLD[spikex][spikey] = Tileset.SPIKED_WALL;
+            st[stai] = new int[]{spikex, spikey};
+            stai += 1;
         }
     }
 
@@ -383,7 +426,6 @@ public class MapGenerator implements Serializable {
         int numRooms = RandomUtils.uniform(r, 24, 30);
         for (int i = 0; i < numRooms; i++) {
             addRoom();
-
         }
     }
 
@@ -420,81 +462,6 @@ public class MapGenerator implements Serializable {
             }
         }
     }
-
-/*
-    public void addLight() {
-        Integer lightIndex = RandomUtils.uniform(r, 0, ftai);
-        Integer[] lightCoordinates = ft[lightIndex];
-        lightx = lightCoordinates[0];
-        lighty = lightCoordinates[1];
-        while (!isLightValid(lightx,lighty)) {
-            lightIndex = RandomUtils.uniform(r, 0, ftai);
-            lightCoordinates = ft[lightIndex];
-            lightx = lightCoordinates[0];
-            lighty = lightCoordinates[1];
-        }
-        TETILE_WORLD[lightx][lighty] = Tileset.LIGHT_OFF;
-        lightStatus = false;
-
-            int lightindex = RandomUtils.uniform(r, 0, ftai);
-            lightx = ft[lightindex][0];
-            lighty = ft[lightindex][1];
-            while(!isLightValid(lightx, lighty)) {
-                lightindex = RandomUtils.uniform(r, 0, ftai);
-                lightx = ft[lightindex][0];
-                lighty = ft[lightindex][1];
-            }
-            TETILE_WORLD[lightx][lighty] = Tileset.LIGHT_OFF;
-            lightStatus = false;
-
-    }
-
-    public boolean isLightValid(int xPos, int yPos) {
-        for (int i = 0; i < 6; i++) {
-            for (int j = 0; j < 6; j++) {
-                if(TETILE_WORLD[(xPos - 2 + i)][(yPos - 2 + j)] == Tileset.WALL) {
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
-
-    public void makeBright() {
-        lightStatus = true;
-        for(int i = 0; i < 6; i++) {
-            for (int j = 0; j < 6; j++) {
-                if (TETILE_WORLD[lightx - 2 + i][lighty - 2 + j] == Tileset.NOTHING) {
-                    TETILE_WORLD[lightx - 2 + i][lighty - 2 + j] = Tileset.LIT_NOTHING;
-                } else if (TETILE_WORLD[lightx - 2 + i][lighty - 2 + j] == Tileset.FLOOR) {
-                    TETILE_WORLD[lightx - 2 + i][lighty - 2 + j] = Tileset.LIT_FLOOR;
-                } else if (TETILE_WORLD[lightx - 2 + i][lighty - 2 + j] == Tileset.PLAYER) {
-                    TETILE_WORLD[lightx - 2 + i][lighty - 2 + j] = Tileset.LIT_PLAYER;
-                } else if (TETILE_WORLD[lightx - 2 + i][lighty - 2 + j] == Tileset.FLOWER) {
-                    TETILE_WORLD[lightx - 2 + i][lighty - 2 + j] = Tileset.LIT_FLOWER;
-                }
-            }
-        }
-    }
-
-    public void makeDim() {
-        lightStatus = false;
-        for(int i = 0; i < 6; i++) {
-            for (int j = 0; j < 6; j++) {
-                if (TETILE_WORLD[lightx - 2 + i][lighty - 2 + j] == Tileset.LIT_NOTHING) {
-                    TETILE_WORLD[lightx - 2 + i][lighty - 2 + j] = Tileset.NOTHING;
-                } else if (TETILE_WORLD[lightx - 2 + i][lighty - 2 + j] == Tileset.LIT_FLOOR) {
-                    TETILE_WORLD[lightx - 2 + i][lighty - 2 + j] = Tileset.FLOOR;
-                } else if (TETILE_WORLD[lightx - 2 + i][lighty - 2 + j] == Tileset.LIT_PLAYER) {
-                    TETILE_WORLD[lightx - 2 + i][lighty - 2 + j] = Tileset.PLAYER;
-                } else if(TETILE_WORLD[lightx - 2 + i][lighty - 2 + j] == Tileset.LIT_FLOWER) {
-                    TETILE_WORLD[lightx - 2 + i][lighty - 2 + j] = Tileset.FLOWER;
-                }
-            }
-        }
-    }
-
-*/
 
 
     ////////////////////////////////////////////////////////////////////////////////////////////

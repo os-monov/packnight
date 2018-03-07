@@ -209,8 +209,12 @@ public class Game implements Serializable {
         StdDraw.setFont(small_font);
         StdDraw.setPenColor(Color.white);
         StdDraw.text(5, HEIGHT + 2, message);
-        StdDraw.text(5, HEIGHT + 1, String.valueOf(HEALTH));
-        StdDraw.text(5, HEIGHT , String.valueOf(SCORE));
+        if(HEALTH <= 0) {
+            StdDraw.text(5, HEIGHT + 1, "Game Over");
+        } else {
+            StdDraw.text(5, HEIGHT + 1, "Health: " + String.valueOf(HEALTH));
+        }
+        StdDraw.text(5, HEIGHT , "Score: " + String.valueOf(SCORE));
         StdDraw.show();
 
 
@@ -230,8 +234,14 @@ public class Game implements Serializable {
                 return "Floor";
             } else if (twm.equals(Tileset.PLAYER)) {
                 return "You";
+            } else if (twm.equals(Tileset.SPIKED_WALL)) {
+                return "Spiked Wall";
             } else if (twm.equals(Tileset.WALL)) {
                 return "Wall";
+            } else if (twm.equals(Tileset.NOTHING)) {
+                return "Nothing";
+            } else if (twm.equals(Tileset.FLOWER)) {
+                return "Heart";
             } else if (twm.equals(Tileset.NOTHING)) {
                 return "Nothing";
             } else {
