@@ -1,14 +1,12 @@
-
 package byog.Core;
 
-import byog.SaveDemo.World;
 import byog.TileEngine.TERenderer;
 import byog.TileEngine.TETile;
 import byog.TileEngine.Tileset;
 import edu.princeton.cs.introcs.StdDraw;
-import java.awt.*;
+import java.awt.Font;
+import java.awt.Color;
 import java.io.Serializable;
-import java.util.Map;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -16,8 +14,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.util.Random;
-
 
 public class Game implements Serializable {
     TERenderer ter = new TERenderer();
@@ -28,13 +24,14 @@ public class Game implements Serializable {
     private TETile[][] finalWorldFrame;
     private boolean gameOver = false;
     private boolean gameStarted = false;
-    boolean readytoSave;
+    boolean readytoSave = false;
     private String SEED;
     private int player_X;
     private int player_Y;
     private int SCORE;
     private int HEALTH;
-    public String moves;
+    private String moves = "";
+    private String numberseed = "";
 
 
     /**
@@ -49,9 +46,9 @@ public class Game implements Serializable {
 
 
         StdDraw.setCanvasSize(WIDTH / 2 * 16, HEIGHT * 16);
-        Font large_font = new Font("Monaco", Font.BOLD, 40);
-        Font small_font = new Font("Monaco", Font.BOLD, 20);
-        StdDraw.setFont(large_font);
+        Font largeFont = new Font("Monaco", Font.BOLD, 40);
+        Font smallFont = new Font("Monaco", Font.BOLD, 20);
+        StdDraw.setFont(largeFont);
         StdDraw.setXscale(0, WIDTH);
         StdDraw.setYscale(0, HEIGHT);
         StdDraw.clear(Color.BLACK);
@@ -60,7 +57,7 @@ public class Game implements Serializable {
 
         StdDraw.setPenColor(Color.white);
         StdDraw.text(WIDTH / 2, HEIGHT / 1.5, "CS61B: THE GAME");
-        StdDraw.setFont(small_font);
+        StdDraw.setFont(smallFont);
         StdDraw.text(WIDTH / 2, (HEIGHT / 2), "New Game (N)");
         StdDraw.text(WIDTH / 2, (HEIGHT / 2) - 2, "Load Game (L)");
         StdDraw.text(WIDTH / 2, (HEIGHT / 2) - 4, "Quit Game (Q)");
@@ -105,11 +102,9 @@ public class Game implements Serializable {
                 ter.renderFrame(reloaded.finalWorldFrame);
                 reloaded.gameOver = false;
                 reloaded.readytoSave = false;
-                this.nm.PLAYER_X = reloaded.player_X;
-                this.nm.PLAYER_Y = reloaded.player_Y;
-                this.playWithKeyboard();
-
-
+                this.player_X = reloaded.nm.PLAYER_X;
+                this.player_Y = reloaded.nm.PLAYER_Y;
+                reloaded.playWithKeyboard();
 
             }
         }
@@ -128,7 +123,7 @@ public class Game implements Serializable {
             HEALTH = nm.HEALTH;
 
             ter.renderFrame(finalWorldFrame);
-            HeadsUpDisplay();
+            headsUpDisplay();
             StdDraw.clear(Color.black);
 
 
@@ -154,7 +149,6 @@ public class Game implements Serializable {
                 ter.renderFrame(finalWorldFrame);
 
 
-
             } else if (key == 's' || key == 'S') {
                 nm.playerMove(key, finalWorldFrame);
                 ter.renderFrame(finalWorldFrame);
@@ -166,51 +160,40 @@ public class Game implements Serializable {
             } else if (readytoSave) {
                 if (key == 'q' || key == 'Q') {
                     gameOver = true;
-                    player_X = nm.PLAYER_X;
-                    player_Y = nm.PLAYER_Y;
+                    this.player_X = nm.PLAYER_X;
+                    this.player_Y = nm.PLAYER_Y;
                     finalWorldFrame = nm.TETILE_WORLD;
-
-                    System.out.println(SEED);
                     saveWorld(this);
                     System.exit(0);
                 }
-            } /*else if (key == 'T' || key == 't') {
-                if(nm.lightStatus) {
-                    nm.makeDim();
-                } else {
-                    nm.makeBright();
-                }
-            } */
+            }
         }
     }
 
 
-    public void HeadsUpDisplay() {
+    public void headsUpDisplay() {
         String message = tileMessage();
-        Font small_font = new Font("Monaco", Font.BOLD, 15);
-        StdDraw.setFont(small_font);
+        Font smallFont = new Font("Monaco", Font.BOLD, 15);
+        StdDraw.setFont(smallFont);
         StdDraw.setPenColor(Color.white);
         StdDraw.text(5, HEIGHT + 2, message);
-        if(HEALTH <= 0) {
+        if (HEALTH <= 0) {
             StdDraw.text(5, HEIGHT + 1, "Game Over");
         } else {
             StdDraw.text(5, HEIGHT + 1, "Health: " + String.valueOf(HEALTH));
         }
-        StdDraw.text(5, HEIGHT , "Score: " + String.valueOf(SCORE));
+        StdDraw.text(5, HEIGHT, "Score: " + String.valueOf(SCORE));
         StdDraw.show();
 
 
-
     }
-
-
 
 
     public String tileMessage() {
         int mousex = (int) StdDraw.mouseX(); //StdDraw.mouseX();
         int mousey = (int) StdDraw.mouseY();
 
-        if (mouseInBounds(mousex, mousey)){
+        if (mouseInBounds(mousex, mousey)) {
             TETile twm = finalWorldFrame[mousex][mousey];
             if (twm.equals(Tileset.FLOOR)) {
                 return "Floor";
@@ -236,7 +219,7 @@ public class Game implements Serializable {
     }
 
 
-    private boolean mouseInBounds(int x, int y){
+    private boolean mouseInBounds(int x, int y) {
         return (x > 0) && (x < WIDTH) && (y > 0) && (y < HEIGHT);
 
     }
@@ -252,6 +235,7 @@ public class Game implements Serializable {
             FileOutputStream fs = new FileOutputStream(f);
             ObjectOutputStream os = new ObjectOutputStream(fs);
             os.writeObject(g);
+            os.reset();
             os.close();
             fs.close();
 
@@ -265,7 +249,6 @@ public class Game implements Serializable {
             System.exit(0);
         }
     }
-
 
 
     private static Game loadWorld() {
@@ -297,9 +280,6 @@ public class Game implements Serializable {
     }
 
 
-
-
-
     /**
      * Method used for autograding and testing the game code. The input string will be a series
      * of characters (for example, "n123sswwdasdassadwas", "n123sss:q", "lwww". The game should
@@ -316,46 +296,82 @@ public class Game implements Serializable {
     public TETile[][] playWithInputString(String input) {
         // and return a 2D tile representation of the world that would have been
         // drawn if the same inputs had been given to playWithKeyboard().
+        String separatedSeed = parseInput(input);
+        char[] arrayedmoves = moves.toCharArray();
 
-//        String randomSEED = parseInput(input);
-        MapGenerator nm = new MapGenerator(input);
-        TETile[][] finalWorldFrame = nm.generate();
-        ter.initialize(WIDTH, HEIGHT + 3);
-        ter.renderFrame(finalWorldFrame);
+        int i = 0;
+
+        if (arrayedmoves[0] == 'L' || arrayedmoves[0] == 'l') {
+            i++;
+            char[] newarray = new char[arrayedmoves.length - 1];
+            System.arraycopy(arrayedmoves, 1, newarray, 0, arrayedmoves.length - 1);
+            String inputnew = new String(newarray);
+
+
+            Game reloaded = loadWorld();
+            nm = reloaded.nm;
+            TETile[][] tempFrame = reloaded.finalWorldFrame;
+            finalWorldFrame = tempFrame;
+//            nm = reloaded.nm;
+//            this.nm.SCORE = reloaded.SCORE;
+//            this.nm.HEALTH = reloaded.HEALTH;
+//            reloaded.gameOver = false;
+//            reloaded.readytoSave = false;
+//            this.nm.PLAYER_X = reloaded.nm.PLAYER_X;
+//            this.nm.PLAYER_Y = reloaded.nm.PLAYER_Y;
+            reloaded.playWithInputString(inputnew);
+
+        } else if (arrayedmoves[i] == 's' || arrayedmoves[i] == 'S') {
+            i++;
+            nm = new MapGenerator(separatedSeed);
+            finalWorldFrame = nm.generate();
+        }
+
+        while (i < arrayedmoves.length) {
+            if (arrayedmoves[i] == ':') {
+                readytoSave = true;
+            } else if (readytoSave) {
+                if (arrayedmoves[i] == 'Q' || arrayedmoves[i] == 'q') {
+                    this.player_X = nm.PLAYER_X;
+                    this.player_Y = nm.PLAYER_Y;
+                    saveWorld(this);
+                }
+            } else {
+                nm.playerMove(arrayedmoves[i], finalWorldFrame);
+            }
+            i++;
+        }
         return finalWorldFrame;
     }
 
+
     private String parseInput(String input) {
         char[] inputarray = input.toCharArray();
-        String numberseed = "";
-        boolean readyforMoves = false;
-        boolean readytoSave = false;
+        boolean readyForMoves = false;
+        char first = inputarray[0];
+        if (first != 'n' && first != 'N' && first != 'l' && first != 'L') {
+            readyForMoves = true;
+        }
         int i = 0;
-
-
-        for (int i = 0; i < inputarray.length; i++ ) {
-
-
-            if (inputarray[i] == 'N' || inputarray[i] == 'n') {
-
-            } else if (Character.isDigit(inputarray[i])) {
-                numberseed += inputarray[i];
-
-            }
-
-            else
-
-            else if (inputarray[i] == 'S' || inputarray[i] == 's'){
-                    readyforMoves = true;
-            }
-
-            else if (readyforMoves) {
+        moves = "";
+        while (i < inputarray.length) {
+            if (!readyForMoves) {
+                if (inputarray[i] == 'N' || inputarray[i] == 'n') {
+                    moves += "";
+                } else if (inputarray[i] == 'L' || inputarray[i] == 'l') {
+                    readyForMoves = true;
+                    moves += inputarray[i];
+                } else if (Character.isDigit(inputarray[i])) {
+                    numberseed += inputarray[i];
+                } else if (inputarray[i] == 'S' || inputarray[i] == 's') {
+                    moves += inputarray[i];
+                    readyForMoves = true;
+                }
+            } else {
                 moves += inputarray[i];
             }
-
+            i++;
         }
-        System.out.println(numberseed);
-//        System.out.println(moves);
         return numberseed;
     }
 }

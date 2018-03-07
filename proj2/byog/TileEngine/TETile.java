@@ -4,7 +4,6 @@ import java.awt.Color;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Random;
-
 import edu.princeton.cs.introcs.StdDraw;
 import byog.Core.RandomUtils;
 

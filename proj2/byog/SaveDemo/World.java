@@ -3,9 +3,7 @@ package byog.SaveDemo;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Random;
-
 import byog.Core.RandomUtils;
-
 import java.awt.Color;
 import java.io.Serializable;
 
