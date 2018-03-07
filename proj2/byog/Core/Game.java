@@ -106,8 +106,8 @@ public class Game implements Serializable {
                 ter.renderFrame(reloaded.finalWorldFrame);
                 reloaded.gameOver = false;
                 reloaded.readytoSave = false;
-                this.nm.PLAYER_X = reloaded.player_X;
-                this.nm.PLAYER_Y = reloaded.player_Y;
+                this.player_X = reloaded.nm.PLAYER_X;
+                this.player_Y = reloaded.nm.PLAYER_Y;
                 reloaded.playWithKeyboard();
 
             }
@@ -164,8 +164,8 @@ public class Game implements Serializable {
             } else if (readytoSave) {
                 if (key == 'q' || key == 'Q') {
                     gameOver = true;
-                    player_X = nm.PLAYER_X;
-                    player_Y = nm.PLAYER_Y;
+                    this.player_X = nm.PLAYER_X;
+                    this.player_Y = nm.PLAYER_Y;
                     finalWorldFrame = nm.TETILE_WORLD;
                     saveWorld(this);
                     System.exit(0);
@@ -239,6 +239,7 @@ public class Game implements Serializable {
             FileOutputStream fs = new FileOutputStream(f);
             ObjectOutputStream os = new ObjectOutputStream(fs);
             os.writeObject(g);
+            os.reset();
             os.close();
             fs.close();
 
@@ -301,30 +302,35 @@ public class Game implements Serializable {
         // drawn if the same inputs had been given to playWithKeyboard().
         String separatedSeed = parseInput(input);
         char[] arrayedmoves = moves.toCharArray();
-        for (int i = 0; i < arrayedmoves.length; i++) {
-            System.out.println(arrayedmoves[i]);
-        }
+        System.out.println(arrayedmoves[0]);
+
+
         int i = 0;
-        TETile[][] finalWorldFrame = null;
-        MapGenerator nm;
 
         if (arrayedmoves[0] == 'L' || arrayedmoves[0] == 'l' ){
             i++;
             char[] newarray = new char[arrayedmoves.length - 1];
             System.arraycopy(arrayedmoves, 1, newarray, 0, arrayedmoves.length - 1);
             String inputnew = new String(newarray);
+            System.out.println(newarray[0] + "TEST");
+
 
             Game reloaded = loadWorld();
             nm = reloaded.nm;
-            this.nm.SCORE = reloaded.SCORE;
-            this.nm.HEALTH = reloaded.HEALTH;
-            reloaded.gameOver = false;
-            reloaded.readytoSave = false;
-            this.nm.PLAYER_X = reloaded.player_X;
-            this.nm.PLAYER_Y = reloaded.player_Y;
+            TETile[][] tempFrame = reloaded.finalWorldFrame;
+            finalWorldFrame = tempFrame;
+//            nm = reloaded.nm;
+//            this.nm.SCORE = reloaded.SCORE;
+//            this.nm.HEALTH = reloaded.HEALTH;
+//            reloaded.gameOver = false;
+//            reloaded.readytoSave = false;
+//            this.nm.PLAYER_X = reloaded.nm.PLAYER_X;
+//            this.nm.PLAYER_Y = reloaded.nm.PLAYER_Y;
+            System.out.println(nm.PLAYER_X);
+            System.out.println(reloaded.nm.PLAYER_X);
             reloaded.playWithInputString(inputnew);
 
-        } else {
+        } else if (arrayedmoves[i] == 's' || arrayedmoves[i] == 'S'){
             i++;
             nm = new MapGenerator(separatedSeed);
             finalWorldFrame = nm.generate();
@@ -340,6 +346,8 @@ public class Game implements Serializable {
 
             else if (readytoSave){
                 if (arrayedmoves[i] == 'Q' || arrayedmoves[i] == 'q' ){
+                    this.player_X = nm.PLAYER_X;
+                    this.player_Y = nm.PLAYER_Y;
                     saveWorld(this);
                 }
             }
@@ -360,8 +368,11 @@ public class Game implements Serializable {
     private String parseInput(String input) {
         char[] inputarray = input.toCharArray();
         boolean readyForMoves = false;
-//        boolean readyToSave = false;
+        if (inputarray[0] != 'n' && inputarray[0] != 'N' && inputarray[0] != 'l' && inputarray[0] != 'L') {
+            readyForMoves = true;
+        }
         int i = 0;
+        moves = "";
         while (i < inputarray.length) {
             if (!readyForMoves) {
                 if (inputarray[i] == 'N' || inputarray[i] == 'n') {
@@ -374,21 +385,13 @@ public class Game implements Serializable {
                 } else if (inputarray[i] == 'S' || inputarray[i] == 's') {
                     moves += inputarray[i];
                     readyForMoves = true; }
+                } else {
+                    moves += inputarray[i];
+                }
 
-//            } else if (inputarray[i] == ':') {
-//                readyToSave = true;
-//            } else if (readyToSave && (inputarray[i] == 'Q' || inputarray[i] == 'q')) {
-////                saveWorld(this);
-//
-            } else {
-                moves += inputarray[i];
+                i++;
             }
 
-            i++;
-        }
-
-        System.out.println(numberseed);
-        System.out.println(moves);
         return numberseed;
     }
 }

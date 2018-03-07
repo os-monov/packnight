@@ -28,8 +28,8 @@ public class MapGenerator implements Serializable {
     private static final int YSTART = 15; // RandomUtils.uniform(r, 12, 18);
     protected static int X_CURRENT = XSTART;
     private static int Y_CURRENT = YSTART;
-    protected static int PLAYER_X;
-    protected static int PLAYER_Y;
+    int PLAYER_X;
+    int PLAYER_Y;
     static int SCORE = 0;
     static int HEALTH = 1;
     static String moves;
