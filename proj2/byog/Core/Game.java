@@ -35,6 +35,10 @@ public class Game implements Serializable {
     private int player_Y;
     private int SCORE;
     private int HEALTH;
+    public String moves = "";
+    public String numberseed = "";
+    char[] movesBeforeSave = new char[100];
+
 
 
     /**
@@ -109,28 +113,6 @@ public class Game implements Serializable {
                 this.nm.PLAYER_Y = reloaded.player_Y;
                 reloaded.playWithKeyboard();
 
-//
-//                this.nm = reloaded.nm;
-//                this.ter = reloaded.ter;
-//                this.finalWorldFrame = reloaded.finalWorldFrame;
-//                this.gameOver = false;
-//                this.gameStarted = true;
-//                this.readytoSave = false;
-//                this.SEED = reloaded.SEED;
-//                System.out.println(SEED);
-//
-//
-//                this.nm.PLAYER_X = reloaded.player_X;
-//                this.nm.PLAYER_Y = reloaded.player_Y;
-//                ter.initialize(WIDTH, HEIGHT + 3);
-//                if (finalWorldFrame[10][15] == null){
-//                    System.out.println("NULL");
-//                }
-//                ter.renderFrame(finalWorldFrame);
-//                this.playWithKeyboard();
-//
-
-
             }
         }
     }
@@ -174,7 +156,6 @@ public class Game implements Serializable {
                 ter.renderFrame(finalWorldFrame);
 
 
-
             } else if (key == 's' || key == 'S') {
                 nm.playerMove(key, finalWorldFrame);
                 ter.renderFrame(finalWorldFrame);
@@ -189,18 +170,10 @@ public class Game implements Serializable {
                     player_X = nm.PLAYER_X;
                     player_Y = nm.PLAYER_Y;
                     finalWorldFrame = nm.TETILE_WORLD;
-
-                    System.out.println(SEED);
                     saveWorld(this);
                     System.exit(0);
                 }
-            } /*else if (key == 'T' || key == 't') {
-                if(nm.lightStatus) {
-                    nm.makeDim();
-                } else {
-                    nm.makeBright();
-                }
-            } */
+            }
         }
     }
 
@@ -211,26 +184,23 @@ public class Game implements Serializable {
         StdDraw.setFont(small_font);
         StdDraw.setPenColor(Color.white);
         StdDraw.text(5, HEIGHT + 2, message);
-        if(HEALTH <= 0) {
+        if (HEALTH <= 0) {
             StdDraw.text(5, HEIGHT + 1, "Game Over");
         } else {
             StdDraw.text(5, HEIGHT + 1, "Health: " + String.valueOf(HEALTH));
         }
-        StdDraw.text(5, HEIGHT , "Score: " + String.valueOf(SCORE));
+        StdDraw.text(5, HEIGHT, "Score: " + String.valueOf(SCORE));
         StdDraw.show();
 
 
-
     }
-
-
 
 
     public String tileMessage() {
         int mousex = (int) StdDraw.mouseX(); //StdDraw.mouseX();
         int mousey = (int) StdDraw.mouseY();
 
-        if (mouseInBounds(mousex, mousey)){
+        if (mouseInBounds(mousex, mousey)) {
             TETile twm = finalWorldFrame[mousex][mousey];
             if (twm.equals(Tileset.FLOOR)) {
                 return "Floor";
@@ -256,7 +226,7 @@ public class Game implements Serializable {
     }
 
 
-    private boolean mouseInBounds(int x, int y){
+    private boolean mouseInBounds(int x, int y) {
         return (x > 0) && (x < WIDTH) && (y > 0) && (y < HEIGHT);
 
     }
@@ -285,7 +255,6 @@ public class Game implements Serializable {
             System.exit(0);
         }
     }
-
 
 
     private static Game loadWorld() {
@@ -317,9 +286,6 @@ public class Game implements Serializable {
     }
 
 
-
-
-
     /**
      * Method used for autograding and testing the game code. The input string will be a series
      * of characters (for example, "n123sswwdasdassadwas", "n123sss:q", "lwww". The game should
@@ -336,11 +302,101 @@ public class Game implements Serializable {
     public TETile[][] playWithInputString(String input) {
         // and return a 2D tile representation of the world that would have been
         // drawn if the same inputs had been given to playWithKeyboard().
+        String separatedSeed = parseInput(input);
+        char[] arrayedmoves = moves.toCharArray();
+        for (int i = 0; i < arrayedmoves.length; i++) {
+            System.out.println(arrayedmoves[i]);
+        }
+        int i = 0;
+        TETile[][] finalWorldFrame = null;
+        MapGenerator nm;
 
-        MapGenerator nm = new MapGenerator(input);
-        TETile[][] finalWorldFrame = nm.generate();
+        if (arrayedmoves[0] == 'L' || arrayedmoves[0] == 'l' ){
+            i++;
+            char[] newarray = new char[arrayedmoves.length - 1];
+            System.arraycopy(arrayedmoves, 1, newarray, 0, arrayedmoves.length - 1);
+            String inputnew = new String(newarray);
+
+            Game reloaded = loadWorld();
+            nm = reloaded.nm;
+            this.nm.SCORE = reloaded.SCORE;
+            this.nm.HEALTH = reloaded.HEALTH;
+            reloaded.gameOver = false;
+            reloaded.readytoSave = false;
+            this.nm.PLAYER_X = reloaded.player_X;
+            this.nm.PLAYER_Y = reloaded.player_Y;
+            reloaded.playWithInputString(inputnew);
+
+        } else {
+            i++;
+            nm = new MapGenerator(separatedSeed);
+            finalWorldFrame = nm.generate();
+        }
+
+
+        boolean readytoSave = false;
+
+        while (i < arrayedmoves.length) {
+            if (arrayedmoves[i] == ':') {
+                readytoSave = true;
+            }
+
+            else if (readytoSave){
+                if (arrayedmoves[i] == 'Q' || arrayedmoves[i] == 'q' ){
+                    saveWorld(this);
+                }
+            }
+
+            else {
+                if (nm == null) {
+                    System.out.print("testtttt");
+                }
+                nm.playerMove(arrayedmoves[i], finalWorldFrame);
+            }
+            i++;
+        }
+
+
         ter.initialize(WIDTH, HEIGHT + 3);
-        ter.renderFrame(finalWorldFrame);
+        //ter.renderFrame(finalWorldFrame);
         return finalWorldFrame;
     }
+
+
+
+    private String parseInput(String input) {
+        char[] inputarray = input.toCharArray();
+        boolean readyForMoves = false;
+//        boolean readyToSave = false;
+        int i = 0;
+        while (i < inputarray.length) {
+            if (!readyForMoves) {
+                if (inputarray[i] == 'N' || inputarray[i] == 'n') {
+                    moves += "";
+                } else if (inputarray[i] == 'L' || inputarray[i] == 'l') {
+                    readyForMoves = true;
+                    moves += inputarray[i];
+                } else if (Character.isDigit(inputarray[i])) {
+                    numberseed += inputarray[i];
+                } else if (inputarray[i] == 'S' || inputarray[i] == 's') {
+                    moves += inputarray[i];
+                    readyForMoves = true; }
+
+//            } else if (inputarray[i] == ':') {
+//                readyToSave = true;
+//            } else if (readyToSave && (inputarray[i] == 'Q' || inputarray[i] == 'q')) {
+////                saveWorld(this);
+//
+            } else {
+                moves += inputarray[i];
+            }
+
+            i++;
+        }
+
+        System.out.println(numberseed);
+        System.out.println(moves);
+        return numberseed;
+    }
 }
+        //return numberseed;

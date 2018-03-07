@@ -121,9 +121,7 @@ public class MapGenerator implements Serializable {
     public void playerMove(char direction, TETile[][] world) {
 
         if (direction == 'D' || direction == 'd') {
-            System.out.println("testing if move is valid");
             if (isMoveValid(direction)) {
-                System.out.println("move is valid");
                 PLAYER_X++;
                 updateHUD(TileType(PLAYER_X - 1, PLAYER_Y, world));
                 world[PLAYER_X - 1][PLAYER_Y] = Tileset.NOTHING;
@@ -178,14 +176,9 @@ public class MapGenerator implements Serializable {
 
     private boolean isMoveValid(char direction) {
         int[] test_coordinates = new int[]{PLAYER_X, PLAYER_Y};
-        System.out.println(PLAYER_X);
-        System.out.println(PLAYER_Y);
 
-        System.out.println("in Validity Test");
         if (direction == 'D' || direction == 'd'){
-
             test_coordinates[0] += 1;
-            System.out.println("test coordinates updated");
         }
 
         else if (direction == 'W' || direction == 'w'){
@@ -205,14 +198,8 @@ public class MapGenerator implements Serializable {
 
     private boolean isWallSpiked(char direction) {
         int[] test_coordinates = new int[]{PLAYER_X, PLAYER_Y};
-        System.out.println(PLAYER_X);
-        System.out.println(PLAYER_Y);
-
-        System.out.println("in Danger Test");
         if (direction == 'D' || direction == 'd'){
-
             test_coordinates[0] += 1;
-            System.out.println("test coordinates updated");
         }
 
         else if (direction == 'W' || direction == 'w'){
