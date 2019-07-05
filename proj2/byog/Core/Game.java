@@ -15,23 +15,18 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
-public class Game implements Serializable {
-    TERenderer ter = new TERenderer();
-    /* Feel free to change the width and height. */
-    public static final int WIDTH = 80;
-    public static final int HEIGHT = 30;
-    private MapGenerator nm;
-    private TETile[][] finalWorldFrame;
+class Game implements Serializable {
+    private TERenderer ter = new TERenderer();
+    private static final int width = 80;
+    private static final int height = 33;
+    private MapGenerator mapGenerator;
+    private TETile[][] currMap;
     private boolean gameOver = false;
     private boolean gameStarted = false;
-    boolean readytoSave = false;
-    private String SEED;
-    private int player_X;
-    private int player_Y;
-    private int SCORE;
-    private int HEALTH;
+    private boolean readyToSave = false;
+    private String userInput;
     private String moves = "";
-    private String numberseed = "";
+    private String numberSeed = "";
 
 
     /**
@@ -39,32 +34,29 @@ public class Game implements Serializable {
      */
 
 
-    public void showStartScreen() {
-        gameOver = false;
-        gameStarted = false;
-        readytoSave = false;
+    private void showStartScreen() {
 
-
-        StdDraw.setCanvasSize(WIDTH / 2 * 16, HEIGHT * 16);
+        StdDraw.setCanvasSize(width / 2 * 16, height * 16);
         Font largeFont = new Font("Monaco", Font.BOLD, 40);
         Font smallFont = new Font("Monaco", Font.BOLD, 20);
         StdDraw.setFont(largeFont);
-        StdDraw.setXscale(0, WIDTH);
-        StdDraw.setYscale(0, HEIGHT);
+        StdDraw.setXscale(0, width);
+        StdDraw.setYscale(0, height);
         StdDraw.clear(Color.BLACK);
         StdDraw.enableDoubleBuffering();
 
 
         StdDraw.setPenColor(Color.white);
-        StdDraw.text(WIDTH / 2, HEIGHT / 1.5, "CS61B: THE GAME");
+        StdDraw.text(width / 2, height / 1.5, "PacKnight");
         StdDraw.setFont(smallFont);
-        StdDraw.text(WIDTH / 2, (HEIGHT / 2), "New Game (N)");
-        StdDraw.text(WIDTH / 2, (HEIGHT / 2) - 2, "Load Game (L)");
-        StdDraw.text(WIDTH / 2, (HEIGHT / 2) - 4, "Quit Game (Q)");
+        StdDraw.text(width / 2, (height / 2), "New Game (N)");
+        StdDraw.text(width / 2, (height / 2) - 2, "Reinforcement Learning Mode (R)");
+        StdDraw.text(width / 2, (height / 2) - 4, "Load Game (L)");
+        StdDraw.text(width / 2, (height / 2) - 6, "Quit Game (Q)");
         StdDraw.show();
 
+        userInput = "";
 
-        SEED = "";
 
         while (!gameStarted) {
             if (!StdDraw.hasNextKeyTyped()) {
@@ -72,57 +64,65 @@ public class Game implements Serializable {
             }
 
             char key = StdDraw.nextKeyTyped();
-            SEED += String.valueOf(key);
+            userInput += String.valueOf(key);
 
             if (key == 'N' || key == 'n') {
                 StdDraw.clear(Color.BLACK);
-                StdDraw.text(WIDTH / 2, HEIGHT / 2, "SEED:");
+                StdDraw.text(width / 2, height / 2, "SEED:");
                 StdDraw.show();
 
             }
 
             if (Character.isDigit(key)) {
                 StdDraw.clear(Color.BLACK);
-                StdDraw.text(WIDTH / 2, HEIGHT / 2, "SEED:");
-                StdDraw.text(WIDTH / 2, (HEIGHT / 2) - 2, SEED.substring(1, SEED.length()));
+                StdDraw.text(width / 2, height / 2, "SEED:");
+                StdDraw.text(width / 2, (height / 2) - 2, userInput.substring(1));
+                StdDraw.text(width / 2, (height / 2) - 10, "Press 'S' to Start");
+                StdDraw.show();
                 StdDraw.show();
 
             } else if (key == 'S' || key == 's') {
                 gameStarted = true;
-                nm = new MapGenerator(SEED.substring(1, SEED.length() - 1));
-                finalWorldFrame = nm.generate();
-                ter.initialize(WIDTH, HEIGHT + 3);
-                ter.renderFrame(finalWorldFrame);
+                mapGenerator = new MapGenerator(userInput);
+                ter.initialize(width, height + 3);
+                currMap = mapGenerator.returnMap();
+                ter.renderFrame(currMap);
+
+            } else if (key == 'R' || key == 'r'){
+                StdDraw.clear(Color.BLACK);
+                StdDraw.text(width / 2, height / 2, "Not Implemented Yet");
+                StdDraw.show();
+
 
             } else if (key == 'L' || key == 'l') {
                 Game reloaded = loadWorld();
-                this.nm.SCORE = reloaded.SCORE;
-                this.nm.HEALTH = reloaded.HEALTH;
-                ter.initialize(WIDTH, HEIGHT + 3);
-                ter.renderFrame(reloaded.finalWorldFrame);
-                reloaded.gameOver = false;
-                reloaded.readytoSave = false;
-                this.player_X = reloaded.nm.PLAYER_X;
-                this.player_Y = reloaded.nm.PLAYER_Y;
-                reloaded.playWithKeyboard();
+                this.ter = reloaded.ter;
+                ter.initialize(width, height + 3);
+                this.mapGenerator = reloaded.mapGenerator;
+                this.currMap = this.mapGenerator.returnMap();
+                this.gameOver = false;
+                this.readyToSave = false;
+                this.gameStarted = true;
 
             }
         }
     }
 
 
-    public void playWithKeyboard() {
-
+    void playWithKeyboard() {
         while (!gameStarted) {
             showStartScreen();
         }
 
+
         while (!gameOver) {
 
-            SCORE = nm.SCORE;
-            HEALTH = nm.HEALTH;
+            if (mapGenerator.playerHealth <= 0){
+                gameOver = true;
+                break;
+            }
 
-            ter.renderFrame(finalWorldFrame);
+            ter.renderFrame(currMap);
             headsUpDisplay();
             StdDraw.clear(Color.black);
 
@@ -132,95 +132,128 @@ public class Game implements Serializable {
             }
 
             char key = StdDraw.nextKeyTyped();
-            SEED += String.valueOf(key);
+            userInput += String.valueOf(key);
 
+            switch (key) {
+                case 'D':
+                case 'd':
+                case 'W':
+                case 'w':
+                case 'A':
+                case 'a':
+                case 'S':
+                case 's':
+                    updateMap(key);
+                    break;
 
-            if (key == 'D' || key == 'd') {
-                nm.playerMove(key, finalWorldFrame);
-                ter.renderFrame(finalWorldFrame);
+                case ':':
+                    readyToSave = true;
+                    break;
 
-            } else if (key == 'W' || key == 'w') {
-                nm.playerMove(key, finalWorldFrame);
-                ter.renderFrame(finalWorldFrame);
-
-
-            } else if (key == 'A' || key == 'a') {
-                nm.playerMove(key, finalWorldFrame);
-                ter.renderFrame(finalWorldFrame);
-
-
-            } else if (key == 's' || key == 'S') {
-                nm.playerMove(key, finalWorldFrame);
-                ter.renderFrame(finalWorldFrame);
-
-
-            } else if (key == ':') {
-                readytoSave = true;
-
-            } else if (readytoSave) {
-                if (key == 'q' || key == 'Q') {
+                case 'Q':
+                case 'q':
                     gameOver = true;
-                    this.player_X = nm.PLAYER_X;
-                    this.player_Y = nm.PLAYER_Y;
-                    finalWorldFrame = nm.TETILE_WORLD;
                     saveWorld(this);
                     System.exit(0);
-                }
+                    break;
             }
+
+//            if (key == 'D' || key == 'd') {
+//                updateMap(key);
+//
+//            } else if (key == 'W' || key == 'w') {
+//                updateMap(key);
+//
+//
+//            } else if (key == 'A' || key == 'a') {
+//                updateMap(key);
+//
+//
+//            } else if (key == 's' || key == 'S') {
+//                updateMap(key);
+//
+//
+//            } else if (key == ':') {
+//                readyToSave = true;
+//
+//            } else if (readyToSave) {
+//                if (key == 'q' || key == 'Q') {
+//                    gameOver = true;
+//                    saveWorld(this);
+//                    System.exit(0);
+//                }
+//            }
         }
+
+        StdDraw.setPenColor(Color.white);
+        Font largeFont = new Font("Monaco", Font.BOLD, 100);
+        StdDraw.text(width / 2, height / 2, "GAME OVER");
+        StdDraw.setFont(largeFont);
+        StdDraw.show();
+
+        try
+        {
+            Thread.sleep(1000);
+            System.exit(0);
+        }
+        catch(InterruptedException ex)
+        {
+            Thread.currentThread().interrupt();
+        }
+
     }
 
+    private void updateMap(char key){
+        mapGenerator.playerMove(key);
+        currMap = mapGenerator.returnMap();
+        ter.renderFrame(currMap);
+    }
 
-    public void headsUpDisplay() {
+    private void headsUpDisplay() {
         String message = tileMessage();
-        Font smallFont = new Font("Monaco", Font.BOLD, 15);
-        StdDraw.setFont(smallFont);
+        Font largeFont = new Font("Monaco", Font.BOLD, 24);
+        StdDraw.setFont(largeFont);
         StdDraw.setPenColor(Color.white);
-        StdDraw.text(5, HEIGHT + 2, message);
-        if (HEALTH <= 0) {
-            StdDraw.text(5, HEIGHT + 1, "Game Over");
-        } else {
-            StdDraw.text(5, HEIGHT + 1, "Health: " + String.valueOf(HEALTH));
-        }
-        StdDraw.text(5, HEIGHT, "Score: " + String.valueOf(SCORE));
+        StdDraw.text(8, height + 1, message);
+
+        Font smallFont = new Font("Monaco", Font.BOLD, 16);
+        StdDraw.setFont(smallFont);
+        StdDraw.text(8, height - 1, "Health: " + mapGenerator.playerHealth);
+        StdDraw.text(8, height - 2, "Score: " + mapGenerator.playerScore);
         StdDraw.show();
 
 
     }
 
 
-    public String tileMessage() {
-        int mousex = (int) StdDraw.mouseX(); //StdDraw.mouseX();
-        int mousey = (int) StdDraw.mouseY();
+    private String tileMessage() {
+        int mouseX = (int) StdDraw.mouseX();
+        int mouseY = (int) StdDraw.mouseY();
 
-        if (mouseInBounds(mousex, mousey)) {
-            TETile twm = finalWorldFrame[mousex][mousey];
-            if (twm.equals(Tileset.FLOOR)) {
+        if (mouseInBounds(mouseX, mouseY)) {
+            TETile tileHoveringOver = currMap[mouseX][mouseY]; //
+            if (tileHoveringOver.equals(Tileset.FLOOR)) {
                 return "Floor";
-            } else if (twm.equals(Tileset.PLAYER)) {
+            } else if (tileHoveringOver.equals(Tileset.PLAYER)) {
                 return "You";
-            } else if (twm.equals(Tileset.SPIKED_WALL)) {
-                return "Spiked Wall";
-            } else if (twm.equals(Tileset.WALL)) {
+            } else if (tileHoveringOver.equals(Tileset.RADIOACTIVE)) {
+                return "Radioactive!";
+            } else if (tileHoveringOver.equals(Tileset.WALL)) {
                 return "Wall";
-            } else if (twm.equals(Tileset.NOTHING)) {
-                return "Nothing";
-            } else if (twm.equals(Tileset.FLOWER)) {
+            } else if (tileHoveringOver.equals(Tileset.HEART)) {
                 return "Heart";
-            } else if (twm.equals(Tileset.NOTHING)) {
-                return "Nothing";
             } else {
-                return "";
+                return "Nothing";
             }
         }
 
-        return "";
+        return "Nothing";
 
     }
 
 
     private boolean mouseInBounds(int x, int y) {
-        return (x > 0) && (x < WIDTH) && (y > 0) && (y < HEIGHT);
+        return (x >= 0) && (x < width) && (y >= 0) && (y < height);
 
     }
 
@@ -241,7 +274,7 @@ public class Game implements Serializable {
 
 
         } catch (FileNotFoundException e) {
-            System.out.println("file not found");
+            System.out.println("File not Found");
             System.exit(0);
 
         } catch (IOException e) {
@@ -293,7 +326,7 @@ public class Game implements Serializable {
      * @param input the input string to feed to your program
      * @return the 2D TETile[][] representing the state of the world
      */
-    public TETile[][] playWithInputString(String input) {
+    TETile[][] playWithInputString(String input) {
         // and return a 2D tile representation of the world that would have been
         // drawn if the same inputs had been given to playWithKeyboard().
         String separatedSeed = parseInput(input);
@@ -309,39 +342,30 @@ public class Game implements Serializable {
 
 
             Game reloaded = loadWorld();
-            nm = reloaded.nm;
-            TETile[][] tempFrame = reloaded.finalWorldFrame;
-            finalWorldFrame = tempFrame;
-//            nm = reloaded.nm;
-//            this.nm.SCORE = reloaded.SCORE;
-//            this.nm.HEALTH = reloaded.HEALTH;
-//            reloaded.gameOver = false;
-//            reloaded.readytoSave = false;
-//            this.nm.PLAYER_X = reloaded.nm.PLAYER_X;
-//            this.nm.PLAYER_Y = reloaded.nm.PLAYER_Y;
+            mapGenerator = reloaded.mapGenerator;
+            TETile[][] tempFrame = reloaded.currMap;
+            currMap = tempFrame;
             reloaded.playWithInputString(inputnew);
 
         } else if (arrayedmoves[i] == 's' || arrayedmoves[i] == 'S') {
             i++;
-            nm = new MapGenerator(separatedSeed);
-            finalWorldFrame = nm.generate();
+            mapGenerator = new MapGenerator(separatedSeed);
+            currMap = mapGenerator.returnMap();
         }
 
         while (i < arrayedmoves.length) {
             if (arrayedmoves[i] == ':') {
-                readytoSave = true;
-            } else if (readytoSave) {
+                readyToSave = true;
+            } else if (readyToSave) {
                 if (arrayedmoves[i] == 'Q' || arrayedmoves[i] == 'q') {
-                    this.player_X = nm.PLAYER_X;
-                    this.player_Y = nm.PLAYER_Y;
                     saveWorld(this);
                 }
             } else {
-                nm.playerMove(arrayedmoves[i], finalWorldFrame);
+                mapGenerator.playerMove(arrayedmoves[i]);
             }
             i++;
         }
-        return finalWorldFrame;
+        return currMap;
     }
 
 
@@ -362,7 +386,7 @@ public class Game implements Serializable {
                     readyForMoves = true;
                     moves += inputarray[i];
                 } else if (Character.isDigit(inputarray[i])) {
-                    numberseed += inputarray[i];
+                    numberSeed += inputarray[i];
                 } else if (inputarray[i] == 'S' || inputarray[i] == 's') {
                     moves += inputarray[i];
                     readyForMoves = true;
@@ -372,6 +396,6 @@ public class Game implements Serializable {
             }
             i++;
         }
-        return numberseed;
+        return numberSeed;
     }
 }

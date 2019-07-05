@@ -1,404 +1,450 @@
 package byog.Core;
 
 import java.io.Serializable;
-import java.util.Random;
+import java.util.*;
+
 import byog.TileEngine.Tileset;
 import byog.TileEngine.TETile;
 
 public class MapGenerator implements Serializable {
 
-    private static final int HEIGHT = 30;
-    private static final int WIDTH = 80;
-    static TETile[][] TETILE_WORLD = new TETile[WIDTH][HEIGHT];
-    private static long randomSEED;
-    private static String FULLSEED;
-    private Random r;
-    private int[][] ft = new int[8000][2];
-    private int ftai = 0;
-    private int[][] wt = new int[8000][2];
-    private int wtai = 0;
-    private int[][] st = new int[100][2];
-    private int stai = 0;
-    private static final int XSTART = 38; //RandomUtils.uniform(r, 30, 50);
-    private static final int YSTART = 15; // RandomUtils.uniform(r, 12, 18);
-    protected static int X_CURRENT = XSTART;
-    private static int Y_CURRENT = YSTART;
-    int PLAYER_X;
-    int PLAYER_Y;
-    static int SCORE = 0;
-    static int HEALTH = 1;
-    static String moves;
+
+    private static final int height = 33;
+    private static final int width = 80;
+    private static Random r;
+    int playerScore;
+    int playerHealth;
+    // Map Floor Attributes
+    private TETile[][] tiles;
+    private int playerX;
+    private int playerY;
+    private int[][] floorTiles = new int[10000][2];  // Array of floor tile coordinates ([] int) => [][]
+    private int[][] wallTiles = new int[100000][2];   // Array of wall tile coordinates ([] int) => [][]
+
+    private int numberOfFloorTiles; // Number of floor tiles
+    private int numberOfWallTiles; // Number of wall tiles
+
+    private HashSet<Tile> setOfFloorTiles;
+    private HashSet<Tile> setOfWallTiles;
+    private HashSet<Tile> setOfHeartTiles;
 
 
+    // General Constructor Method w/ only seed input
     public MapGenerator(String input) {
-        randomSEED = numericalseed(input);
-        r = new Random(randomSEED);
 
-    }
-
-    private boolean inArray(int[][] array, int[] item) {
-        for (int j = 0; j < array.length; j++) {
-            if (array[j][0] == (item[0]) && array[j][1] == (item[1])) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private TETile[][] ctw() {
-
-        fillTileBackground(TETILE_WORLD);
+        this.tiles = new TETile[width][height];
+        r = new Random(stringSeedtoInt(input));
+        this.playerScore = 0;
+        this.playerHealth = 5;
+        fillBackground();
         addFloors();
         addRooms();
+
+        setOfFloorTiles = createTileSetFromArray(floorTiles);
+        floorTiles = createArrayFromTileSet(setOfFloorTiles);
+        numberOfFloorTiles = floorTiles.length;
+
         addWalls();
-        ft = cleanTheTiles(ft);
+
+        setOfWallTiles = createTileSetFromArray(wallTiles);
+        wallTiles = createArrayFromTileSet(setOfWallTiles);
+        numberOfWallTiles = wallTiles.length;
+
+        addRadioactivity(25);
+        setOfHeartTiles = new HashSet<>();
+        addHearts(6);
         playerStart();
-        spikedWalls(25);
-        addFlowers(6);
-        return TETILE_WORLD;
+
     }
 
-    public TETile[][] generate() {
-        TETile[][] world = ctw();
-        return world;
+    TETile[][] returnMap() {
+        return tiles;
     }
 
-    private long numericalseed(String input) {
-        input = input.replace("N", "");
-        input = input.replace("n", "");
-        input = input.replace("S", "");
-        input = input.replace("s", "");
-        return Long.parseLong(input);
-    }
 
-//    public long numberSEED(String input){
-//        return Long.parseLong(input);
-//    }
-
-    ////////////////////////////////////////////////////////////////////////////////////////////
-    ///// INTERACTIVITY ///////
-    ////////////////////////////////////////////////////////////////////////////////////////////
-
+    ///////////////////////////////////////////////
+    //////////// Player Interactivity /////////////
+    ///////////////////////////////////////////////
 
     private void playerStart() {
-        int start = RandomUtils.uniform(r, 0, ftai);
-        PLAYER_X = ft[start][0];
-        PLAYER_Y = ft[start][1];
-        TETILE_WORLD[PLAYER_X][PLAYER_Y] = Tileset.PLAYER;
-
-
+        int startIndex = RandomUtils.uniform(r, 0, numberOfFloorTiles);
+        playerX = floorTiles[startIndex][0];
+        playerY = floorTiles[startIndex][1];
+        numberOfFloorTiles = setOfFloorTiles.size();
+        tiles[playerX][playerY] = Tileset.PLAYER;
     }
 
 
-    public int tileType(int x, int y, TETile[][] world) {
-        String type = world[PLAYER_X][PLAYER_Y].description();
+    private void updateInformation(int tile) {
+        if (tile == 1) {
+            playerScore++;
+        } else if (tile == 2) {
+            playerHealth++;
+        } else if (tile == 4) {
+            playerHealth--;
+        }
 
-        if (type.equals("floor")) {
-            return 1;
-        } else if (type.equals("flower")) {
-            return 2;
+    }
+
+    void playerMove(char direction) {
+        int[] currentPlayerPosition = new int[]{playerX, playerY};
+
+        if (isPlayerMoveValid(direction, currentPlayerPosition)) {
+
+            int[] newPlayerPosition = createNewCoordinatePosition(direction, currentPlayerPosition);
+            int tileType = tileType(currentPlayerPosition[0], currentPlayerPosition[1]);
+            updateInformation(tileType(newPlayerPosition[0], newPlayerPosition[1]));
+
+            if (tileType == 2) {
+                setOfHeartTiles.remove(new Tile(currentPlayerPosition[0], currentPlayerPosition[1]));
+            }
+
+            tiles[playerX][playerY] = Tileset.NOTHING;
+            playerX = newPlayerPosition[0];
+            playerY = newPlayerPosition[1];
+            tiles[playerX][playerY] = Tileset.PLAYER;
+
         } else {
-            return 0;
+            int[] temporaryPosition = createNewCoordinatePosition(direction, currentPlayerPosition);
+            updateInformation(tileType(temporaryPosition[0], temporaryPosition[1]));
         }
     }
 
 
-    public void updateHUD(int x) {
-        if (x == 1 && HEALTH > 0) {
-            SCORE += 1;
-        } else if (x == 2) {
-            HEALTH += 1;
-        }
+    private boolean isPlayerMoveValid(char dir, int[] playerPosition) {
+        int xTest = playerPosition[0];
+        int yTest = playerPosition[1];
 
-    }
-
-    public void playerMove(char direction, TETile[][] world) {
-
-        if (direction == 'D' || direction == 'd') {
-            if (isMoveValid(direction)) {
-                PLAYER_X++;
-                updateHUD(tileType(PLAYER_X - 1, PLAYER_Y, world));
-                world[PLAYER_X - 1][PLAYER_Y] = Tileset.NOTHING;
-                world[PLAYER_X][PLAYER_Y] = Tileset.PLAYER;
-            }
-            if (isWallSpiked(direction)) {
-                HEALTH -= 1;
-            }
-        } else if (direction == 'W' || direction == 'w') {
-            if (isMoveValid(direction)) {
-                PLAYER_Y++;
-                updateHUD(tileType(PLAYER_X, PLAYER_Y - 1, world));
-                world[PLAYER_X][PLAYER_Y - 1] = Tileset.NOTHING;
-                world[PLAYER_X][PLAYER_Y] = Tileset.PLAYER;
-
-            }
-            if (isWallSpiked(direction)) {
-                HEALTH -= 1;
-            }
-        } else if (direction == 'A' || direction == 'a') {
-            if (isMoveValid(direction)) {
-                PLAYER_X--;
-                updateHUD(tileType(PLAYER_X + 1, PLAYER_Y, world));
-                world[PLAYER_X + 1][PLAYER_Y] = Tileset.NOTHING;
-                world[PLAYER_X][PLAYER_Y] = Tileset.PLAYER;
-
-            }
-            if (isWallSpiked(direction)) {
-                HEALTH -= 1;
-            }
-        } else if (direction == 'S' || direction == 's') {
-            if (isMoveValid(direction)) {
-                PLAYER_Y--;
-                updateHUD(tileType(PLAYER_X, PLAYER_Y - 1, world));
-                world[PLAYER_X][PLAYER_Y + 1] = Tileset.NOTHING;
-                world[PLAYER_X][PLAYER_Y] = Tileset.PLAYER;
-
-            }
-            if (isWallSpiked(direction)) {
-                HEALTH -= 1;
-            }
-
-        }
-    }
-
-
-    private boolean isMoveValid(char direction) {
-        int[] testCoordinates = new int[]{PLAYER_X, PLAYER_Y};
-
-        if (direction == 'D' || direction == 'd') {
-            testCoordinates[0] += 1;
-        } else if (direction == 'W' || direction == 'w') {
-            testCoordinates[1] += 1;
-        } else if (direction == 'A' || direction == 'a') {
-            testCoordinates[0] -= 1;
+        if (dir == 'D' || dir == 'd') {
+            xTest += 1;
+        } else if (dir == 'W' || dir == 'w') {
+            yTest += 1;
+        } else if (dir == 'A' || dir == 'a') {
+            xTest -= 1;
         } else {
-            testCoordinates[1] -= 1;
+            yTest -= 1;
         }
 
-        return inArray(ft, testCoordinates);
-    }
-
-    private boolean isWallSpiked(char direction) {
-        int[] testCoordinates = new int[]{PLAYER_X, PLAYER_Y};
-
-        if (direction == 'D' || direction == 'd') {
-            testCoordinates[0] += 1;
-        } else if (direction == 'W' || direction == 'w') {
-            testCoordinates[1] += 1;
-        } else if (direction == 'A' || direction == 'a') {
-            testCoordinates[0] -= 1;
-        } else {
-            testCoordinates[1] -= 1;
-        }
-        return inArray(st, testCoordinates);
+        return setOfFloorTiles.contains(new Tile(xTest, yTest)) || setOfHeartTiles.contains(new Tile(xTest, yTest));
     }
 
 
+    ///////////////////////////////////////////////
+    /////////////// MAP GENERATION ////////////////
+    ///////////////////////////////////////////////
 
 
-
-    ////////////////////////////////////////////////////////////////////////////////////////////
-    ///// MAP GENERATION ///////
-    ////////////////////////////////////////////////////////////////////////////////////////////
-
-    private static void fillTileBackground(TETile[][] ta) {
-        for (int i = 0; i < ta.length; i += 1) {
-            for (int j = 0; j < ta[0].length; j += 1) {
-                ta[i][j] = Tileset.NOTHING;
+    // Initializes every tile to nothing
+    private void fillBackground() {
+        for (int i = 0; i < this.tiles.length; i++) {
+            for (int j = 0; j < this.tiles[0].length; j++) {
+                this.tiles[i][j] = Tileset.NOTHING;
             }
         }
     }
 
-    private int [][] cleanTheTiles(int[][] tilecoord) {
-        int [][] cleancopy = new int [ftai][2];
-        int copyindex = 0;
 
-        for (int i = 0; i < tilecoord.length; i++) {
-            if (tilecoord[i] != null) {
-                if (!inArray(cleancopy, tilecoord[i])) {
-                    cleancopy[copyindex] = tilecoord[i];
-                    copyindex += 1;
-
-                }
-            }
-        }
-
-        ftai = copyindex;
-        return cleancopy;
-
-    }
-
-    private boolean isValid(int direction) {
-        if (direction == 1) {
-            return (X_CURRENT != 76 && X_CURRENT != 77 && X_CURRENT != 78);
-        } else if (direction == 2) {
-            return (Y_CURRENT != 26 && Y_CURRENT != 27 && Y_CURRENT != 28);
-        } else if (direction == 3) {
-            return (X_CURRENT != 3 && X_CURRENT != 2 && X_CURRENT != 1);
-        } else {
-            return (Y_CURRENT != 3 && Y_CURRENT != 2 && Y_CURRENT != 1);
-        }
-
-
-    }
-
-    public void moveRight() {
-        for (int i = 0; i < 3; i++) {
-            X_CURRENT += 1;
-            TETILE_WORLD[X_CURRENT][Y_CURRENT] = Tileset.FLOOR;
-            ft[ftai] = new int[]{X_CURRENT, Y_CURRENT};
-            ftai += 1;
-        }
-    }
-
-    public void moveLeft() {
-        for (int i = 0; i < 3; i++) {
-            X_CURRENT -= 1;
-            TETILE_WORLD[X_CURRENT][Y_CURRENT] = Tileset.FLOOR;
-            ft[ftai] = new int[]{X_CURRENT, Y_CURRENT};
-            ftai += 1;
-        }
-    }
-
-    public void moveUp() {
-        for (int i = 0; i < 3; i++) {
-            Y_CURRENT += 1;
-            TETILE_WORLD[X_CURRENT][Y_CURRENT] = Tileset.FLOOR;
-            ft[ftai] = new int[]{X_CURRENT, Y_CURRENT};
-            ftai += 1;
-        }
-    }
-
-    public void moveDown() {
-        for (int i = 0; i < 3; i++) {
-            Y_CURRENT -= 1;
-            TETILE_WORLD[X_CURRENT][Y_CURRENT] = Tileset.FLOOR;
-            ft[ftai] = new int[]{X_CURRENT, Y_CURRENT};
-            ftai += 1;
-        }
-    }
-
-
+    // Randomly traverse through map while placing floor tiles in the process
     private void addFloors() {
-        TETILE_WORLD[XSTART][YSTART] = Tileset.FLOOR;
-        ft[ftai] = new int[]{XSTART, YSTART};
-        ftai += 1;
+        int xStart = 39;
+        int yStart = 16;
+
+        tiles[xStart][yStart] = Tileset.FLOOR;
+        floorTiles[numberOfFloorTiles] = new int[]{xStart, yStart};
+        numberOfFloorTiles++;
 
 
+        for (int iterations = 0; iterations < 20; iterations++) {
+            int xCurr = xStart;
+            int yCurr = yStart;
+            int len = RandomUtils.uniform(r, 1, 5);
+            int[] newPosition = new int[]{xCurr, yCurr};
 
-        for (int repeats = 0; repeats < 5; repeats++) {
-            X_CURRENT = XSTART; //RandomUtils.uniform(r, 10, 75);
-            Y_CURRENT = YSTART; //RandomUtils.uniform(r, 5, 19);
 
-            for (int i = 0; i < 100; i++) {
+            for (int j = 0; j < 75; j++) {
                 int direction = RandomUtils.uniform(r, 1, 5);
-                while (!isValid(direction)) {
-                    direction = RandomUtils.uniform(r, 1, 5);
-                }
 
-                if (direction == 1) {
-                    moveRight();
-                } else if (direction == 2) {
-                    moveUp();
-                } else if (direction == 3) {
-                    moveLeft();
 
-                } else {
-                    moveDown();
+                switch (direction) {
+                    case 1:
+                        newPosition = move("right", xCurr, yCurr, len);
+                        break;
+                    case 2:
+                        newPosition = move("up", xCurr, yCurr, len);
+                        break;
+                    case 3:
+                        newPosition = move("left", xCurr, yCurr, len);
+                        break;
+                    case 4:
+                        newPosition = move("down", xCurr, yCurr, len);
+                        break;
+                    default:
+                        System.out.println("Error: Invalid Direction, couldn't move");
                 }
+                xCurr = newPosition[0];
+                yCurr = newPosition[1];
             }
         }
 
     }
 
-    private void addFlowers(int num) {
+
+    // Given a direction, (x,y) coordinate, and length (x), places x number of floor tiles in that direction
+    private int[] move(String dir, int x, int y, int num) {
         for (int i = 0; i < num; i++) {
-            int flowerindex = RandomUtils.uniform(r, 0, ftai);
-            int flowerx = ft[flowerindex][0];
-            int flowery = ft[flowerindex][1];
-            TETILE_WORLD[flowerx][flowery] = Tileset.FLOWER;
+            switch (dir) {
+                case "right":
+                    if (isMoveValid(1, x, y)) {
+                        x++;
+                    }
+                    break;
+
+                case "left":
+                    if (isMoveValid(3, x, y)) {
+                        x--;
+                    }
+                    break;
+
+                case "up":
+                    if (isMoveValid(2, x, y)) {
+                        y++;
+                    }
+                    break;
+
+                case "down":
+                    if (isMoveValid(4, x, y)) {
+                        y--;
+                    }
+                    break;
+            }
+
+            tiles[x][y] = Tileset.FLOOR;
+            floorTiles[numberOfFloorTiles] = new int[]{x, y};
+            numberOfFloorTiles++;
+        }
+        return new int[]{x, y};
+    }
+
+    // Checks if moving in a certain direction from (x,y) is valid
+    private boolean isMoveValid(int direction, int x, int y) {
+        boolean maxX = (x < 76);
+        boolean maxY = (y < 26);
+        boolean minX = (x > 3);
+        boolean minY = (y > 3);
+
+        if (direction == 1) {
+            return maxX;
+        } else if (direction == 2) {
+            return maxY;
+        } else if (direction == 3) {
+            return minX;
+        } else {
+            return minY;
         }
     }
 
-    private int[][] getSurroundings(int[] floorCoords) {
-        int[][] surroundings = new int[8][2];
-        surroundings[0] = new int[]{floorCoords[0] - 1, floorCoords[1] + 1};
-        surroundings[1] = new int[]{floorCoords[0], floorCoords[1] + 1};
-        surroundings[2] = new int[]{floorCoords[0] + 1, floorCoords[1] + 1};
-        surroundings[3] = new int[]{floorCoords[0] + 1, floorCoords[1]};
-        surroundings[4] = new int[]{floorCoords[0] + 1, floorCoords[1] - 1};
-        surroundings[5] = new int[]{floorCoords[0], floorCoords[1] - 1};
-        surroundings[6] = new int[]{floorCoords[0] - 1, floorCoords[1] - 1};
-        surroundings[7] = new int[]{floorCoords[0] - 1, floorCoords[1]};
-
-        return surroundings;
-
+    // Checks if a (x,y) position is a legal tile
+    private boolean isLegalTile(int x, int y) {
+        return x < (width - 1) && x > 1 && y > 1 && y < (height - 1);
     }
 
-    private void addWalls() {
-        for (int i = 0; i < ftai; i++) {
-            int[][] theseSurroundings = getSurroundings(ft[i]);
-            for (int j = 0; j < 8; j++) {
-                int xcurr = theseSurroundings[j][0];
-                int ycurr = theseSurroundings[j][1];
-                if (TETILE_WORLD[xcurr][ycurr].equals(Tileset.NOTHING)) {
-                    TETILE_WORLD[xcurr][ycurr] = Tileset.WALL;
-                    wt[wtai] = new int[]{xcurr, ycurr};
-                    wtai += 1;
-                }
+
+    // Chooses random dimensions and start point for a room & then place floor tiles
+    private void addRoom() {
+        int roomWidth = RandomUtils.uniform(r, 4, 18);
+        int roomHeight = RandomUtils.uniform(r, 4, 9);
+        int randomIndex = RandomUtils.uniform(r, 0, numberOfFloorTiles);
+        int[] roomPosition = floorTiles[randomIndex];
+
+        while (!isRoomValid(roomPosition, roomWidth, roomHeight)) {
+            randomIndex = RandomUtils.uniform(r, 0, numberOfFloorTiles);
+            roomPosition = floorTiles[randomIndex];
+        }
+
+        for (int x = roomPosition[0]; x < roomPosition[0] + roomWidth; x++) {
+            for (int y = roomPosition[1]; y < roomPosition[1] + roomHeight; y++) {
+                tiles[x][y] = Tileset.FLOOR;
+                floorTiles[numberOfFloorTiles] = new int[]{x, y};
+                numberOfFloorTiles++;
             }
         }
     }
 
-    private void spikedWalls(int num) {
-        for (int i = 0; i < num; i++) {
-            int spikeindex = RandomUtils.uniform(r, 0, wtai);
-            int spikex = wt[spikeindex][0];
-            int spikey = wt[spikeindex][1];
-            TETILE_WORLD[spikex][spikey] = Tileset.SPIKED_WALL;
-            st[stai] = new int[]{spikex, spikey};
-            stai += 1;
-        }
-    }
-
+    // Repeatedly adds 6 - 12 rooms
     private void addRooms() {
-        int numRooms = RandomUtils.uniform(r, 24, 30);
+        int numRooms = RandomUtils.uniform(r, 6, 12);
         for (int i = 0; i < numRooms; i++) {
             addRoom();
         }
     }
 
-
-
-
+    // Checks whether a room @ start point (x,y) with dimensions (xDim x yDim) is valid
     private boolean isRoomValid(int[] coords, int xDim, int yDim) {
-        boolean x = ((coords[0] - xDim) <= 0 || (coords[0] + xDim) >= 79);
-        boolean y = ((coords[1] - yDim) <= 0 || (coords[1] + yDim) >= 29);
+        boolean x = ((coords[0] - xDim) <= 1 || (coords[0] + xDim) >= 79);
+        boolean y = ((coords[1] - yDim) <= 1 || (coords[1] + yDim) >= 29);
         return !(x || y);
     }
 
 
-    private void addRoom() {
-        int xDim = RandomUtils.uniform(r, 2, 8);
-        int yDim = RandomUtils.uniform(r, 2, 8);
-        int roomindex = RandomUtils.uniform(r, 0, ftai);
-        int[] roomcoordinates = ft[roomindex];
+    // Turns every 'nothing' tile around a floor tile into a wall tile
+    private void addWalls() {
+        for (int i = 0; i < numberOfFloorTiles; i++) {
+            int[][] currSurroundingTiles = getSurroundingTiles(floorTiles[i]);
+            for (int j = 0; j < 8; j++) {
+                int x = currSurroundingTiles[j][0];
+                int y = currSurroundingTiles[j][1];
 
-        while (!isRoomValid(roomcoordinates, xDim, yDim)) {
-            roomindex = RandomUtils.uniform(r, 0, ftai);
-            roomcoordinates = ft[roomindex];
-        }
-
-        int xroom = roomcoordinates[0];
-        int yroom = roomcoordinates[1];
-
-
-        for (int x = xroom; x < xroom + xDim; x++) {
-            for (int y = yroom; y < yroom + yDim; y++) {
-                TETILE_WORLD[x][y] = Tileset.FLOOR;
-                ft[ftai] = new int[]{x, y};
-                ftai += 1;
+                if (isLegalTile(x, y) && tiles[x][y].equals(Tileset.NOTHING)) {
+                    tiles[x][y] = Tileset.WALL;
+                    int[] coord = new int[]{x, y};
+                    wallTiles[numberOfWallTiles] = coord;
+                    numberOfWallTiles++;
+                }
             }
         }
     }
+
+    private int[][] getSurroundingTiles(int[] position) {
+        int[][] surroundings = new int[8][2];
+        surroundings[0] = new int[]{position[0] - 1, position[1] + 1};
+        surroundings[1] = new int[]{position[0], position[1] + 1};
+        surroundings[2] = new int[]{position[0] + 1, position[1] + 1};
+
+        surroundings[3] = new int[]{position[0] - 1, position[1]};
+        surroundings[4] = new int[]{position[0] + 1, position[1]};
+
+        surroundings[5] = new int[]{position[0] - 1, position[1] - 1};
+        surroundings[6] = new int[]{position[0], position[1] - 1};
+        surroundings[7] = new int[]{position[0] + 1, position[1] - 1};
+
+        return surroundings;
+
+    }
+
+
+    // Takes array of (x,y) coordinates [x, y] and condense into a GIVEN HashSet
+    private int[][] createArrayFromTileSet(HashSet<Tile> tileSet) {
+
+        int[][] copyArray = new int[tileSet.size()][2];
+        Iterator<Tile> copyArrayIterator = tileSet.iterator();
+        int i = 0;
+
+        while (copyArrayIterator.hasNext()) {
+            Tile next = copyArrayIterator.next();
+            copyArray[i] = new int[]{next.getX(), next.getY()};
+            i++;
+        }
+
+        return copyArray;
+    }
+
+    private HashSet<Tile> createTileSetFromArray(int[][] tiles) {
+        HashSet<Tile> copySet = new HashSet<>();
+
+        for (int[] pair : tiles) {
+            Tile tile = new Tile(pair[0], pair[1]);
+            copySet.add(tile);
+        }
+        return copySet;
+
+    }
+
+    private void addHearts(int num) {
+        for (int i = 0; i < num; i++) {
+            int random = RandomUtils.uniform(r, 0, numberOfFloorTiles); // Picks index of a random floor tile
+            int x = floorTiles[random][0]; // extracts x-position
+            int y = floorTiles[random][1]; // extracts y-position
+            tiles[x][y] = Tileset.HEART;
+            Tile heartTile = new Tile(x, y);
+            setOfHeartTiles.add(heartTile);
+            setOfFloorTiles.remove(heartTile);
+            numberOfFloorTiles--;
+        }
+
+    }
+
+    private void addRadioactivity(int num) {
+        for (int i = 0; i < num; i++) {
+            int random = RandomUtils.uniform(r, 0, numberOfWallTiles); // Picks index of a random wall tile
+            int x = wallTiles[random][0];
+            int y = wallTiles[random][1];
+            tiles[x][y] = Tileset.RADIOACTIVE;
+            Tile radioactiveTile = new Tile(x, y);
+            setOfWallTiles.remove(radioactiveTile);
+            numberOfWallTiles--;
+        }
+    }
+    /////////////////////////////////////////
+
+
+    // Transforms string input seed into a number
+    private long stringSeedtoInt(String input) {
+        String[] badChars = new String[]{"N", "n", "S", "s"};
+
+        for (String bchar : badChars) {
+            input = input.replace(bchar, "");
+
+        }
+        return Long.parseLong(input);
+    }
+
+
+    // Returns tile type (Nothing = 0, Floor = 1, Heart = 2, Player = 3, Radioactive = 4, Wall = 5)
+    private int tileType(int x, int y) {
+
+        String type = tiles[x][y].description();
+
+        switch (type) {
+            case "floor":
+                return 1;
+
+            case "heart":
+                return 2;
+
+            case "player":
+                return 3;
+
+            case "radioactive":
+                return 4;
+
+
+            case "wall":
+                return 5;
+
+            default:
+                return 0;
+        }
+    }
+
+    private int[] createNewCoordinatePosition(char direction, int[] currentCoordinates) {
+        try {
+            switch (direction) {
+                case 'D':
+                case 'd':
+                    currentCoordinates[0]++;
+                    break;
+                case 'W':
+                case 'w':
+                    currentCoordinates[1]++;
+                    break;
+                case 'A':
+                case 'a':
+                    currentCoordinates[0]--;
+                    break;
+                case 'S':
+                case 's':
+                    currentCoordinates[1]--;
+                    break;
+            }
+        } catch (Exception e) {
+            System.out.println("Invalid Direction");
+        }
+        return currentCoordinates;
+    }
+
+
 }
+
+
+
+

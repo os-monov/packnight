@@ -18,24 +18,36 @@ import java.io.Serializable;
  */
 
 public class Tileset implements Serializable {
+
     public static final TETile PLAYER = new TETile('♞', Color.white, Color.black, "player");
-    public static final TETile WALL = new TETile('߷', new Color(216, 128, 128), Color.darkGray,
-            "wall");
-    public static final TETile FLOOR = new TETile('·', new Color(128, 192, 128), Color.black,
+
+    public static final TETile FLOOR = new TETile('·', new Color(50, 205, 120), Color.black,
             "floor");
+
     public static final TETile NOTHING = new TETile(' ', Color.black, Color.black, "nothing");
-    public static final TETile GRASS = new TETile('"', Color.green, Color.black, "grass");
-    public static final TETile WATER = new TETile('≈', Color.blue, Color.black, "water");
-    public static final TETile FLOWER = new TETile('❤', Color.pink, Color.black, "flower");
-    public static final TETile LOCKED_DOOR = new TETile('█', Color.orange, Color.black,
-            "locked door");
-    public static final TETile UNLOCKED_DOOR = new TETile('▢', Color.orange, Color.black,
-            "unlocked door");
-    public static final TETile SAND = new TETile('▒', Color.yellow, Color.black, "sand");
-    public static final TETile MOUNTAIN = new TETile('▲', Color.gray, Color.black, "mountain");
-    public static final TETile TREE = new TETile('♠', Color.green, Color.black, "tree");
-    public static final TETile SPIKED_WALL = new TETile('☭', Color.yellow, Color.red,
-            "spiked wall");
+
+    public static final TETile HEART = new TETile('❤', Color.pink, Color.black, "heart");
+
+    public static final TETile WALL = new TETile('-', Color.yellow, Color.red,
+
+            "wall", "/Users/alex/Desktop/CS/cs61b/sp18-proj2-axu-cej/proj2/byog/TileEngine/tiles/brick.png");
+
+    public static final TETile RADIOACTIVE = new TETile('!', Color.yellow, Color.red,
+            "radioactive", "/Users/alex/Desktop/CS/cs61b/sp18-proj2-axu-cej/proj2/byog/TileEngine/tiles/radioactive.png");
+
+
+
+//    public static final TETile LOCKED_DOOR = new TETile('█', Color.orange, Color.black,
+//            "locked door");
+//    public static final TETile UNLOCKED_DOOR = new TETile('▢', Color.orange, Color.black,
+//            "unlocked door");
+//    public static final TETile SAND = new TETile('▒', Color.yellow, Color.black, "sand");
+//    public static final TETile MOUNTAIN = new TETile('▲', Color.gray, Color.black, "mountain");
+//    public static final TETile TREE = new TETile('♠', Color.green, Color.black, "tree");
+
+//    public static final TETile GRASS = new TETile('"', Color.green, Color.black, "grass");
+//    public static final TETile WATER = new TETile('≈', Color.blue, Color.black, "water");
+
 }
 
 
