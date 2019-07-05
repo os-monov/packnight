@@ -1,5 +1,9 @@
 # PacKnight
-Fun 2D Tile Game
+
+
+# GAME DEMO </br>
+
+![Game Demo](demo/demo.gif)
 
 
 <h2 id="clarifications">Design Specifications</h2>
