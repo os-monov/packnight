@@ -158,31 +158,6 @@ class Game implements Serializable {
                     break;
             }
 
-//            if (key == 'D' || key == 'd') {
-//                updateMap(key);
-//
-//            } else if (key == 'W' || key == 'w') {
-//                updateMap(key);
-//
-//
-//            } else if (key == 'A' || key == 'a') {
-//                updateMap(key);
-//
-//
-//            } else if (key == 's' || key == 'S') {
-//                updateMap(key);
-//
-//
-//            } else if (key == ':') {
-//                readyToSave = true;
-//
-//            } else if (readyToSave) {
-//                if (key == 'q' || key == 'Q') {
-//                    gameOver = true;
-//                    saveWorld(this);
-//                    System.exit(0);
-//                }
-//            }
         }
 
         StdDraw.setPenColor(Color.white);
